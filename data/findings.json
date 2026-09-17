@@ -1,0 +1,20 @@
+{
+  "source": "Peggy — 'What the Top-10 Actually Accept', findings report",
+  "basis": "~5,150 self-reported applicant profiles across 10 elite universities (accepted + rejected), plus a 2,617-record verified dataset.",
+  "caveat": "Self-reported and skewed STEM/high-achieving; rejected files sampled more heavily than accepted. Valid for COMPARISONS between admitted and rejected populations and between tiers — NOT as absolute admit rates.",
+  "thesis": "Elite academics are the entry ticket to the pool, not the thing that wins the seat. Outcomes are decided by the tier of a student's single best achievement and by structural hooks — not by the length of the resume.",
+  "universal": [
+    {"id": "academics_are_a_floor", "claim": "The academic bar is a threshold, not a differentiator. Admits and rejects both centre on 1540 SAT / 4.0 UW / 11 APs. ~36% of REJECTED applicants scored 1550+; ~16% of ADMITS scored below 1500.", "implication": "Clear the floor, then stop. Extra points above it do not buy anything."},
+    {"id": "spike_over_breadth", "claim": "Admits list FEWER activity areas than rejects (5.8 vs 6.2). What separates them is the tier of one best achievement.", "implication": "Depth in one thread beats a long list. Cap the activity count."},
+    {"id": "hooks", "claim": "Structural hooks separate admits: recruited athlete 2.4x, international-level award 1.65x, ISEF/Regeneron research 1.55x, first-generation 1.5x.", "implication": "Where a real hook exists, build around it. Never assert a hook the student does not actually hold.", "caution": "The report does not state whether 'first-generation' means first-gen COLLEGE or first-gen immigrant. Do not apply it to a student with college-graduate parents until that is resolved."},
+    {"id": "shutouts", "claim": "Students who struck out across all top-10s over-index on volunteer HOURS, AP-Scholar, and the international pool.", "implication": "Logged service hours are not a lever. Sustained involvement in one cause is."},
+    {"id": "tier_ladder", "claim": "Signals rise monotonically Top 21-50 -> 11-20 -> Top 10; a top-10 profile cascades downward and collects the lower tiers automatically.", "implication": "Build for the top of the realistic range; the rest follows."}
+  ],
+  "by_major": {
+    "cs":            {"pct_1500_plus": 90, "top10_share": 38, "note": "Hardest academic bar. Olympiads / ISEF 2.4x."},
+    "stem_non_cs":   {"pct_1500_plus": 86, "top10_share": 32, "note": "Scores plus olympiads / ISEF research."},
+    "humanities":    {"pct_1500_plus": 81, "top10_share": 22, "note": "National / international awards plus an arts & writing portfolio (not olympiads)."},
+    "social_science":{"pct_1500_plus": 76, "top10_share": 24, "note": "Most score-sensitive of the non-STEM tracks; RESEARCH + DEBATE (42% of top-10 admits)."},
+    "business":      {"pct_1500_plus": 67, "top10_share": 21, "note": "LOWEST academic bar of any track; LEADERSHIP / DEBATE outweigh research."}
+  }
+}
