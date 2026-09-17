@@ -1,0 +1,42 @@
+{
+  "student": {
+    "first_name": "Neerav", "last_initial": "U.", "grade": "8th",
+    "school": "Sierramont Middle School (public)", "location": "San Jose, CA (95132)",
+    "parent": "Priyanka U.",
+    "note": "No GPA / test / transcript yet — 8th grade; academic figures are entering targets, not records."
+  },
+  "parent_answers": {
+    "who_he_is": "Open-minded across cultures, kind, with a strong sense of justice and fairness. What lights him up is interesting problems and debates — he loves to take apart something happening in politics or business ('what if we did this vs that'), comparing outcomes, repercussions, and strategies. A strong business mind and a strong sense of social justice; also loves language. Highly sensitive — sensitive to others' emotions, and affected by rudeness or aggression; thrives in a supportive environment. Very socially adept, makes friends easily, people seek him out.",
+    "business_spine": "Runs a real Pokemon-card business that makes a few thousand dollars a year — a real little business with customers. Earlier ran an in-game Roblox business selling to other kids. The current goal: find cards that can be saved and become valuable to help pay a semester of college tuition ($5,000-$10,000). These are the ideas that light him up.",
+    "how_he_learns": "Thrives when instructions are clear, there's structure, milestones, and a chance to make up mistakes (a retake, extra credit). Struggles with one-big-test, sink-or-swim formats where a single test drops an A to a B. Needs the teacher to actually teach the concept first, then practice. Needs a lot of encouragement.",
+    "temperament_tags": ["Creative", "Perfectionist", "Leader", "Sensitive", "Kind", "Stubborn"],
+    "social_style": "Strongly prefers teams and groups; learns by listening and discussion; mostly social but needs downtime.",
+    "interests": ["Writing / Journalism", "Music", "Debate / Public speaking", "Business / Entrepreneurship", "Languages / Culture", "History / Politics", "Philosophy / Psychology"],
+    "intended_direction": "Business/Finance, Law/Government, Writing/Communications, Liberal arts/Humanities, Social sciences. Parent's words: 'a good business school or law school or school of public affairs or politics.' Prefers strong, well-known schools.",
+    "activities": [
+      {"name": "Pokemon card business", "tenure": "<1 yr", "hours_per_week": "4-6", "where": "outside school", "level": "self-run", "note": "'It's their thing'"},
+      {"name": "Ping-pong -> switching to tennis", "tenure": "1-2 yrs", "hours_per_week": "1-3", "where": "outside school"},
+      {"name": "Chess", "note": "won medals in tournaments"},
+      {"name": "Cooking", "note": "district-level competition, top-5 finalist, medal"},
+      {"name": "Theater", "note": "performed in two elementary-school musicals"}
+    ],
+    "travel_and_writing": "Travelled to India (Ladakh mountains, river rafting, zip-lining) and wrote about the trip; travelled to France and on an African safari.",
+    "tailwinds": "First-generation American. Mom is a Columbia University graduate; stepfather is a scientist at Stanford. Wants French as a second-language elective in undergrad. Aspires to a master's.",
+    "worry": "He has a real business already and real potential, but he's a sensitive perfectionist who needs encouragement and quits when the first step is a cliff — we don't want to scatter that energy in high school.",
+    "flags": "ADHD suspected but not diagnosed (a few traits; Mom is officially diagnosed). Severe ~2-month spring allergy season that debilitates schoolwork and all physical activity — timing, not ambition.",
+    "parent_ask": "Recommend what to do the summer after 8th grade, and what activities in 8th grade now will help him get into a good college that leads to business/law/public-affairs/politics.",
+    "constraints": {
+      "budget_activities_per_year": "$2,000-$5,000",
+      "summer_program_budget": "$3,000-$5,000",
+      "financial_aid": "Essential — needs significant aid or scholarships; a major priority",
+      "location": "Regional — our state or nearby; prefers in-person",
+      "scheduling": "Divorced household, two homes — scheduling is the hardest part; he gets mentally tired and can't cope with as many activities as a one-home kid. A $100/hr coach ($400/mo) already felt too steep.",
+      "wants": "Family community-service / volunteering options they can do together",
+      "hard_nos": ["nothing that requires steep per-session costs", "no out-of-region/travel-heavy commitments"]
+    }
+  },
+  "child_answers": {
+    "loves": "running my business and debating ideas; open to all cultures and foods",
+    "recent": "sourcing collectible cards; wants to try tennis instead of ping-pong"
+  }
+}

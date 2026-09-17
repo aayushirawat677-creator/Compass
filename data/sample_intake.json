@@ -1,0 +1,22 @@
+{
+  "student": {
+    "first_name": "Maya",
+    "grade": 9,
+    "location": "rural California (in-state only)",
+    "gpa_reported": 3.9
+  },
+  "parent_answers": {
+    "activities": "She builds robots at home on weekends without being asked. Also dances (5 years, school recitals).",
+    "temperament": "A perfectionist — she won't try things she might lose at, and freezes when it gets competitive.",
+    "intended_college": "MIT",
+    "intended_major": "Computer Science",
+    "worry": "She has real potential but freezes when things get competitive.",
+    "budget": "Cannot spend more than $5,000 a year",
+    "location_constraint": "Nothing out of state",
+    "weekly_hours_free": 6
+  },
+  "child_answers": {
+    "loves": "building robots",
+    "recent": "entered a regional robotics competition"
+  }
+}
