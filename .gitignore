@@ -3,9 +3,9 @@
 *.key
 **/secrets*
 
-# ── the corpus: large, scraped, and not ours to redistribute ──────────────
-# Supply it locally or via COMPASS_CORPUS_CSV. See DATA_REQUIREMENTS.md.
-data/acceptance_rejected_college_data_verified.csv
+# ── derived / bulk data (rebuildable) ─────────────────────────────────────
+# NOTE: the corpus itself (data/acceptance_rejected_college_data_verified.csv)
+# IS committed — the Outcome Cards cannot be built without it. See data/README.md.
 data/*.sqlite
 data/ipeds*
 
