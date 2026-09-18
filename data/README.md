@@ -16,7 +16,7 @@ that reason.
 | | |
 |---|---|
 | Rows | 2,723 posts (2,613 usable after dedup/validity filters) |
-| Application rows | 30,414 after the explode (see below) |
+| Application rows | 30,414 after the explode |
 | Years | 2024–2026 |
 | Size | ~10 MB |
 | Source | Public Reddit admissions-results posts, parsed and verified |
@@ -60,18 +60,75 @@ engine only ever reads the banded and structured columns.
 
 ---
 
+## The program / competition registry
+
+Debate is one source, not the shape of the system. Three files, one
+contract:
+
+| File | Role |
+|---|---|
+| `sources.json` | **The registry.** One entry per database: what it covers, which adapter reads it, when it was verified, its refresh cadence, and what is still missing. This is the file you edit when you add a competition database. |
+| `programs.csv` | **The common schema.** Every source resolves to these columns, whatever shape it arrived in. |
+| `tabroom_circuits.csv` | A raw source, kept exactly as it came. The adapter does the fitting — never edit a source file to match the schema. |
+
+### Adding a database
+
+1. Drop the raw file in `data/` under its own name.
+2. Add an entry to `sources.json` with `status: "active"`, the activities
+   it covers, and `verified_on`.
+3. If its columns already match `programs.csv`, set `adapter` to
+   `programs_csv`. Otherwise add a function to `ADAPTERS` in
+   `compass/programs.py` that yields rows in the common schema.
+4. Map its levels onto the six ladder rungs.
+5. Check it landed:
+
+```bash
+python -c "from compass import programs; print(programs.coverage())"
+```
+
+Nothing else in the engine changes — no step, no prompt, no gate.
+
+### The ladder
+
+```
+school → district → regional → state → national → international
+```
+
+Ordered, and load-bearing. Step 6 (Two Paths) builds a stretch path by
+INTENSIFY — same activity, next rung up — which only works if every
+source speaks this vocabulary. A source that invents a seventh rung
+breaks that logic, so the loader blanks any level it doesn't recognise
+rather than passing it through.
+
+An empty rung is the honest answer. It says *this activity has no
+verified path upward in our data yet* — which is not the same as saying
+none exists, and the planner is told the difference.
+
+### Current coverage
+
+`coverage()` reports it live. As committed: 135 rows across debate,
+speech, venture and service, from two active sources. Robotics, math,
+science research, computer science, Model UN, writing, arts, music,
+athletics and leadership have **no rows yet** — they sit in
+`sources.json` as `planned`, with the wanted coverage written down.
+
+Planned entries have no URL on purpose. A URL enters a data file only
+after someone has opened it and confirmed what it contains — the same
+rule the engine applies to recommendations.
+
+---
+
 ## The other files
 
 | File | What it is | Source |
 |---|---|---|
 | `admit_rates.json` | Published admit rates + selectivity bands, 33 schools + 13 name aliases | Web (Common Data Sets / official). Self-extends via `refresh_rates.ensure_rate()` |
 | `findings.json` | The findings report, keyed by track | Supplied research |
-| `tabroom_circuits.csv` | Debate circuits by state, with tier | Tabroom |
-| `catalog.csv` | Verified programs/opportunities for recommendations. **5 rows — the thinnest file here.** Growing it is a named handoff task | Hand-verified; extended by `llm.research_json()` |
+| `catalog.csv` | The old flat catalog. Superseded by `programs.csv`; still read so nothing that referenced it breaks | Hand-verified |
 | `neerav_intake.json` | The worked example intake | Real intake form |
 | `sample_intake.json` | Minimal intake for smoke tests | Synthetic |
 
-`catalog.csv` being nearly empty is why recommendations fall back to live
-verified web lookup. That fallback works, but it costs a call per
-recommendation and can't be reviewed ahead of time — growing the catalog
+When the registry has nothing for a task, recommendations fall back to a
+live verified web lookup. That works, but it costs a call per
+recommendation and can't be reviewed ahead of time — growing the registry
 is the cheaper fix.

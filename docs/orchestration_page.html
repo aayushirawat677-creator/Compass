@@ -142,16 +142,20 @@ flowchart TB
     APPROWS[("application rows<br>30,414 after explode")]
     RATES[("admit_rates.json<br>33 schools + aliases")]
     FIND[("findings.json")]
-    CIRC[("tabroom_circuits.csv")]
-    CAT[("catalog.csv<br>verified programs")]
+    TAB[("tabroom_circuits.csv<br>debate")]
+    MORE[("more competition DBs<br>robotics · math · venture …")]
+    PROG[("programs.csv<br>common program schema")]
     SRC --> CORPUS
     CORPUS -->|"load_corpus(applications=True)"| APPROWS
     PUB -->|"refresh_rates.ensure_rate()"| RATES
+    REG["sources.json + programs.py<br>registry → one common schema"]
+    TAB --> REG
+    PROG --> REG
+    MORE -.->|"register, don't rewire"| REG
     CTX["context.py<br>retrieval layer"]
     RATES --> CTX
     FIND --> CTX
-    CIRC --> CTX
-    CAT --> CTX
+    REG --> CTX
   end
 
   subgraph RUNTIME["RUNTIME — per student"]
@@ -205,10 +209,10 @@ flowchart TB
   end
 
   APPROWS -->|"admit cards for the intended colleges"| S3
-  CTX -->|"circuits + findings"| S4
+  CTX -->|"ladder + findings"| S4
   CTX -->|"what moved the needle"| S5
   CTX -->|"published rates"| S6
-  CTX -->|"catalog + circuits"| S8
+  CTX -->|"programs for this task"| S8
   CTX -->|"published rates + evidence"| S11
 
   classDef agent fill:#eaf0f9,stroke:#2f4f8f,stroke-width:1.4px,color:#11171b;
@@ -217,8 +221,8 @@ flowchart TB
   classDef gate fill:#f7eede,stroke:#9a6310,stroke-width:1.4px,color:#3d2a0c;
   classDef stop fill:#f8e8e5,stroke:#94362a,stroke-width:1.4px,color:#3d1410;
   class S1,S2,S4,S5,S6,S7,S8,S11,S12,RES agent;
-  class S3,S9,S10,RENDER,CTX,TRAIL module;
-  class CORPUS,APPROWS,RATES,FIND,CIRC,CAT,PDF,SRC,PUB,IN store;
+  class S3,S9,S10,RENDER,CTX,REG,TRAIL module;
+  class CORPUS,APPROWS,RATES,FIND,TAB,MORE,PROG,PDF,SRC,PUB,IN store;
   class G0,G1,G3,G4,G5,G6,G7,G8,G9 gate;
   class HUMAN stop;
 </pre>
@@ -243,11 +247,11 @@ flowchart TB
           <tr><td class="num">1</td><td>Profile</td><td><span class="kind k-agent">agent · top</span></td><td>intake</td><td><code>gate_profile</code> — retry</td></tr>
           <tr><td class="num">2</td><td>Projected Profile</td><td><span class="kind k-agent">agent · mid</span></td><td>profile</td><td>—</td></tr>
           <tr><td class="num">3</td><td>Match &amp; Rank</td><td><span class="kind k-module">module</span></td><td>30,414 application rows</td><td><code>gate_retrieval</code> — escalate / degrade</td></tr>
-          <tr><td class="num">4</td><td>Gap Analyst</td><td><span class="kind k-agent">agent · top</span></td><td>profile, cards, tally, circuits, findings</td><td><code>gate_gap</code> — retry</td></tr>
+          <tr><td class="num">4</td><td>Gap Analyst</td><td><span class="kind k-agent">agent · top</span></td><td>profile, cards, tally, ladder, findings</td><td><code>gate_gap</code> — retry</td></tr>
           <tr><td class="num">5</td><td>Strategy</td><td><span class="kind k-agent">agent · top</span></td><td>gap map, profile, findings</td><td><code>gate_strategy</code> — retry</td></tr>
           <tr><td class="num">6</td><td>Two Paths</td><td><span class="kind k-agent">agent · top</span></td><td>selected moves, admit pattern, published rates</td><td><code>gate_two_paths</code> — retry</td></tr>
           <tr><td class="num">7a</td><td>Plan Goals</td><td><span class="kind k-agent">agent · mid</span></td><td>selected moves, profile, grade</td><td><code>gate_plan</code> — retry</td></tr>
-          <tr><td class="num">7b</td><td>Recommendations</td><td><span class="kind k-agent">agent · mid · fan-out</span></td><td>catalog, circuits, constraints</td><td>—</td></tr>
+          <tr><td class="num">7b</td><td>Recommendations</td><td><span class="kind k-agent">agent · mid · fan-out</span></td><td>program registry, constraints</td><td>—</td></tr>
           <tr><td class="num">7c</td><td>Constraint Guardrail</td><td><span class="kind k-module">module</span></td><td>recommendations, constraints</td><td><code>gate_recs</code> — escalate</td></tr>
           <tr><td class="num">7d</td><td>Tiering</td><td><span class="kind k-module">module</span></td><td>intended colleges</td><td>—</td></tr>
           <tr><td class="num">8</td><td>Writer</td><td><span class="kind k-agent">agent · mid</span></td><td>the whole plan, published rates, evidence</td><td><code>gate_draft</code></td></tr>
@@ -276,6 +280,10 @@ flowchart TB
       <div class="rule">
         <h3>Numbers belong to modules</h3>
         <p>Counts, bands, tiers and rates are computed by deterministic code and handed to the agents. An agent that states a number it was not handed is a bug, not a phrasing issue.</p>
+      </div>
+      <div class="rule">
+        <h3>Debate is one source, not the shape</h3>
+        <p>Every program and competition database resolves to one common schema through <code>data/sources.json</code>. Adding robotics, math or business competitions is a data change — drop the file, register it, map its levels onto the six rungs. No step, prompt or gate moves.</p>
       </div>
       <div class="rule">
         <h3>The corpus and the rate table answer different questions</h3>

@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "what_this_is": "The registry of every program / competition database the engine can draw on. One entry per source. Adding a new activity means: drop the raw file in data/, add an entry here, and (only if its shape is unusual) write a small adapter in compass/programs.py. Nothing else in the engine changes.",
+  "contract": "Every source resolves to rows in the common programs schema (see data/programs.csv header). A source that cannot fill `activity`, `name` and either `level` or `kind` is not usable — fix the adapter rather than loosening the schema.",
+  "ladder": [
+    "school",
+    "district",
+    "regional",
+    "state",
+    "national",
+    "international"
+  ],
+  "ladder_note": "The rungs a credential can climb. Step 6 (Two Paths) uses exactly this vocabulary to build a stretch path by INTENSIFY — same activity, next rung up. Any new source must map its levels onto these six words, not invent its own.",
+  "activities": [
+    "debate",
+    "speech",
+    "robotics",
+    "math",
+    "science_research",
+    "computer_science",
+    "venture",
+    "service",
+    "model_un",
+    "writing",
+    "arts",
+    "music",
+    "athletics",
+    "leadership",
+    "other"
+  ],
+  "sources": [
+    {
+      "id": "peggy_catalog",
+      "name": "Hand-verified program catalog",
+      "org": "Peggy",
+      "activities": ["debate", "venture", "service"],
+      "provides": "programs",
+      "file": "programs.csv",
+      "adapter": "programs_csv",
+      "coverage": "Programs verified by hand, one family at a time. Currently Bay Area heavy.",
+      "granularity": "program",
+      "verified_on": "2026-09-16",
+      "refresh": "continuous — every verified recommendation should land here",
+      "status": "active",
+      "handling": "public listings; safe to commit",
+      "known_gap": "Thin. When it has nothing for a task the engine falls back to a live verified web lookup, which costs a call per recommendation and cannot be reviewed ahead of time. Growing this file is the cheaper fix."
+    },
+    {
+      "id": "tabroom",
+      "name": "Tabroom circuits",
+      "org": "National Speech & Debate Association",
+      "activities": ["debate", "speech"],
+      "provides": "competition_ladder",
+      "file": "tabroom_circuits.csv",
+      "adapter": "tabroom",
+      "coverage": "US speech & debate circuits with 2026-27 tournament counts, by state.",
+      "granularity": "circuit",
+      "verified_on": "2026-09-17",
+      "refresh": "annual — tournament counts change each season",
+      "status": "active",
+      "handling": "public listing; safe to commit",
+      "note": "Tournament count is how live a circuit is, not how hard it is. It ranks circuits; it never becomes a claim about the student."
+    },
+    {
+      "id": "first_robotics",
+      "name": "FIRST programs",
+      "org": "FIRST",
+      "activities": ["robotics"],
+      "provides": "competition_ladder",
+      "file": null,
+      "adapter": null,
+      "coverage": "Not yet sourced. Wanted: team/event listings by state with the progression from local qualifier to championship.",
+      "status": "planned",
+      "url": null,
+      "url_note": "Left blank on purpose — a URL enters this file only after someone has opened it and confirmed what it contains. Same rule the engine applies to recommendations."
+    },
+    {
+      "id": "science_olympiad",
+      "name": "Science Olympiad",
+      "org": "Science Olympiad",
+      "activities": ["science_research"],
+      "provides": "competition_ladder",
+      "file": null,
+      "adapter": null,
+      "coverage": "Not yet sourced. Wanted: regional → state → national tournament structure by state.",
+      "status": "planned"
+    },
+    {
+      "id": "math_competitions",
+      "name": "Math competition ladder",
+      "org": "Mathematical Association of America and others",
+      "activities": ["math"],
+      "provides": "competition_ladder",
+      "file": null,
+      "adapter": null,
+      "coverage": "Not yet sourced. Wanted: the qualifying chain school contest → AMC → AIME → national, with eligibility by grade.",
+      "status": "planned"
+    },
+    {
+      "id": "business_orgs",
+      "name": "Business and entrepreneurship competitions",
+      "org": "DECA, FBLA and similar",
+      "activities": ["venture", "leadership"],
+      "provides": "competition_ladder",
+      "file": null,
+      "adapter": null,
+      "coverage": "Not yet sourced. Wanted: chapter → state → international conference structure, and which need a school chapter.",
+      "status": "planned",
+      "note": "Relevant to the rule that a venture only counts as a credential once it is registered or judged by someone outside the family."
+    },
+    {
+      "id": "writing_arts_awards",
+      "name": "Writing and art awards",
+      "org": "Scholastic Art & Writing Awards and similar",
+      "activities": ["writing", "arts"],
+      "provides": "competition_ladder",
+      "file": null,
+      "adapter": null,
+      "coverage": "Not yet sourced. Wanted: regional → national award tiers with submission windows.",
+      "status": "planned"
+    }
+  ],
+  "how_to_add_a_source": [
+    "1. Put the raw file in data/ under its own name. Never edit it to fit — the adapter does the fitting.",
+    "2. Add an entry here with status 'active', the activities it covers, and verified_on.",
+    "3. If its columns already match programs.csv, set adapter to 'programs_csv' and append the rows. Otherwise add a function to ADAPTERS in compass/programs.py that yields rows in the common schema.",
+    "4. Map its levels onto the six ladder rungs. If something genuinely does not fit, raise it rather than adding a seventh rung — the stretch logic in Step 6 depends on this ladder being ordered.",
+    "5. Run the coverage check: python -c \"from compass import programs; print(programs.coverage())\""
+  ]
+}

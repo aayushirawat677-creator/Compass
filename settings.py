@@ -47,8 +47,17 @@ CORPUS_CSV = os.environ.get(
 # IPEDS institution DB (published admit rates, test bands) — used for tiering.
 IPEDS_SQLITE = os.environ.get("COMPASS_IPEDS", os.path.join(DATA_DIR, "ipeds.sqlite"))
 
-# Hand-seeded program catalog (name, category, cost, format, location, url, ...).
+# Hand-seeded program catalog (legacy shape — superseded by programs.csv below,
+# still read so nothing that referenced it breaks).
 CATALOG_CSV = os.environ.get("COMPASS_CATALOG", os.path.join(DATA_DIR, "catalog.csv"))
+
+# --- PROGRAM / COMPETITION REGISTRY -----------------------------------------
+# sources.json is the list of databases we draw on (one entry per source, with
+# the adapter that maps it into the common schema). programs.csv is that common
+# schema. Adding a new competition database means editing these two files, not
+# the engine. See compass/programs.py and data/README.md.
+SOURCES_JSON = os.environ.get("COMPASS_SOURCES", os.path.join(DATA_DIR, "sources.json"))
+PROGRAMS_CSV = os.environ.get("COMPASS_PROGRAMS", os.path.join(DATA_DIR, "programs.csv"))
 
 # --- COLUMN MAP -------------------------------------------------------------
 # Rename these to match the real headers in your corpus CSV. The code only ever

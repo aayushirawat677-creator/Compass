@@ -10,6 +10,7 @@ Each pack assembles the slice of reference data THAT step needs, deterministical
 in Python. Nothing here asks a model to go find anything.
 """
 from . import data_access
+from . import programs
 
 
 def _state_of(profile):
@@ -34,6 +35,20 @@ def _track_of(profile):
     return "social_science"
 
 
+def _activities_of(profile):
+    """Which registry activities this kid actually does, from the profile's own
+    activity list. Empty means we have no named activity to climb — the planner
+    should be told that rather than handed a debate ladder by default."""
+    out, seen = [], set()
+    for a in (profile.get("activities") or []):
+        text = a if isinstance(a, str) else " ".join(str(v) for v in a.values())
+        act = programs.activity_of(text)
+        if act and act not in seen:
+            seen.add(act)
+            out.append(act)
+    return out
+
+
 def for_gap(profile):
     """Gap analysis needs to know which signals actually separate admits."""
     return {"findings": data_access.findings_for(_track_of(profile))}
@@ -41,29 +56,46 @@ def for_gap(profile):
 
 def for_strategy(profile):
     """Strategy needs the findings AND the real competitive ladder, so it can
-    aim at a named level instead of inventing one."""
+    aim at a named level instead of inventing one.
+
+    The ladder comes from the program registry, so it is per-activity: whichever
+    activities this kid actually does, not debate by assumption.
+    """
+    state = _state_of(profile)
+    ladders = {a: programs.ladder(a, state) for a in _activities_of(profile)}
     return {"findings": data_access.findings_for(_track_of(profile)),
-            "debate_circuits": data_access.circuits_for(_state_of(profile))}
+            "ladders": ladders,
+            "registry_coverage": programs.coverage(),
+            "debate_circuits": data_access.circuits_for(state)}   # legacy key
 
 
 def for_recs(profile, task=None):
-    """Recommendations need an actual catalog, filtered to what this family can use."""
-    cat = data_access.load_catalog()
-    if cat is None:
-        rows = []
-    elif hasattr(cat, "to_dict"):          # pandas DataFrame
-        rows = cat.fillna("").to_dict("records")
-    else:
-        rows = list(cat)
+    """Recommendations need real programs, filtered to what this family can use.
+
+    Sourced from the program registry (data/sources.json), so a new competition
+    database becomes available to this step the moment it is registered — no
+    change here. The activity is inferred from the task text only to choose which
+    slice to hand over; it never becomes a claim.
+    """
     cons = profile.get("constraints") or {}
     state = _state_of(profile)
-    if state:
-        rows = [r for r in rows
-                if not str(r.get("state") or "").strip()
-                or str(r.get("state")).strip().upper() == state]
-    return {"catalog": rows,
+    grade = (profile.get("cover") or {}).get("grade") or (profile.get("intended") or {}).get("grade")
+    text = task if isinstance(task, str) else (task or {}).get("task_title") or str(task or "")
+    activity = programs.activity_of(text)
+
+    rows = programs.find(activity=activity, state=state, grade=grade)
+    if not rows and activity:
+        rows = programs.find(state=state, grade=grade)      # widen before giving up
+
+    cov = programs.coverage()
+    return {"catalog": rows,                                 # legacy key, new rows
+            "programs": rows,
+            "activity": activity,
+            "ladder": programs.ladder(activity, state, grade) if activity else {},
             "constraints": cons,
-            "debate_circuits": data_access.circuits_for(state),
+            "sources": cov["active_sources"],
+            "no_data_for": cov["no_data_for"],
+            "debate_circuits": data_access.circuits_for(state),   # legacy key
             "coverage": bool(rows)}
 
 

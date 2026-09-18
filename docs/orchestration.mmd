@@ -8,16 +8,20 @@ flowchart TB
     APPROWS[("application rows<br/>30,414 after explode")]
     RATES[("admit_rates.json<br/>33 schools + aliases")]
     FIND[("findings.json")]
-    CIRC[("tabroom_circuits.csv")]
-    CAT[("catalog.csv<br/>verified programs")]
+    TAB[("tabroom_circuits.csv<br/>debate")]
+    MORE[("more competition DBs<br/>robotics · math · venture …")]
+    PROG[("programs.csv<br/>common program schema")]
     SRC --> CORPUS
     CORPUS -->|"load_corpus(applications=True)"| APPROWS
     PUB -->|"refresh_rates.ensure_rate()"| RATES
+    REG["sources.json + programs.py<br/>registry → one common schema"]
+    TAB --> REG
+    PROG --> REG
+    MORE -.->|"register, don't rewire"| REG
     CTX["context.py<br/>retrieval layer"]
     RATES --> CTX
     FIND --> CTX
-    CIRC --> CTX
-    CAT --> CTX
+    REG --> CTX
   end
 
   subgraph RUNTIME["RUNTIME — per student"]
@@ -71,8 +75,8 @@ flowchart TB
   end
 
   APPROWS -->|"admit cards for the intended colleges"| S3
-  CTX -->|"circuits + findings"| S4
+  CTX -->|"ladder + findings"| S4
   CTX -->|"what moved the needle"| S5
   CTX -->|"published rates"| S6
-  CTX -->|"catalog + circuits"| S8
+  CTX -->|"programs for this task"| S8
   CTX -->|"published rates + evidence"| S11

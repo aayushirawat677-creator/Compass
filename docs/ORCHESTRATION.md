@@ -20,16 +20,20 @@ flowchart TB
     APPROWS[("application rows<br/>30,414 after explode")]
     RATES[("admit_rates.json<br/>33 schools + aliases")]
     FIND[("findings.json")]
-    CIRC[("tabroom_circuits.csv")]
-    CAT[("catalog.csv<br/>verified programs")]
+    TAB[("tabroom_circuits.csv<br/>debate")]
+    MORE[("more competition DBs<br/>robotics · math · venture …")]
+    PROG[("programs.csv<br/>common program schema")]
     SRC --> CORPUS
     CORPUS -->|"load_corpus(applications=True)"| APPROWS
     PUB -->|"refresh_rates.ensure_rate()"| RATES
+    REG["sources.json + programs.py<br/>registry → one common schema"]
+    TAB --> REG
+    PROG --> REG
+    MORE -.->|"register, don't rewire"| REG
     CTX["context.py<br/>retrieval layer"]
     RATES --> CTX
     FIND --> CTX
-    CIRC --> CTX
-    CAT --> CTX
+    REG --> CTX
   end
 
   subgraph RUNTIME["RUNTIME — per student"]
@@ -83,10 +87,10 @@ flowchart TB
   end
 
   APPROWS -->|"admit cards for the intended colleges"| S3
-  CTX -->|"circuits + findings"| S4
+  CTX -->|"ladder + findings"| S4
   CTX -->|"what moved the needle"| S5
   CTX -->|"published rates"| S6
-  CTX -->|"catalog + circuits"| S8
+  CTX -->|"programs for this task"| S8
   CTX -->|"published rates + evidence"| S11
 ```
 
@@ -108,16 +112,47 @@ profile containing numbers for exactly this reason.
 | 1 | Profile | agent (top) | intake | `gate_profile` — retry |
 | 2 | Projected Profile | agent (mid) | profile | — |
 | 3 | Match & Rank | module | 30,414 application rows | `gate_retrieval` — escalate / degrade |
-| 4 | Gap Analyst | agent (top) | profile, cards, tally, circuits + findings | `gate_gap` — retry |
+| 4 | Gap Analyst | agent (top) | profile, cards, tally, ladder + findings | `gate_gap` — retry |
 | 5 | Strategy | agent (top) | gap map, profile, findings | `gate_strategy` — retry |
 | 6 | Two Paths | agent (top) | selected moves, admit pattern, published rates | `gate_two_paths` — retry |
 | 7a | Plan Goals | agent (mid) | selected moves, profile, grade | `gate_plan` — retry |
-| 7b | Recommendations | agent (mid), fan-out per task | catalog, circuits, constraints | — |
+| 7b | Recommendations | agent (mid), fan-out per task | program registry, constraints | — |
 | 7c | Constraint Guardrail | module | recommendations, constraints | `gate_recs` — escalate |
 | 7d | Tiering | module | intended colleges, seed | — |
 | 8 | Writer | agent (mid) | the whole plan, published rates, evidence | `gate_draft` |
 | 9 | Critic | agent (top) | draft | — |
 | — | Comparisons | agent (top) | profile, cards | supplement, run separately |
+
+## Adding a competition database
+
+Debate is one source, not the shape of the system. Every program and competition
+database resolves to one common schema, so a new activity is a data change:
+
+| | |
+|---|---|
+| `data/sources.json` | the registry — one entry per database: what it covers, which adapter reads it, when it was verified, and what is still missing |
+| `data/programs.csv` | the common schema every source resolves to |
+| `compass/programs.py` | the loader, the adapters, and the ladder |
+
+To add one: drop the raw file in `data/`, add an entry to `sources.json`, and —
+only if its columns differ — add a function to `ADAPTERS`. No step, prompt or
+gate changes. Check it landed with:
+
+```bash
+python -c "from compass import programs; print(programs.coverage())"
+```
+
+`coverage()` reports what the registry can and cannot answer, including
+`no_data_for` — the activities with no rows yet. A thin activity should surface
+as a gap, never as silence.
+
+**The ladder is the load-bearing part.** Every source maps its levels onto the
+same ordered six — school → district → regional → state → national →
+international — because Step 6 builds a stretch path by INTENSIFY: same activity,
+next rung up. A source that invents a seventh rung breaks that logic, so the
+loader blanks any level it does not recognise rather than passing it through. An
+empty rung is the honest answer: it says this activity has no verified path
+upward in our data yet, which is different from saying none exists.
 
 ## Gate verdicts
 
