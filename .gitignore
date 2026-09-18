@@ -12,6 +12,8 @@ data/ipeds*
 # ── generated output ──────────────────────────────────────────────────────
 out/
 *.pdf
+# the reference plan is committed on purpose
+!examples/*.pdf
 *.state.json
 *.plan.json
 
