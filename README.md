@@ -5,8 +5,22 @@ family — via nine agent/module steps, with runtime gates that stop bad output 
 rubric suite for grading each step.
 
 ```
-intake.json  ──▶  9 steps (5 agents + 4 modules, gated)  ──▶  Strategic_Plan.pdf
+intake.json  ──▶  9 numbered steps · 10 agent calls + 4 modules · 9 gates  ──▶  Strategic_Plan.pdf
 ```
+
+---
+
+## Start here — in this order
+
+1. **`examples/neerav_plan_reference.pdf`** — what the product is. Two minutes, and it makes
+   everything below make sense. (Hand-authored, not a pipeline run — see `examples/README.md`.)
+2. **`docs/ORCHESTRATION.md`** — how it runs, as one diagram: agents, modules, gates, data plane.
+3. **Quick start below** — clone, install, `python run.py`. Mock mode produces a PDF in about a
+   minute with no API key.
+4. **`docs/HANDOFF.md`** — what to do first, ordered by value. The first real run is task one.
+5. **`ENGINE_FEEDBACK_LOG.md`** — why the rules are the way they are. Read the relevant entry
+   before deleting anything that looks redundant; most of it is there because the engine shipped
+   the opposite once.
 
 ---
 
@@ -15,6 +29,8 @@ intake.json  ──▶  9 steps (5 agents + 4 modules, gated)  ──▶  Strate
 ```bash
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
+# weasyprint needs native libs. macOS: brew install pango libffi
+# Debian/Ubuntu: apt install libpango-1.0-0 libpangoft2-1.0-0 libffi-dev
 
 # 1) Mock mode — no API key, no cost. Verifies the plumbing end to end.
 python run.py --intake data/neerav_intake.json --out out/plan.pdf --dump-state
@@ -72,10 +88,15 @@ compass/
   llm.py            model client; mock + real; verified web research
   refresh_rates.py  self-extending published admit-rate table
   render.py         plan JSON → HTML → PDF
+  programs.py       program / competition registry + the six-rung ladder
   mockdata.py       fixtures for mock mode (STALE — see Known gaps)
 
-evals/              10 rubrics, 2 graders, the rubric standard, gate docs
-data/               reference data (corpus is gitignored — see DATA_REQUIREMENTS.md)
+evals/              10 rubrics, 3 graders, the rubric standard, gate docs
+data/               the corpus, published rates, findings, and the program
+                    registry (sources.json + programs.csv) — see data/README.md
+docs/               ORCHESTRATION.md (the diagram), HANDOFF.md (what to do first)
+design/             how it was designed; its README says which parts are current
+examples/           the reference plan PDF and the script that renders it
 ENGINE_FEEDBACK_LOG.md   31 numbered rules, each traced to a real review finding
 ```
 
@@ -164,9 +185,13 @@ is for.
 2. **`mockdata.py` fixtures are stale.** They predate several schema additions, so mock runs fail
    some gates (`plan_goals` currently RETRYs) and score badly on the per-agent rubrics. That is
    the fixtures, not the prompts.
-3. **The corpus and IPEDS are gitignored.** Supply them locally — see `DATA_REQUIREMENTS.md`.
-4. **The catalog covers one metro area** (`data/catalog.csv`, 5 rows). Everything outside it
-   escalates to live research, which works but costs calls.
+3. **The corpus is committed; IPEDS is not.** The corpus lives at
+   `data/acceptance_rejected_college_data_verified.csv` — keep this repo private, and read
+   `data/README.md` before using it. IPEDS is still gitignored; see `DATA_REQUIREMENTS.md`.
+4. **The program registry is thin.** 135 rows, and only debate has real depth. Robotics, math,
+   science research, CS, Model UN, writing, arts, music, athletics and leadership have no rows
+   yet — `programs.coverage()` lists them. Anything uncovered escalates to live research, which
+   works but costs a call per recommendation.
 5. **Escalations have nowhere to go.** A blocked run stops correctly but nothing notifies anyone.
    Needed before unattended operation.
 6. **Graders are manual.** `grade.py` / `grade_agents.py` should run after each plan and store the
@@ -189,4 +214,9 @@ call it 15–20 model calls. Measure it on the first real run rather than estima
 ## Credentials
 
 Never commit a key. `ANTHROPIC_API_KEY` is read from the environment; `.gitignore` covers `.env`
-and `*.key`. The corpus is excluded too — it is scraped third-party data and large.
+and `*.key`.
+
+The corpus **is** committed, because the Outcome Cards cannot be built without it. It carries
+Reddit usernames, post links and full post bodies — public posts, but traceable to individuals.
+Keep this repo private, don't redistribute the file, and never surface `author` or post text in a
+generated plan. `data/README.md` has the handling rules.
