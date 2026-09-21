@@ -168,7 +168,37 @@ PROSE CONTRACT — every sentence earns its place.
 - Prefer an unused, grounded intake fact over any connective or summarising sentence. Before
   writing a linking sentence, check whether real evidence would be more valuable there. [#9]
 - Plain English a parent reads once. No jargon, no consultant vocabulary, no clever coinage.
+- ONE FACT, ONE PLACE. A date, price, programme name, contact or rationale appears exactly
+  once, in the section that owns it. Elsewhere, point to it — never restate it. Three copies
+  of the same registration deadline is the commonest way this document doubles in length,
+  and it is what turns a 12-page plan into a 16-page one. [#32]
+- NEVER describe our own inputs to the reader. "The intake does not say X" is a note to
+  ourselves; the reader gets the action it implies — "confirm X". Provenance lives in the
+  flags field and nowhere else. [#33]
+- NO MARKDOWN. No **bold**, no _italics_, no backticks, no bullet characters inside a string.
+  The renderer prints them literally, so "**One thread**" reaches the parent with the
+  asterisks showing. Emphasis is the template's job, not the text's. [#34]
 """
+
+
+SCHEMA = """
+OUTPUT SHAPE CONTRACT — the shape is part of the answer. [#35]
+The step after you is CODE, not a reader. It looks for exact keys and exact container
+types. A field that arrives as a list where an object was expected does not degrade the
+plan — it crashes the step, or worse, silently reads as empty and the run continues on
+nothing. Measured on the first live run: four of nine gate verdicts were wrong because
+output shapes drifted, including two failures on correct work and one pass on bad work.
+- Return EVERY key named in your spec, even when the value is empty. Empty is a value;
+  a missing key is a bug.
+- Return each key in the container type the spec names. If the spec says an object with
+  named fields, return an object with those field names — not a list of {{item, value}}
+  pairs, however tidy that looks.
+- Never rename, never abbreviate, never helpfully nest one level deeper. If a shape seems
+  wrong for the content, use it anyway and say so in the flags field.
+- No prose outside the JSON. No markdown fences. The first character is {{ and the last
+  is }}.
+"""
+
 
 
 # ===========================================================================
@@ -236,9 +266,41 @@ WHAT TO PRODUCE
 {TONE}
 {PROSE}
 
-Return ONLY the Profile JSON with keys: spine, activities, social_leadership, temperament,
-tailwinds, constraints, constraint_tensions, self_driven_read, intended, flags_to_confirm,
-preference_vs_behaviour, evidence."""
+{SCHEMA}
+
+RETURN SHAPE — exactly these keys, in these container types:
+
+  identity        object: first_name, last_initial, grade, school, location, parent, class_of.
+                  Copy them from the intake verbatim. This is how the student's NAME reaches
+                  the finished document. On the first live run it was missing here, so the
+                  plan a family would have paid for read "Student name to be confirmed" on
+                  its cover. [#36]
+  spine           object: activity, confidence, what_it_is
+  activities      list of objects: name, disposition, signals{{tenure, role, level_or_scale}}
+  social_leadership  object
+  temperament     list of objects: trait, condition, pacing_implication, source_quote
+  tailwinds       list of strings
+  constraints     OBJECT with named keys, NOT a list. Use these key names where the intake
+                  supports them: location, radius, weekly_capacity, activities_budget,
+                  summer_budget, per_session_ceiling, financial_aid, hard_nos, family_request,
+                  stated_worry. A list of {{item, value}} pairs breaks every downstream step
+                  that reads constraints.location or constraints.stated_worry. [#35]
+  constraint_tensions  list of objects
+  self_driven_read     object
+  intended        object: fields_verbatim, parent_words_verbatim, school_preference_verbatim,
+                  colleges (LIST of named colleges — empty list if the intake names none),
+                  major, beyond_undergraduate.
+                  `colleges` is what retrieval searches on. If the intake names no target
+                  colleges, return [] and add a flags_to_confirm entry saying the family
+                  must name them. Do NOT infer targets from a parent's own alma mater — a
+                  mother's degree is a fact about her, not a target for him. An empty list
+                  correctly stops the run; an invented one produces a confident plan aimed
+                  at schools nobody chose. [#37]
+  flags_to_confirm     list of objects: item, detail, source_quote
+  preference_vs_behaviour  object
+  evidence        list of objects
+
+Return ONLY that JSON object."""
 
 
 # ===========================================================================
@@ -309,6 +371,19 @@ RULES
 {EVIDENCE}
 {TONE}
 
+THREE RULES THAT KEEP THIS STEP IN ITS LANE [#40]
+- COUNT NOTHING YOURSELF. Every number you state was handed to you in the tally or the
+  reference pack. Do not count the student's activities, the admits, or anything else — a
+  miscount here becomes a false premise the whole plan rests on.
+- THE CATEGORY SET IS CLOSED: at_or_above / missing / lower_level. Nothing else. If the
+  activity exists at any level, it is `lower_level`, never `missing` — and `level_gap` names
+  the two rungs, from and to.
+- NO FIT OR PRIORITY JUDGMENTS. Not in `why_it_matters`, not in `grade_context`, nowhere.
+  Which gaps matter is the next step's only job. You describe the distance; someone else
+  decides what to do about it.
+- Stamp every gap with the school and major it was measured against. A gap with no school
+  attached cannot be reconciled with anything downstream.
+
 Return ONLY the gap-map JSON: gaps[] (each: domain, category, kid_state, admit_reference,
 level_gap, magnitude, within_range, frequency, grade_context), strengths[], cross_school_notes,
 meta."""
@@ -371,6 +446,14 @@ RULES
 {TONE}
 {PLANNING}
 
+ONE THREAD AT CORE INTENSITY. EXACTLY ONE. [#39]
+A spike is one thing taken far, not four things carried at once. Whatever you mark `core`,
+there is one of it. Everything else is `steady`, `maintain`, or subtracted — and subtracting
+is a real move: a week with four commitments and one of them deep beats a week with seven.
+Twelve selected moves is not a strategy, it is a list; the runtime gate rejects it, and four
+"core" threads fails the same test one level down. If two candidates both look core, pick the
+one the student already has evidence in and make the other its support.
+
 Return ONLY the JSON: selected_moves[] (which_gap, why, priority, dependency_order, intensity,
 pacing_note), dropped_moves[], tensions[]."""
 
@@ -400,6 +483,13 @@ RULES
 {TONE}
 {PROSE}
 {PLANNING}
+
+{SCHEMA}
+
+SHAPE — `current_year` is a list of TERMS; each term holds `goals`; each goal holds `tasks`;
+each task carries `date` or `term` plus `task` and `detail`. A task without a date is not a
+task, it is a wish. Write each one as a full sentence saying what happens and why it falls in
+that week — 12 to 20 words. "Register him." tells a parent nothing. [#41]
 
 Return ONLY the plan JSON: multi_year_arc[], current_year[] (terms, each with goals and dated
 tasks)."""
@@ -571,7 +661,56 @@ Return ONLY the StrategicPlan JSON with EXACTLY these keys, each fully populated
 - final_note: [paragraph, paragraph] — answers the parent's stated worry warmly and specifically,
   WITHOUT restating the sensitive cause behind it, and without predicting anything bad.
 
-Assert only numbers you are handed. Ground every profile statement in the intake."""
+{SCHEMA}
+
+LENGTH IS A HARD CONSTRAINT, NOT A PREFERENCE. [#38]
+Each section starts on a fresh page in the PDF. A section that runs four lines long does not
+cost four lines — it costs a whole page, and the page it spills onto carries fifty words and
+looks broken. The finished document is TWELVE PAGES. Write to this budget:
+
+    profile 650    target 380    stretch 380    course 340
+    roadmap 500    this_year 800    parent_actions 250    final_note 220
+    ~3,700 words total, cover excluded.
+
+Over budget is a defect of the same order as a wrong number. If a section will not fit, the
+cut comes from repetition and connective tissue — never from a price, date, age range,
+programme name, contact or deadline. Every one of those must survive somewhere.
+
+SECTION SHAPES THAT KEEP IT AT TWELVE PAGES [#38]
+
+  roadmap — three stage cards and one detailed year.
+    * `stages`: exactly three, for grades 9, 10 and 11–12. Each body is 35–45 WORDS: what the
+      stage is, and the one decision or shift that defines it. Do not enumerate the threads;
+      they are listed directly beneath. A 150-word stage card is the single largest source of
+      overflow in this document.
+    * `grades`: the CURRENT year only, in dated rows. Grades 9–12 get no task tables — that is
+      the horizon rule, and it is also what keeps the page count honest.
+    * Each task line is a full sentence saying what happens and why it falls in that week.
+      "Register him." is a stub, not a task; it tells a parent nothing. Roughly 12–20 words.
+
+  this_year — specifications, not paragraphs.
+    * `body`: at most TWO short sentences — what this is, and why it fits this student.
+      Rationale lives here, once.
+    * `options`: specification lines, not prose. Facts separated by middots, no connective
+      clauses:
+        "Primary — Little Loudspeakers, San José · ages 8-14 · in person or online · call for price"
+        "Free alternative — his school team; ask whether Sierramont fields one"
+        "Santa Clara session — fair Oct 17, 2026 · closes Oct 17 · $50 booth fee"
+      Order: primary, then the free or fallback route, then session-specific detail.
+    * `contact` and `plan_by` are operational lines a parent acts on. Keep them exact and
+      complete; they are the last thing to cut.
+
+  course — targets only.
+    * `target_bullets` at most 4, `stretch_bullets` at most 3, one line each. A bullet states
+      a target, a threshold or a course-direction consequence. "Which grades count is a fair
+      question" is commentary and does not belong on a targets page.
+
+  Outcome cards — a credential is the credential plus ONE qualifying clause. Nothing more.
+
+Assert only numbers you are handed. Ground every profile statement in the intake.
+
+Use the student's real name, from `identity` in the profile object. A cover reading
+"Student name to be confirmed" is a failed document, not a cautious one. [#36]"""
 
 
 # ===========================================================================
@@ -591,6 +730,17 @@ Read every string in the document, not just the profile.
    most valuable content in the pack. Do NOT flag a rejection list, a "rejected from Stanford,
    Columbia, Penn" line, or a sobering takeaway in that document as a tone problem. The tone rules
    below protect THIS student from being judged; they do not soften the evidence.
+
+0b. COVER AND IDENTITY SWEEP — run this FIRST, before reading the body. [#36]
+   Read the cover block and every heading as carefully as the prose. Flag, and return
+   verdict `escalate`:
+   - Any placeholder reaching the reader: "to be confirmed", "TBD", "[name]", "Student",
+     an empty required field, or a document that never names the student.
+   - A document that refers to the child only as "he" or "she" throughout.
+   A placeholder on line one is the first thing a parent sees and the cheapest possible
+   failure. On the first live run this was missed across twelve findings — the body was
+   audited closely while the cover, which said "Student name to be confirmed", was not read
+   at all.
 
 1. RED FLAGS AND NEGATIVITY [#5]
    - Any sentence presenting the child as limited, at risk, fragile, tired, low-capacity or

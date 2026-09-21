@@ -135,7 +135,23 @@ def gate_plan(plan_goals, strategy):
     moves = strategy.get("selected_moves") or []
     if moves and not plan_goals.get("multi_year_arc"):
         f.append("no multi-year arc")
-    dated = [t for g in cur for t in (g.get("tasks") or []) if isinstance(t, dict) and t.get("term")]
+    # Walk the plan whatever depth it nests to. R6 legitimately returns either
+    # current_year -> goals -> tasks, or current_year -> TERMS -> goals -> tasks.
+    # The old version only looked one level down, so a correctly dated plan in the
+    # deeper shape was rejected for "carrying no dates" — a false failure that cost
+    # a retry on every run. Shape is the schema's job; the gate checks substance.
+    def _tasks(node):
+        if isinstance(node, dict):
+            for k in ("tasks", "goals", "terms", "rows"):
+                for child in (node.get(k) or []):
+                    yield from _tasks(child)
+            if node.get("term") or node.get("by_when") or node.get("date"):
+                yield node
+        elif isinstance(node, list):
+            for child in node:
+                yield from _tasks(child)
+
+    dated = list(_tasks(cur))
     if cur and not dated:
         f.append("no current-year task carries a term/date")
     return GateResult("plan_goals", RETRY if f else PASS, f)
@@ -148,11 +164,23 @@ def gate_recs(recs):
     t = _txt(recs)
     if "[CATALOG]" in t or "a local program" in t.lower():
         f.append("placeholder shipped")
+    # Accept every shape R7 actually returns. The old check looked only for a
+    # `recommendations` key, so a rec returning primary/alternates passed unread —
+    # including one whose own escalate flag was true. A gate that passes bad work
+    # is worse than one that fails good work.
+    def _payload(r):
+        for k in ("recommendations", "primary", "alternates", "name", "options"):
+            if r.get(k):
+                return True
+        return False
+
     unver = [r for r in (recs or []) if isinstance(r, dict)
-             and not r.get("escalate") and not r.get("verified")
-             and (r.get("recommendations") or r.get("name"))]
+             and not r.get("escalate") and not r.get("verified") and _payload(r)]
     if unver:
         f.append(f"{len(unver)} recommendation(s) neither verified nor escalated")
+    flagged = [r for r in (recs or []) if isinstance(r, dict) and r.get("escalate")]
+    if flagged:
+        f.append(f"{len(flagged)} recommendation(s) raised their own escalate flag")
     return GateResult("plan_recs", ESCALATE if f else PASS, f,
                       "a parent will phone this number" if f else "")
 
@@ -165,12 +193,26 @@ def gate_draft(draft, allowed_numbers):
     missing = [k for k in REQUIRED if not draft.get(k)]
     if missing:
         f.append(f"missing sections: {missing}")
-    pcts = set(re.findall(r"(\d{1,3}(?:\.\d)?)\s?%", _txt(draft)))
-    allowed = {str(a) for a in allowed_numbers} | {str(int(float(a))) for a in allowed_numbers}
-    stray = sorted(pcts - allowed)
+    # Match the WHOLE number, decimals and all. The old pattern allowed one decimal
+    # place, so "15.64%" matched as "64" and was reported as a number nobody handed
+    # over — a false failure on a correctly cited rate.
+    txt = _txt(draft)
+    pcts = {float(x) for x in re.findall(r"(\d{1,3}(?:\.\d+)?)\s?%", txt)}
+    allowed = set()
+    for a in allowed_numbers:
+        try:
+            v = float(a)
+        except (TypeError, ValueError):
+            continue
+        allowed |= {round(v, 2), round(v, 1), float(round(v))}
+    stray = sorted(v for v in pcts
+                   if not any(abs(v - a) < 0.051 for a in allowed))
     if stray:
         f.append(f"percentages not handed to the writer: {stray[:6]}")
-    if re.search(r"\b(his|her|their) (chance|odds|probability)\b", _txt(draft), re.I):
+    # "not his odds" is the rule being OBEYED, not broken. Only flag the phrase when
+    # it is asserting odds, i.e. when it is not negated right before.
+    if re.search(r"(?<!not )(?<!never )\b(his|her|their) (chance|odds|probability)\b",
+                 txt, re.I):
         f.append("personal-odds phrasing")
     return GateResult("writer", RETRY if f else PASS, f)
 

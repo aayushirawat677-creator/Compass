@@ -755,3 +755,124 @@ hypothesis to verify against the intake and reference data, never content to tra
 - **Also encoded:** distrust any synthesis arriving with the source data — read the raw outcomes
   and form conclusions from them, because third-party optimism routinely outruns the outcomes.
   Two pages is a hard constraint; no cover, no how-to-read page, no synthesis page.
+
+---
+
+# Rules 32–42 — from the first real run
+
+Everything above came from reading output. **These came from running it.** On 18–21 Sep 2026
+Neerav's intake went through all ten agents with the live prompts, real modules and real gates,
+and every step was graded blind against its rubric. Nine of eleven findings below are things
+no amount of reading the prompts would have surfaced.
+
+## 32. One fact, one place
+- **Found:** the generated plan ran 9,200 words against a 4,036-word benchmark — 20 pages
+  where 12 were wanted. The excess was almost entirely repetition: the business-fair
+  registration dates appeared three times, the tennis-clinic rationale three times, roadmap
+  stage bodies restated the task rows printed directly beneath them.
+- **Rule:** a date, price, programme name, contact or rationale appears exactly ONCE, in the
+  section that owns it. Elsewhere, point to it. Never restate.
+- **Lands in:** `PROSE` contract — inherited by profile, gap, strategy, plan, writer.
+
+## 33. Never narrate our own inputs to a parent
+- **Found:** the draft told the reader "the intake does not say X" in nine places, and the
+  profile lead opened with "Everything here comes from what the family and he said in the
+  intake."
+- **Rule:** "the intake does not say X" is a note to ourselves. The reader gets the action it
+  implies — "confirm X". Provenance lives in the `flags` field and nowhere else.
+- **Lands in:** `PROSE` contract.
+
+## 34. No markdown in any string
+- **Found:** four `**bold**` markers printed literally in the finished PDF. The Outcome Card
+  takeaway reached the parent as `**One thread, carried the whole way**`.
+- **Rule:** no `**`, no `_`, no backticks, no bullet characters inside a string. Emphasis is
+  the template's job.
+- **Lands in:** `PROSE` contract.
+
+## 35. THE OUTPUT SHAPE CONTRACT — the largest single finding
+- **Found:** four of nine gate verdicts on the first run were WRONG, and every one traced to
+  shape drift. R1 returned `constraints` as a list of `{item, value}` pairs where the code
+  reads `constraints.location` — that crashed the retrieval layer. R6 nested tasks one level
+  deeper than `gate_plan` looked. R7 returned `primary`/`alternates` where the pipeline reads
+  `recommendations`, so `gate_recs` passed a recommendation whose own escalate flag was true.
+  Every prompt named its keys; none named its container types.
+- **Rule:** a new shared `SCHEMA` contract. Return every key named in the spec even when
+  empty; return each in the container type the spec names; never rename, abbreviate or nest
+  deeper; no prose outside the JSON.
+- **Lands in:** `SCHEMA` contract, plus an explicit shape block in PROFILE and PLAN_GOALS.
+- **Note:** a false PASS is worse than a false FAIL. `gate_recs` was the only gate that let
+  bad work through, and it was the one whose shape assumption was wrong.
+
+## 36. Identity must be carried, and the cover must be read
+- **Found:** the finished plan never named the child. Its cover read "Student name to be
+  confirmed — the intake does not carry one." The name was in the intake; R1's schema had no
+  field for it, so it was dropped before the writer ever saw it. The writer behaved correctly,
+  flagging rather than inventing. The critic then missed it across all twelve of its findings —
+  it audited the body closely and never read the cover.
+- **Rule:** R1 returns an `identity` object (first_name, last_initial, grade, school, location,
+  parent, class_of), copied verbatim. The writer uses the real name. The critic runs a cover
+  and identity sweep FIRST, and any placeholder reaching the reader forces `escalate`.
+- **Lands in:** PROFILE shape spec, WRITER, CRITIC section 0b.
+
+## 37. Target colleges come from the family, never from inference
+- **Found:** the run could not complete. The intake never asks which colleges the family is
+  aiming at; R1 correctly refused to invent them; retrieval had no target and `gate_retrieval`
+  escalated at step 3. The only college names anywhere in the intake were the mother's alma
+  mater and the stepfather's employer.
+- **Rule:** `intended.colleges` is a list. Empty if the intake names none, plus a
+  flags_to_confirm entry. Never infer a target from a parent's own degree — a mother's Columbia
+  degree is a fact about her, not a target for him. An empty list correctly stops the run; an
+  invented one produces a confident plan aimed at schools nobody chose.
+- **Lands in:** PROFILE shape spec. **Also an intake change:** the form must ask.
+
+## 38. Length is a hard constraint, because a section is a page
+- **Found:** cutting 5,700 words to 4,100 did not reduce the page count at all. Each section
+  starts on a fresh page, so a section running four lines long costs a whole page, and the page
+  it spills onto carries fifty words and looks broken. Five sections were each doing this.
+- **Rule:** a per-section word budget totalling ~3,700, stated in the writer prompt as a defect
+  of the same order as a wrong number. Plus the three section shapes that hold it:
+  roadmap = three 35–45-word stage cards and one detailed year; this_year cards = two-sentence
+  body then specification lines (`Primary — name · age fit · format · price`), with contact and
+  plan-by untouchable; course = at most 4 target bullets and 3 stretch bullets, targets only.
+- **Lands in:** WRITER. Also `render.py` CSS was tightened (body 11px/1.55 → 10.5px/1.42,
+  narrower page margins) so a few long lines no longer cost a page.
+
+## 39. Exactly one thread at core intensity
+- **Found:** strategy returned twelve selected moves with no spike. The gate caught it, the
+  retry came back with six — but still four of them marked `core`, which is the same failure
+  one level down.
+- **Rule:** whatever is marked `core`, there is ONE of it. Everything else is steady, maintain
+  or subtracted. If two candidates both look core, the one with existing evidence wins and the
+  other becomes its support.
+- **Lands in:** STRATEGY.
+
+## 40. Three rules that keep the Gap Analyst in its lane
+- **Found:** graded C — the lowest score of the run. It counted the student's activities itself
+  and got it wrong; it used categories outside the defined set; it made fit and priority
+  judgments that belong to strategy; and its gaps carried no school stamp, so nothing
+  downstream could reconcile them.
+- **Rule:** count nothing yourself — every number was handed to you. The category set is
+  closed: at_or_above / missing / lower_level, and an activity that exists at any level is
+  `lower_level`, never `missing`. No fit or priority judgments anywhere, including in
+  `grade_context`. Stamp every gap with its school and major.
+- **Lands in:** GAP.
+
+## 41. A task without a date is a wish
+- **Found:** after the roadmap was cut to fit, the grade-8 rows had become stubs — "Register
+  him.", "Check the next fair window." Technically dated, useless to a parent.
+- **Rule:** each task is a full sentence saying what happens and why it falls in that week,
+  roughly 12–20 words. The current year gets dated rows; grades 9–12 get none.
+- **Lands in:** PLAN_GOALS shape spec, WRITER roadmap shape.
+
+## 42. Two gate bugs, and one gate that was never switched on
+- **Found:** `gate_draft` was defined in `gates.py`, documented in `GATES.md` and drawn on the
+  orchestration diagram — and `pipeline.py` never called it. The writer's output reached the
+  critic ungated. When finally run by hand it failed a correct document twice, on two bugs of
+  its own: its percentage regex allowed one decimal place, so "15.64%" read as an unauthorised
+  "64%", and its odds check fired on the phrase "not his odds" — the rule being obeyed.
+  `gate_plan` and `gate_recs` had the shape bugs in #35.
+- **Rule:** gates are code and get the same scrutiny as code. A gate nobody runs is worse than
+  no gate, because the diagram says it is there.
+- **Lands in:** `gates.py` (regexes fixed; `gate_plan` now walks the plan at any depth;
+  `gate_recs` reads every shape R7 returns and honours a rec's own escalate flag) and
+  `pipeline.py` (gate_draft wired in after the writer).

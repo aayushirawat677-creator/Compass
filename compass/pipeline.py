@@ -143,6 +143,22 @@ def run(intake: dict, log=print) -> dict:
                                         "numbers_json": {"tiers": state["college_tiers"], "tally": mr["tally"]},
                                         "reference_json": context.for_writer(profile, _college_seed(intended))})
 
+    # gate_draft was defined, documented and drawn on the diagram but never called —
+    # the writer's output reached the critic ungated. [#42]
+    allowed = []
+    for row in (context.for_writer(profile, _college_seed(intended))
+                .get("published_rates", {}) or {}).values():
+        if isinstance(row, dict):
+            r = row.get("rate_pct", row.get("rate"))
+            if r is not None:
+                allowed.append(r)
+    tally = mr.get("tally", {})
+    allowed += [tally.get("gpa_modal_share", 0) * 100, tally.get("test_modal_share", 0) * 100]
+    gd = gates.gate_draft(state["draft"], [a for a in allowed if a is not None])
+    state.setdefault("_gates", []).append(gd)
+    if gd.verdict != gates.PASS:
+        log(f"      gate: {gd.verdict} — {'; '.join(gd.failures)}")
+
     log("  9/9  Critic ........... tone / honesty / plain English")
     verdict = _agent("critic", {"strategic_plan_json": state["draft"]})
     state["critic"] = verdict

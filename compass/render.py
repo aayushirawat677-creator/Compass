@@ -10,14 +10,14 @@ from jinja2 import Template
 
 CSS = r"""
 @page { size: letter; margin: 0; }
-@page content { margin: 54px 62px 60px; }
+@page content { margin: 44px 58px 44px; }
 * { box-sizing: border-box; }
 :root{
   --ink:#1c2a21; --cream:#f4f1e8; --card:#fbfaf4; --gold:#a5852f; --gold2:#9c7b2e;
   --muted:#6f7469; --line:#e0dccb; --green:#5c6b3d; --greenbg:#e7ecd7;
   --purple:#5b4a86; --purplebg:#e8e4f1; --tan:#efe8d6;
 }
-body{ margin:0; color:#20281f; font-family:'Inter','Helvetica Neue',Arial,sans-serif; font-size:11px; line-height:1.55; }
+body{ margin:0; color:#20281f; font-family:'Inter','Helvetica Neue',Arial,sans-serif; font-size:10.5px; line-height:1.42; }
 .serif{ font-family:'Playfair Display','Georgia',serif; }
 h1,h2,h3,.serif{ font-family:'Playfair Display','Georgia',serif; color:#182117; font-weight:700; }
 
@@ -32,13 +32,13 @@ h1,h2,h3,.serif{ font-family:'Playfair Display','Georgia',serif; color:#182117; 
 
 /* ---------- content page frame ---------- */
 .page{ page: content; padding:0; page-break-before:always; }
-.rhead{ color:#9aa08f; letter-spacing:.18em; font-size:9px; text-transform:uppercase; margin-bottom:18px; }
+.rhead{ color:#9aa08f; letter-spacing:.18em; font-size:9px; text-transform:uppercase; margin-bottom:12px; }
 .slabel{ color:var(--gold2); letter-spacing:.16em; font-size:10px; font-weight:700; text-transform:uppercase; margin-bottom:6px; }
-h2.sec{ font-size:36px; margin:0 0 10px; }
-.lead{ color:var(--muted); font-style:italic; font-size:14px; line-height:1.5; max-width:80%; margin-bottom:20px; }
+h2.sec{ font-size:32px; margin:0 0 8px; }
+.lead{ color:var(--muted); font-style:italic; font-size:13px; line-height:1.42; max-width:82%; margin-bottom:14px; }
 .subhead{ font-size:15px; margin:16px 0 2px; }
 .thesis{ color:var(--gold2); font-style:italic; font-size:12px; margin-bottom:5px; }
-p{ margin:6px 0; }
+p{ margin:4px 0; }
 .small{ font-size:10px; } .mut{ color:var(--muted); }
 
 /* boxes */
