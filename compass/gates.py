@@ -57,6 +57,16 @@ def gate_intake(intake):
         f.append("no constraints — every recommendation would be unbounded")
     if not (pa.get("intended_direction") or pa.get("intended")):
         f.append("no intended direction — retrieval has no target")
+    # Q8: "Has [child] mentioned any schools they like — even casually?" The form asks
+    # it; a record that does not carry it cannot be retrieved against, and the run
+    # will stop at step 3 rather than at step 0 where it is cheap to fix. [#46]
+    q8 = pa.get("schools_child_mentioned")
+    if q8 is None:
+        f.append("Q8 (schools the child has mentioned) missing from the record — "
+                 "map it from the intake form")
+    elif isinstance(q8, dict) and not q8.get("answer"):
+        f.append("Q8 was not answered — ask the parent which schools have come up, "
+                 "even casually. A parent's own alma mater is not an answer.")
     return GateResult("intake", ESCALATE if f else PASS, f,
                       "ask the parent before running" if f else "")
 

@@ -245,3 +245,146 @@ def admit_pattern(corpus_df, cohort_student_ids, cols, college=None):
                               "n": int(vc.sum())}
     return {"n_admits": int(df[sid].nunique()), "stats": stats,
             "note": "GPA/test are bands as recorded in the corpus, not computed numbers."}
+
+
+# ===========================================================================
+# PER-SCHOOL ADMIT PATTERN  [#44]
+# ===========================================================================
+# Two Paths was handed one corpus-wide tally — 67 students across six schools —
+# and asked to assess fit per school. It correctly refused, and every school came
+# back "not assessed". That is a wiring failure, not a prompt failure: the step was
+# never given the thing it needs. This computes, for each named school:
+#   - how many admits we actually hold for it (the n that makes fit assertable)
+#   - the GPA / test bands those admits sat in
+#   - how often a given credential type appears among them, so a plan can be
+#     calibrated against what admits really did rather than against a guess.
+#
+# It answers the calibration question directly: for THIS spike, at THIS school,
+# what level did admits reach? Aim at the middle of that distribution, not the tail.
+
+CREDENTIAL_PATTERNS = {
+    "debate":            r"\bdebate|forensics|NSDA|policy debate|lincoln.?douglas|public forum",
+    "research":          r"\bresearch|published|paper|lab\b|ISEF|Regeneron|science fair",
+    "venture":           r"\bstartup|business|founded|company|entrepreneur|sold\b|revenue",
+    "olympiad_math":     r"\bAMC|AIME|USAMO|olympiad|MATHCOUNTS",
+    "robotics_cs":       r"\brobotics|FRC|FTC|USACO|hackathon|\bcoding\b",
+    "service_nonprofit": r"\bnonprofit|volunteer|service|founded a club|charity",
+    "arts_music":        r"\bmusic|orchestra|art\b|film|theater|theatre|dance",
+    "athletics":         r"\bvarsity|captain|recruit|state champion|athlet",
+    "leadership_office": r"\bpresident|captain|editor.in.chief|founder|led\b",
+    "work_internship":   r"\binternship|intern\b|job\b|employed",
+}
+
+# The rungs a credential can reach, weakest first. Same vocabulary as the
+# program registry's ladder, so a plan can say "aim one rung above where he is".
+LEVEL_PATTERNS = [
+    ("international", r"\bTOC\b|Tournament of Champions|world schools|international olympiad|IMO\b|ISEF"),
+    ("national",      r"\bnationals?\b|national qualifier|national champion|USAMO|USACO platinum"),
+    ("state",         r"\bstate (qualifier|champ|final|tournament|semi)|qualified for state|\bstates\b|all.state"),
+    ("regional",      r"\bregional|district\b|county\b|sectional"),
+    ("school",        r"\bcaptain\b|\bclub\b|school team|varsity"),
+]
+
+
+def admit_pattern_by_school(intended_colleges, major, min_admits=None):
+    """Per-school credential and level distribution among admits.
+
+    Returns one record per college, plus `sufficient` so the step downstream can
+    tell the difference between "we looked and this is what admits showed" and
+    "we do not hold enough admits for this school to say anything". An honest
+    `sufficient: false` with its n beats a fabricated percentage.
+    """
+    import re as _re
+    df = data_access.load_corpus()
+    if df is None:
+        return {"schools": [], "mock": True}
+    raw = data_access.load_corpus(applications=False)
+    cols = settings.CORPUS_COLUMNS
+    sid = cols["student_id"]
+    floor = min_admits or getattr(settings, "MIN_ADMITS_PER_SCHOOL", 5)
+    admits = df[df["result"] == "admit"]
+
+    # one text blob per student, so a credential is counted once per person
+    text_by_id = {}
+    if raw is not None:
+        body = raw.get("post_body")
+        title = raw.get("title")
+        for pid, b, t in zip(raw[sid], body if body is not None else raw[sid],
+                             title if title is not None else raw[sid]):
+            text_by_id[pid] = f"{b} {t}".lower()
+
+    out = []
+    for college in (intended_colleges or []):
+        hits = admits[admits["college"].astype(str).str.contains(
+            _re.escape(str(college)), case=False, na=False)]
+        ids = sorted(set(hits[sid]))
+        n = len(ids)
+        texts = [text_by_id.get(i, "") for i in ids]
+
+        creds = {}
+        for name, pat in CREDENTIAL_PATTERNS.items():
+            who = [t for t in texts if _re.search(pat, t, _re.I)]
+            if not who:
+                continue
+            # Read the level from the WINDOW AROUND the credential, not from the
+            # whole post. Scanning the post finds "National Honor Society" and
+            # "international student" and calls every credential national — which
+            # is how a calibration number becomes confidently wrong. [#44]
+            levels = {}
+            for t in who:
+                lvl = _level_near(t, pat)
+                if lvl:
+                    levels[lvl] = levels.get(lvl, 0) + 1
+            creds[name] = {
+                "n": len(who),
+                "share_of_admits": round(len(who) / n, 3) if n else None,
+                "levels": dict(sorted(levels.items(), key=lambda kv: -kv[1])),
+                "modal_level": max(levels, key=levels.get) if levels else None,
+            }
+
+        out.append({
+            "college": college,
+            "n_admits_held": n,
+            "sufficient": n >= floor,
+            "gpa_band": _modal(hits, cols.get("gpa")),
+            "test_band": _modal(hits, cols.get("test")),
+            "credentials": dict(sorted(creds.items(), key=lambda kv: -kv[1]["n"])),
+        })
+    return {
+        "schools": out,
+        "floor": floor,
+        "note": ("Counts are admits we hold, not admits that exist. A credential's "
+                 "modal level is what admits who had it typically reached — aim there, "
+                 "not at the tail. Shares describe admits only and are never an "
+                 "admission rate."),
+    }
+
+
+_LEVEL_NOISE = _RE_NOISE = (
+    r"national honor society|nhs\b|national merit|nationality|international student|"
+    r"international baccalaureate|\bIB\b|internationally")
+
+
+def _level_near(text, credential_pattern, window=140):
+    """The rung a credential reached, read from the text around that credential."""
+    import re as _re
+    for m in _re.finditer(credential_pattern, text, _re.I):
+        lo, hi = max(0, m.start() - window), min(len(text), m.end() + window)
+        span = text[lo:hi]
+        span = _re.sub(_LEVEL_NOISE, " ", span, flags=_re.I)
+        for lvl, lpat in LEVEL_PATTERNS:
+            if _re.search(lpat, span, _re.I):
+                return lvl
+    return None
+
+
+def _modal(frame, col):
+    if not col or col not in getattr(frame, "columns", []) or not len(frame):
+        return None
+    vals = frame[col].astype(str).str.strip()
+    vals = vals[vals != ""]
+    if not len(vals):
+        return None
+    top = vals.value_counts()
+    return {"band": top.index[0], "share": round(float(top.iloc[0] / len(vals)), 3),
+            "n": int(len(vals))}

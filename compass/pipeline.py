@@ -84,12 +84,21 @@ def run(intake: dict, log=print) -> dict:
         lambda o: gates.gate_strategy(o, state["gap"], profile.get("constraints", {})),
         state, log)
 
+    state["admit_pattern"] = modules.admit_pattern_by_school(intended or _seed_names(intended), major)
+    thin = [x["college"] for x in state["admit_pattern"].get("schools", []) if not x.get("sufficient")]
+    if thin:
+        log(f"       ! too few admits held to assess fit at: {', '.join(thin)}")
+
     log("  6/9  Two Paths ........ target & stretch variants")
     state["two_paths"], _ = _gated(
         "two_paths",
         {"moves_json": state["strategy"].get("selected_moves", []),
          "profile_json": profile,
-         "admit_pattern_json": mr.get("tally", {}),
+         # Per-school admit pattern, not one corpus-wide tally. Without this, every
+         # school came back "not assessed" — correctly, since the step was never
+         # handed an n it could assert fit from. [#44]
+         "admit_pattern_json": state["admit_pattern"],
+         "corpus_tally_json": mr.get("tally", {}),
          "published_rates_json": context.for_writer(profile, _college_seed(intended)).get("published_rates", {}),
          "constraints_json": profile.get("constraints", {})},
         lambda o: gates.gate_two_paths(o, state["strategy"]),
@@ -104,13 +113,36 @@ def run(intake: dict, log=print) -> dict:
     for goal in state["plan_goals"].get("current_year", [])[:4]:
         for task in goal.get("tasks", [])[:2]:
             pack = context.for_recs(profile, task)
+            catalog = list(pack["catalog"])
+
+            # RESEARCH FIRST WHEN THE REGISTRY DOES NOT COVER THIS. [#45]
+            # The registry is real for debate and thin everywhere else. Sending an
+            # agent an empty catalog and hoping it escalates wastes a call and
+            # produces a weaker recommendation than searching properly. So when the
+            # registry has nothing for this task's activity, research BEFORE asking,
+            # and hand the verified findings over as the catalog. Cost is not the
+            # constraint here; a real, bookable, verified option is.
+            pre = None
+            if not pack.get("coverage"):
+                pre = llm.research_json(_task_text(task), constraints,
+                                        max_searches=settings.RESEARCH_MAX_SEARCHES)
+                for r in (pre.get("recommendations") or []):
+                    r.setdefault("source", "live research (verified)")
+                    catalog.append(r)
+                log(f"       · registry has no {pack.get('activity') or 'match'} rows — "
+                    f"researched live, {len(pre.get('recommendations') or [])} verified option(s)")
+
             rec = _agent("plan_recs", {"task_json": task,
-                                       "catalog_json": pack["catalog"],
+                                       "catalog_json": catalog,
                                        "debate_circuits_json": pack["debate_circuits"],
+                                       "registry_covers": bool(pack.get("coverage")),
                                        "constraints_json": constraints})
-            # Catalog had nothing usable for this task -> research it live, then verify.
-            if rec.get("escalate") or not rec.get("recommendations"):
-                found = llm.research_json(task.get("text") or str(task), constraints)
+            if pre is not None:
+                rec["researched"] = pre
+            # Still nothing usable -> one more live pass, then escalate honestly.
+            if rec.get("escalate") or not (rec.get("recommendations") or rec.get("primary")):
+                found = llm.research_json(_task_text(task), constraints,
+                                          max_searches=settings.RESEARCH_MAX_SEARCHES)
                 rec["researched"] = found
                 if found.get("recommendations"):
                     rec["recommendations"] = found["recommendations"]
@@ -181,6 +213,19 @@ def run(intake: dict, log=print) -> dict:
 def _grade(profile):
     return profile.get("cover", {}).get("grade") or \
         profile.get("intended", {}).get("grade") or "9"
+
+
+def _task_text(task):
+    if isinstance(task, str):
+        return task
+    for k in ("task", "task_title", "text", "goal"):
+        if task.get(k):
+            return str(task[k])
+    return json.dumps(task, default=str)[:400]
+
+
+def _seed_names(intended):
+    return [c["college"] if isinstance(c, dict) else c for c in _college_seed(intended)]
 
 
 def _college_seed(intended):

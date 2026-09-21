@@ -876,3 +876,74 @@ no amount of reading the prompts would have surfaced.
 - **Lands in:** `gates.py` (regexes fixed; `gate_plan` now walks the plan at any depth;
   `gate_recs` reads every shape R7 returns and honours a rec's own escalate flag) and
   `pipeline.py` (gate_draft wired in after the writer).
+
+## 43. Write about the child, not about our file on him
+- **Flagged on:** the generated plan, after the length and structure were already right.
+  Aayushi: *"check the writing part on the profile and overall, it is way overboard. dont put
+  what you are thinking on the pdf."*
+- **What it was doing:** narrating the system's reading of a record instead of describing a boy.
+  "The one thing in his record that is entirely his own is a Pokemon card business." "Five other
+  activities sit alongside the business, each recorded at a different level, and two of his
+  stated interests have nothing attached to them yet." Both are true, both are about our file.
+  The same facts, written correctly: "He started it on his own, without anyone assigning it."
+  "He competes across several areas — and tends to place when he does."
+- **Rule:** say the thing, never how we came to know it, how complete it is, or what we were
+  able to do with it. Banned in any sentence a parent reads: on record · recorded · no record ·
+  stated · verbatim · as listed · as given · supplied · attached · not assessed · to be
+  confirmed · evidence · the intake · what the plan can use. Anything that genuinely needs
+  confirming is named once, as an action, in the flags box or the parent-action list.
+  And one idea per sentence — three clauses with two qualifiers is two sentences, or a cut.
+- **Lands in:** the shared `PROSE` contract, so profile, gap, strategy, plan and writer all
+  inherit it.
+- **Note:** this is the rule that separates the generated plan from the hand-written one. The
+  structure, the facts and the length were already matched; the voice was the whole remaining
+  gap.
+
+## 44. Per-school admit pattern — the fix for "not assessed", and the calibration mechanism
+- **Flagged on:** every school on the Two Paths card came back `sufficient: false`, fit "not
+  assessed". The step was handed one corpus-wide tally — 67 students across six schools — and
+  asked to assess fit school by school. It refused, correctly. A wiring failure, not a prompt one.
+- **Fix:** `modules.admit_pattern_by_school()` — per college: how many admits we actually hold,
+  their GPA and test bands, which credential types appear among them and how often, and the
+  rung each credential typically reached. Wired into the Two Paths payload; the corpus-wide
+  tally rides along separately.
+- **It also answers the calibration question** Nick raised — *did we aim too high or too low?*
+  For Neerav's six schools we hold 79–280 admits each. School/club level is modal for every
+  credential type; national sits at roughly 10–20% of admits who hold that credential. So a
+  national result is a real differentiator rather than the baseline, our target plan sits at
+  the modal admit, and our stretch sits about one rung above it. That is the number to aim at:
+  **the middle of the distribution, not the tail.**
+- **One precision bug worth recording.** The first version read the level from the whole post,
+  so "National Honor Society" and "international student" made *every* credential national at
+  *every* school — a confidently wrong calibration that looked authoritative. The level is now
+  read from a ±140-character window around the credential itself, with those phrases stripped.
+  A calibration number that is wrong is worse than none.
+- **Honest limit:** a level is only counted when the applicant stated one, and many do not.
+  Modal level means modal *among those who said*.
+
+## 45. Live research is the mechanism, not the fallback
+- **Aayushi:** *"the program registry that we have is only for the debate. So if you are looking
+  for any recommendation which is out of debate, then go to the live web search… Don't worry
+  about the cost."*
+- **Was:** the agent got an empty catalog, tried anyway, and research only ran afterwards if it
+  escalated — a wasted call and a weaker recommendation.
+- **Now:** when the registry has no rows for a task's activity, the pipeline researches FIRST and
+  hands the verified findings over as the catalog. The after-the-fact pass stays as a second
+  chance. Search depth is a setting (`RESEARCH_MAX_SEARCHES`, default 8) rather than a constant,
+  and it is set for thoroughness.
+- **Unchanged:** verification. A researched option still has to be real and bookable, or it
+  escalates. Spending more does not lower the evidence bar.
+
+## 46. Q8 exists — the engine was not reading it
+- **Aayushi:** *"there is a question where it specifically asks… which colleges he intends to go.
+  So look into that."* She was right. **Q8: "Has [child] mentioned any schools they like — even
+  casually?"** is in the live intake form; real answers in the export read "NYU, Stanford,
+  Berkeley, Chicago", "Michigan, Texas, Wisconsin, Duke, Vanderbilt, Indiana", "mit", "no".
+  Our intake record simply never carried it, so the run stopped at step 3 every time.
+- **Fix:** `schools_child_mentioned` (Q8), `college_ambition` (Q1) and `alumni_connections` (Q45)
+  are now intake fields; `gate_intake` fails at step 0 with a specific message rather than
+  letting the run die at step 3; R1 maps Q8 into `intended.colleges`; `data/INTAKE_FIELD_MAP.md`
+  documents the mapping and the questions still unmapped.
+- **The three traps, now written into the prompt:** a parent's own alma mater (Q45) is a hook and
+  never a target; an ambition band (Q1) says how high, not where; a field of study is a major.
+  Each of these was a plausible wrong answer to "which colleges", and R1 fell for the first one.

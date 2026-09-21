@@ -178,6 +178,22 @@ PROSE CONTRACT — every sentence earns its place.
 - NO MARKDOWN. No **bold**, no _italics_, no backticks, no bullet characters inside a string.
   The renderer prints them literally, so "**One thread**" reaches the parent with the
   asterisks showing. Emphasis is the template's job, not the text's. [#34]
+- WRITE ABOUT THE CHILD, NOT ABOUT OUR FILE ON HIM. [#43]
+  This is the difference between a document a mother recognises her son in and one that reads
+  like an audit. Say the thing; never say how we came to know it, how complete it is, or what
+  we were able to do with it.
+    BAD:  "The one thing in his record that is entirely his own is a card business."
+          "Five other activities sit alongside it, each recorded at a different level, and two
+           of his stated interests have nothing attached to them yet."
+    GOOD: "He started it on his own, without anyone assigning it."
+          "He competes across several areas — and tends to place when he does."
+  Banned vocabulary in any sentence a parent reads: on record · recorded · no record ·
+  stated · verbatim · as listed · as given · supplied · attached · not assessed ·
+  to be confirmed · evidence · the intake · what the plan can use.
+  Anything that genuinely needs confirming is named ONCE, in the flags box or the parent-action
+  list, as an action. Never in narrative prose.
+- ONE IDEA PER SENTENCE. Three clauses and two qualifiers is two sentences, or one sentence and
+  a cut. [#43]
 """
 
 
@@ -290,12 +306,22 @@ RETURN SHAPE — exactly these keys, in these container types:
   intended        object: fields_verbatim, parent_words_verbatim, school_preference_verbatim,
                   colleges (LIST of named colleges — empty list if the intake names none),
                   major, beyond_undergraduate.
-                  `colleges` is what retrieval searches on. If the intake names no target
-                  colleges, return [] and add a flags_to_confirm entry saying the family
-                  must name them. Do NOT infer targets from a parent's own alma mater — a
-                  mother's degree is a fact about her, not a target for him. An empty list
-                  correctly stops the run; an invented one produces a confident plan aimed
-                  at schools nobody chose. [#37]
+                  `colleges` is what retrieval searches on. Fill it from Q8 —
+                  "Has [child] mentioned any schools they like — even casually?" — and
+                  from any school the parent or child names anywhere else in their own
+                  words. Casual counts: "he's mentioned Berkeley" is an answer. A list
+                  of five schools from a family still exploring is normal and useful;
+                  it sets the direction, not a commitment.
+                  Three things are NOT targets, whatever else they are:
+                    - a parent's or step-parent's own alma mater or employer (Q45). That
+                      is a fact about them, and possibly a hook. Put it in `tailwinds`.
+                    - an ambition BAND from Q1 ("most selective", "strong, well-known").
+                      That is how high they are aiming, not where. Put it in
+                      `school_preference_verbatim`.
+                    - a field of study. That is `major`.
+                  If nothing names a school, return [] and add a flags_to_confirm entry.
+                  An empty list correctly stops the run; an invented one produces a
+                  confident plan aimed at schools nobody chose. [#37][#46]
   flags_to_confirm     list of objects: item, detail, source_quote
   preference_vs_behaviour  object
   evidence        list of objects

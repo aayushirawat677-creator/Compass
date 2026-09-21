@@ -28,6 +28,11 @@ MODEL_MID = os.environ.get("COMPASS_MODEL_MID", "claude-sonnet-4-20250514")   # 
 
 MAX_TOKENS = 4096
 TEMPERATURE = 0.2          # low — we want reproducible-ish structure
+# Live research depth. The program registry only really covers debate, so every
+# other activity is researched live — that is the mechanism, not a fallback. Set
+# generously: a verified, bookable option is worth far more than a saved call. [#45]
+RESEARCH_MAX_SEARCHES = int(os.environ.get("COMPASS_RESEARCH_SEARCHES", "8"))
+
 MAX_JSON_RETRIES = 2       # reask once if the model returns invalid JSON
 
 # ---------------------------------------------------------------------------
