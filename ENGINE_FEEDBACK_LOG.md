@@ -1053,3 +1053,33 @@ must CONTAIN.
   school's pattern.
 - **This is the answer to "did we aim too high or too low."** It is the only check we
   have, and until now it reached one step out of four.
+
+## 53. The critic could not see the contracts it enforces
+- The critic is the enforcement layer, and it carried none of the five shared contracts —
+  only its own numbered checks, written months of rules ago. So every rule added since
+  (#32–#52: one-fact-one-place, no self-narration, no markdown, the plan's shape, levels
+  not ranks, no quantity targets) was unenforced at the last gate before the PDF.
+- **Fix:** CRITIC now carries EVIDENCE, TONE, PROSE, PLANNING_STRUCTURE and CARD_GRAMMAR
+  verbatim, with one line above them: *the checks are the failures we have already seen;
+  the contracts are the standard.* An audit of contract injection across all ten prompts
+  also found gap, strategy, two_paths, projected and plan_recs missing the output-shape
+  contract, and writer missing the plan's shape. All filled.
+
+## 54. Four gates failed correct work on spelling, not substance
+Found by running the whole pipeline on the new prompts. Every one of these rejected
+output that was right:
+- **`gate_gap`** held the category set with hyphens (`lower-level`) while the prompt
+  specifies underscores (`lower_level`). A correctly categorised 66-gap map failed on
+  punctuation.
+- **`gate_strategy`** counted moves — "more than 6 is no spike" — while the prompt had
+  been changed to require exactly one move at core intensity. Seven moves with one core
+  is a spike with support; four moves all marked core is not. It was measuring the wrong
+  thing.
+- **`gate_plan`** knew only the old `current_year` shape and failed a correct five-year
+  plan for not being a one-year plan.
+- **`gate_document`** compared the plan's `8` against the document's `"Grade 8"` and
+  reported all five grades missing.
+- **The pattern, and the rule:** every time a prompt's contract changes, its gate is part
+  of that change. A gate compares MEANING, never spelling — normalise both sides first.
+  Four false failures in one run is what happens when prompt and gate drift apart, and a
+  false failure costs a retry on every run until someone looks.

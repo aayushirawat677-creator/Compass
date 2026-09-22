@@ -107,9 +107,12 @@ def gate_gap(gap):
     gaps = gap.get("gaps") or []
     if not gaps:
         f.append("no gaps produced")
-    VALID = {"at-or-above", "missing", "lower-level", "unknown-interest"}
+    # Accept either spelling of the closed set. The prompt names these with
+    # underscores and the gate was written with hyphens, so a correctly
+    # categorised gap map failed the gate on punctuation. [#54]
+    VALID = {"at_or_above", "missing", "lower_level", "unknown_interest"}
     bad = [g.get("category") for g in gaps if isinstance(g, dict)
-           and str(g.get("category", "")).lower() not in VALID]
+           and str(g.get("category", "")).lower().replace("-", "_") not in VALID]
     if bad:
         f.append(f"invalid categories: {bad[:3]}")
     nofreq = [g for g in gaps if isinstance(g, dict) and not g.get("frequency")]
@@ -130,20 +133,39 @@ def gate_strategy(strategy, gap, constraints):
         f.append("no moves selected — nothing was decided")
     if gaps and len(moves) >= len(gaps) and len(gaps) > 2:
         f.append(f"selected {len(moves)} of {len(gaps)} gaps — a pass-through, not a choice")
-    if len(moves) > 6:
-        f.append(f"{len(moves)} moves — no spike; effort is spread")
+    # A spike is ONE thread at core intensity, not a short list. Counting moves
+    # measured the wrong thing: a plan with seven moves and one core is a spike
+    # with support; a plan with four moves all marked core is not. The prompt was
+    # changed to say exactly that (#39) and the gate was still counting. [#54]
+    core = [m for m in moves if str(m.get("intensity", "")).lower() == "core"]
+    if moves and not core:
+        f.append("nothing marked core — no spike; the plan has no centre")
+    if len(core) > 1:
+        f.append(f"{len(core)} moves at core intensity — a spike is exactly one")
+    if len(moves) > 9:
+        f.append(f"{len(moves)} moves — more threads than a week can hold")
     if (strategy.get("dropped_moves") or []) and not (strategy.get("tensions") or []):
         f.append("moves dropped but no tensions recorded — the reasoning is invisible")
     return GateResult("strategy", RETRY if f else PASS, f)
 
 
 def gate_plan(plan_goals, strategy):
+    """R6 now returns `grades[]` covering every year to 12, with `is_current_year`
+    on one of them. The old gate only knew about `current_year` and failed a
+    correct five-year plan for not having the one-year shape. [#54]"""
     f = []
-    cur = plan_goals.get("current_year") or []
+    grades = plan_goals.get("grades") or []
+    cur = ([g for g in grades if g.get("is_current_year")]
+           or grades[:1] or plan_goals.get("current_year") or [])
     if not cur:
         f.append("no current-year plan — the parent has nothing to act on")
+    if grades and len(grades) < 2:
+        f.append("only one grade planned — this is a multi-year plan, not a year plan")
+    thin = [g.get("grade") for g in grades if len(g.get("goals") or []) < 2]
+    if thin:
+        f.append(f"grade(s) with fewer than two goals: {thin}")
     moves = strategy.get("selected_moves") or []
-    if moves and not plan_goals.get("multi_year_arc"):
+    if moves and not (plan_goals.get("multi_year_arc") or grades):
         f.append("no multi-year arc")
     # Walk the plan whatever depth it nests to. R6 legitimately returns either
     # current_year -> goals -> tasks, or current_year -> TERMS -> goals -> tasks.
@@ -314,9 +336,17 @@ def gate_document(draft, plan_goals):
     if missing:
         f.append(f"{len(missing)} plan goal(s) never reach the document: {missing[:3]}")
 
+    # Normalise before comparing: the plan says 8, the document says "Grade 8".
+    # This is the fourth gate to fail correct work on a representation difference
+    # rather than a substance one — compare meaning, never spelling. [#54]
+    def _num(x):
+        import re
+        m = re.search(r"\d+", str(x))
+        return m.group(0) if m else str(x).strip().lower()
+
     grades_planned = {g for g, _ in planned if g}
-    grades_rendered = {str(x.get("grade")) for x in (draft.get("roadmap", {}).get("grades") or [])}
-    gone = [g for g in grades_planned if str(g) not in grades_rendered]
+    grades_rendered = {_num(x.get("grade")) for x in (draft.get("roadmap", {}).get("grades") or [])}
+    gone = [g for g in grades_planned if _num(g) not in grades_rendered]
     if gone:
         f.append(f"grade(s) in the plan but not in the roadmap: {sorted(gone)}")
 
