@@ -1,0 +1,299 @@
+<title>Compass Orchestration</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --ground:#eceff0; --surface:#ffffff; --panel:#f6f8f8;
+    --ink:#11171b; --muted:#5d6b72; --line:#d3dadd;
+    --agent:#2f4f8f; --agent-soft:#e9eff9;
+    --module:#4c6067; --module-soft:#eaeeef;
+    --data:#1d6b62;  --data-soft:#e4f0ee;
+    --gate:#9a6310;  --gate-soft:#f7eede;
+    --danger:#94362a;--danger-soft:#f8e8e5;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#0e1418; --surface:#151d22; --panel:#111a1f;
+      --ink:#e4eaec; --muted:#93a3aa; --line:#27333a;
+      --agent:#8fb2ea; --agent-soft:#18263a;
+      --module:#9fb3bb; --module-soft:#1a2429;
+      --data:#57bfb2;  --data-soft:#11292a;
+      --gate:#dfa242;  --gate-soft:#2b2115;
+      --danger:#e08072;--danger-soft:#2d1815;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0e1418; --surface:#151d22; --panel:#111a1f;
+    --ink:#e4eaec; --muted:#93a3aa; --line:#27333a;
+    --agent:#8fb2ea; --agent-soft:#18263a;
+    --module:#9fb3bb; --module-soft:#1a2429;
+    --data:#57bfb2;  --data-soft:#11292a;
+    --gate:#dfa242;  --gate-soft:#2b2115;
+    --danger:#e08072;--danger-soft:#2d1815;
+  }
+
+  body{
+    background:var(--ground); color:var(--ink);
+    font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    font-size:15px; line-height:1.55; margin:0;
+  }
+  .wrap{max-width:1020px; margin:0 auto; padding-inline:20px; padding-block:40px 64px;}
+  h1{font-size:clamp(26px,4.2vw,38px); line-height:1.12; font-weight:600; letter-spacing:-.02em; margin:0 0 10px; text-wrap:balance;}
+  h2{font-size:20px; font-weight:600; letter-spacing:-.01em; margin:0 0 6px;}
+  p{margin:0 0 14px; max-width:68ch;}
+  .lede{color:var(--muted); font-size:16.5px; max-width:64ch; margin-bottom:18px;}
+  .eyebrow{font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin:0 0 10px;}
+  section{margin-top:42px;}
+  code,.mono{font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:.9em;}
+
+  .counts{display:flex; flex-wrap:wrap; gap:10px 26px; padding-top:14px; border-top:1px solid var(--line);}
+  .counts div{display:flex; flex-direction:column; gap:1px;}
+  .counts b{font-family:"IBM Plex Mono",monospace; font-size:19px; font-weight:500; font-variant-numeric:tabular-nums;}
+  .counts span{font-size:12px; color:var(--muted);}
+
+  .chain{display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:0 0 14px; padding:0; list-style:none;}
+  .chain li{font-size:13.5px; padding:5px 11px; border-radius:2px; background:var(--surface); border:1px solid var(--line);}
+  .chain li b{font-weight:600;}
+  .chain li::after{content:""}
+  .chain .arrow{border:0; background:none; color:var(--muted); padding:0 1px;}
+
+  figure{margin:0;}
+  .figpanel{background:#ffffff; border:1px solid var(--line); border-radius:3px; padding:14px; overflow-x:auto;}
+  .figpanel pre{margin:0;}
+  .mermaid svg{max-width:none; height:auto;}
+  figcaption{color:var(--muted); font-size:13px; margin-top:10px; max-width:68ch;}
+
+  .legend{display:flex; flex-wrap:wrap; gap:8px 18px; margin:16px 0 0; padding:0; list-style:none; font-size:13px;}
+  .legend li{display:flex; align-items:center; gap:7px; color:var(--muted);}
+  .swatch{width:22px; height:14px; border:1.5px solid var(--module); background:var(--module-soft); flex:none;}
+  .sw-agent{border-color:var(--agent); background:var(--agent-soft); border-radius:7px;}
+  .sw-data{border-color:var(--data); background:var(--data-soft); border-radius:7px/4px;}
+  .sw-gate{border-color:var(--gate); background:var(--gate-soft); transform:skewX(-14deg);}
+  .sw-dash{border-style:dashed; border-color:var(--muted); background:none;}
+
+  .tablewrap{overflow-x:auto; border:1px solid var(--line); border-radius:3px; background:var(--surface);}
+  table{border-collapse:collapse; width:100%; min-width:680px; font-size:13.5px;}
+  th,td{text-align:left; padding:9px 13px; border-bottom:1px solid var(--line); vertical-align:top;}
+  th{font-size:11.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); font-weight:500; white-space:nowrap;}
+  tbody tr:last-child td{border-bottom:0;}
+  td.num{font-family:"IBM Plex Mono",monospace; color:var(--muted); white-space:nowrap;}
+  .kind{font-family:"IBM Plex Mono",monospace; font-size:11.5px; padding:2px 7px; border-radius:2px; white-space:nowrap;}
+  .k-agent{color:var(--agent); background:var(--agent-soft);}
+  .k-module{color:var(--module); background:var(--module-soft);}
+
+  .verdicts{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px; margin-top:16px;}
+  .verdict{background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--vc,var(--line)); border-radius:2px; padding:12px 14px;}
+  .verdict h3{font-family:"IBM Plex Mono",monospace; font-size:12.5px; letter-spacing:.08em; margin:0 0 5px; color:var(--vc,var(--ink));}
+  .verdict p{font-size:13px; margin:0; color:var(--muted);}
+  .v-pass{--vc:var(--data);} .v-degrade{--vc:var(--gate);}
+  .v-retry{--vc:var(--agent);} .v-escalate{--vc:var(--danger);}
+
+  .rules{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; margin-top:14px;}
+  .rule{background:var(--panel); border:1px solid var(--line); border-radius:3px; padding:16px 18px;}
+  .rule h3{font-size:15px; margin:0 0 6px; font-weight:600;}
+  .rule p{font-size:13.5px; margin:0; color:var(--muted);}
+
+  footer{margin-top:52px; padding-top:16px; border-top:1px solid var(--line); color:var(--muted); font-size:13px;}
+  footer a{color:inherit;}
+  @media (max-width:520px){ .counts{gap:10px 18px;} }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Compass strategy engine · v1</p>
+    <h1>How the agents run</h1>
+    <p class="lede">One intake form in, one Strategic Plan PDF out. Every box below exists in the code — agent steps resolve through <code>prompts.py::BY_STEP</code>, deterministic steps through <code>modules.py</code>, and the order is <code>pipeline.py::run()</code>.</p>
+    <div class="counts">
+      <div><b>10</b><span>agent steps</span></div>
+      <div><b>4</b><span>deterministic modules</span></div>
+      <div><b>9</b><span>runtime gates</span></div>
+      <div><b>2</b><span>fallbacks before escalation</span></div>
+      <div><b>30,414</b><span>application rows behind the cards</span></div>
+    </div>
+  </header>
+
+  <section>
+    <h2>The boundary the shape enforces</h2>
+    <ul class="chain">
+      <li><b>Profile</b> describes</li><li class="arrow">→</li>
+      <li><b>Gap</b> diagnoses</li><li class="arrow">→</li>
+      <li><b>Strategy</b> decides</li><li class="arrow">→</li>
+      <li><b>Two Paths</b> forks</li><li class="arrow">→</li>
+      <li><b>Plan</b> schedules</li><li class="arrow">→</li>
+      <li><b>Recs</b> source</li><li class="arrow">→</li>
+      <li><b>Writer</b> writes</li><li class="arrow">→</li>
+      <li><b>Critic</b> checks</li>
+    </ul>
+    <p>No step does the job of the step before it. A profile that diagnoses, or a writer that decides, is a bug rather than a style problem — which is why <code>gate_profile</code> fails any profile containing numbers.</p>
+  </section>
+
+  <section>
+    <figure>
+      <div class="figpanel">
+<pre class="mermaid">
+%%{init: {"theme":"base","themeVariables":{"background":"#ffffff","primaryColor":"#eaf0f9","primaryBorderColor":"#2f4f8f","primaryTextColor":"#11171b","secondaryColor":"#f2f5f6","tertiaryColor":"#fbfcfc","lineColor":"#77868e","fontFamily":"IBM Plex Sans, sans-serif","fontSize":"13px","clusterBkg":"#fbfcfc","clusterBorder":"#c9d2d5"},"flowchart":{"curve":"basis","nodeSpacing":34,"rankSpacing":44,"padding":10}} }%%
+flowchart TB
+
+  subgraph OFFLINE["REFERENCE DATA — built once, read by every run"]
+    direction TB
+    SRC[/"Reddit results posts<br>parsed + verified"/]
+    PUB[/"Published sources<br>CDS / official"/]
+    CORPUS[("corpus.csv<br>2,613 students")]
+    APPROWS[("application rows<br>30,414 after explode")]
+    RATES[("admit_rates.json<br>33 schools + aliases")]
+    FIND[("findings.json")]
+    TAB[("tabroom_circuits.csv<br>debate")]
+    MORE[("more competition DBs<br>robotics · math · venture …")]
+    PROG[("programs.csv<br>common program schema")]
+    SRC --> CORPUS
+    CORPUS -->|"load_corpus(applications=True)"| APPROWS
+    PUB -->|"refresh_rates.ensure_rate()"| RATES
+    REG["sources.json + programs.py<br>registry → one common schema"]
+    TAB --> REG
+    PROG --> REG
+    MORE -.->|"register, don't rewire"| REG
+    CTX["context.py<br>retrieval layer"]
+    RATES --> CTX
+    FIND --> CTX
+    REG --> CTX
+  end
+
+  subgraph RUNTIME["RUNTIME — per student"]
+    direction TB
+    IN[/"Intake form<br>parent + student"/]
+    G0{{"gate: intake"}}
+    S1(["1 · Profile<br>describes the kid"])
+    G1{{"gate: profile"}}
+    S2(["2 · Projected Profile<br>best-case anchor"])
+    S3["3 · Match &amp; Rank<br>modules.match_rank"]
+    G3{{"gate: retrieval"}}
+    S4(["4 · Gap Analyst<br>diagnoses"])
+    G4{{"gate: gap"}}
+    S5(["5 · Strategy<br>decides the moves"])
+    G5{{"gate: strategy"}}
+    S6(["6 · Two Paths<br>target / stretch fork"])
+    G6{{"gate: two_paths"}}
+    S7(["7a · Plan Goals<br>schedules"])
+    G7{{"gate: plan"}}
+    S8(["7b · Recommendations<br>fan-out, one call per task"])
+    RES(["live research<br>verified web lookup"])
+    S9["7c · Constraint Guardrail<br>modules.constraint_guardrail"]
+    G8{{"gate: recs"}}
+    S10["7d · Tiering<br>modules.tiering"]
+    S11(["8 · Writer<br>composes the plan"])
+    G9{{"gate: draft"}}
+    S12(["9 · Critic<br>tone / honesty / plain English"])
+    RENDER["render.py"]
+    PDF[("Strategic Plan PDF")]
+    TRAIL["quality trail<br>gates.summarise()"]
+    HUMAN["Human review<br>no PDF"]
+
+    IN --> G0 --> S1 --> G1 --> S2 --> S3 --> G3 --> S4 --> G4 --> S5 --> G5 --> S6 --> G6 --> S7 --> G7 --> S8
+    S8 -->|"catalog empty for this task"| RES
+    RES --> S9
+    S8 --> S9 --> G8 --> S10 --> S11 --> G9 --> S12 --> RENDER --> PDF
+
+    G1 -.->|"retry once, failure as feedback"| S1
+    G4 -.->|"retry once"| S4
+    G5 -.->|"retry once"| S5
+    G6 -.->|"retry once"| S6
+    G7 -.->|"retry once"| S7
+    G9 -.->|"rewrite"| S11
+    S12 -.->|"findings"| S11
+
+    G0 -.->|"ESCALATE"| HUMAN
+    G3 -.->|"ESCALATE: no admits / mock fallback"| HUMAN
+    G8 -.->|"ESCALATE: nothing verifiable"| HUMAN
+    G3 -.->|"DEGRADE: marked, run continues"| TRAIL
+    TRAIL --> PDF
+  end
+
+  APPROWS -->|"admit cards for the intended colleges"| S3
+  CTX -->|"ladder + findings"| S4
+  CTX -->|"what moved the needle"| S5
+  CTX -->|"published rates"| S6
+  CTX -->|"programs for this task"| S8
+  CTX -->|"published rates + evidence"| S11
+
+  classDef agent fill:#eaf0f9,stroke:#2f4f8f,stroke-width:1.4px,color:#11171b;
+  classDef module fill:#edf1f2,stroke:#4c6067,stroke-width:1.4px,color:#11171b;
+  classDef store fill:#e4f0ee,stroke:#1d6b62,stroke-width:1.4px,color:#11171b;
+  classDef gate fill:#f7eede,stroke:#9a6310,stroke-width:1.4px,color:#3d2a0c;
+  classDef stop fill:#f8e8e5,stroke:#94362a,stroke-width:1.4px,color:#3d1410;
+  class S1,S2,S4,S5,S6,S7,S8,S11,S12,RES agent;
+  class S3,S9,S10,RENDER,CTX,REG,TRAIL module;
+  class CORPUS,APPROWS,RATES,FIND,TAB,MORE,PROG,PDF,SRC,PUB,IN store;
+  class G0,G1,G3,G4,G5,G6,G7,G8,G9 gate;
+  class HUMAN stop;
+</pre>
+      </div>
+      <ul class="legend">
+        <li><span class="swatch sw-agent"></span>LLM agent</li>
+        <li><span class="swatch"></span>deterministic module</li>
+        <li><span class="swatch sw-data"></span>stored data</li>
+        <li><span class="swatch sw-gate"></span>runtime gate</li>
+        <li><span class="swatch sw-dash"></span>failure path — retry, rewrite, escalate</li>
+      </ul>
+      <figcaption>Reference data is built once and read by every run; the runtime lane runs per student. Solid edges are the happy path; dashed edges are what happens when a gate refuses.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2>Steps</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>#</th><th>Step</th><th>Kind</th><th>Reads</th><th>Gate</th></tr></thead>
+        <tbody>
+          <tr><td class="num">1</td><td>Profile</td><td><span class="kind k-agent">agent · top</span></td><td>intake</td><td><code>gate_profile</code> — retry</td></tr>
+          <tr><td class="num">2</td><td>Projected Profile</td><td><span class="kind k-agent">agent · mid</span></td><td>profile</td><td>—</td></tr>
+          <tr><td class="num">3</td><td>Match &amp; Rank</td><td><span class="kind k-module">module</span></td><td>30,414 application rows</td><td><code>gate_retrieval</code> — escalate / degrade</td></tr>
+          <tr><td class="num">4</td><td>Gap Analyst</td><td><span class="kind k-agent">agent · top</span></td><td>profile, cards, tally, ladder, findings</td><td><code>gate_gap</code> — retry</td></tr>
+          <tr><td class="num">5</td><td>Strategy</td><td><span class="kind k-agent">agent · top</span></td><td>gap map, profile, findings</td><td><code>gate_strategy</code> — retry</td></tr>
+          <tr><td class="num">6</td><td>Two Paths</td><td><span class="kind k-agent">agent · top</span></td><td>selected moves, admit pattern, published rates</td><td><code>gate_two_paths</code> — retry</td></tr>
+          <tr><td class="num">7a</td><td>Plan Goals</td><td><span class="kind k-agent">agent · mid</span></td><td>selected moves, profile, grade</td><td><code>gate_plan</code> — retry</td></tr>
+          <tr><td class="num">7b</td><td>Recommendations</td><td><span class="kind k-agent">agent · mid · fan-out</span></td><td>program registry, constraints</td><td>—</td></tr>
+          <tr><td class="num">7c</td><td>Constraint Guardrail</td><td><span class="kind k-module">module</span></td><td>recommendations, constraints</td><td><code>gate_recs</code> — escalate</td></tr>
+          <tr><td class="num">7d</td><td>Tiering</td><td><span class="kind k-module">module</span></td><td>intended colleges</td><td>—</td></tr>
+          <tr><td class="num">8</td><td>Writer</td><td><span class="kind k-agent">agent · mid</span></td><td>the whole plan, published rates, evidence</td><td><code>gate_draft</code></td></tr>
+          <tr><td class="num">9</td><td>Critic</td><td><span class="kind k-agent">agent · top</span></td><td>draft</td><td>—</td></tr>
+          <tr><td class="num">—</td><td>Comparisons</td><td><span class="kind k-agent">agent · top</span></td><td>profile, cards</td><td>supplement, run separately</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>What a gate decides</h2>
+    <p>A gate does not ask “is this good?” It asks whether the output is good enough for the next step to mean anything. Gates are deterministic and cheap, so they run on every step of every run.</p>
+    <div class="verdicts">
+      <div class="verdict v-pass"><h3>PASS</h3><p>Continue.</p></div>
+      <div class="verdict v-degrade"><h3>DEGRADE</h3><p>Continue, but mark the run. A thin run is always visible in the output — never silently.</p></div>
+      <div class="verdict v-retry"><h3>RETRY</h3><p>Re-run the step once, handing it the failure as feedback.</p></div>
+      <div class="verdict v-escalate"><h3>ESCALATE</h3><p>Stop. No PDF. Used only where continuing would produce something a family might act on and be harmed by.</p></div>
+    </div>
+    <p style="margin-top:16px"><code>gate_retrieval</code> is the one that matters most. Empty or fabricated retrieval makes every step after it fiction <em>and looks completely normal in the PDF</em> — which is how it caught <code>match_rank</code> returning zero cards from a 30,414-row table on its first live run.</p>
+  </section>
+
+  <section>
+    <h2>Two rules the drawing encodes</h2>
+    <div class="rules">
+      <div class="rule">
+        <h3>Numbers belong to modules</h3>
+        <p>Counts, bands, tiers and rates are computed by deterministic code and handed to the agents. An agent that states a number it was not handed is a bug, not a phrasing issue.</p>
+      </div>
+      <div class="rule">
+        <h3>Debate is one source, not the shape</h3>
+        <p>Every program and competition database resolves to one common schema through <code>data/sources.json</code>. Adding robotics, math or business competitions is a data change — drop the file, register it, map its levels onto the six rungs. No step, prompt or gate moves.</p>
+      </div>
+      <div class="rule">
+        <h3>The corpus and the rate table answer different questions</h3>
+        <p>The corpus answers “what does an admit to this school look like?” The published rate table answers “how selective is this school?” The corpus never produces an admit rate: it is self-selected, and 32.6% of posts omit rejections.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    In the repo: <code>docs/ORCHESTRATION.md</code> (this diagram, rendered by GitHub) · <code>docs/orchestration.mmd</code> (source) · <code>ENGINE_FEEDBACK_LOG.md</code> (every rule and why it exists) · <code>evals/GATES.md</code> (gate detail).
+  </footer>
+
+</div>

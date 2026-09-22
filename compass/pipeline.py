@@ -69,10 +69,22 @@ def run(intake: dict, log=print) -> dict:
     if mr.get("escalate_thin_data"):
         log("       ! thin data for the intended college(s) — flag for human review")
 
+    # Computed HERE, not before Two Paths, so the steps that DECIDE can see it. [#52]
+    # Gap measures distance against it; Strategy picks the rung to aim at; Plan sizes
+    # the goals to it. Producing it late meant the two steps that choose what the
+    # student should actually do were the only ones working blind.
+    state["admit_pattern"] = modules.admit_pattern_by_school(
+        intended or _seed_names(intended), major)
+    thin = [x["college"] for x in state["admit_pattern"].get("schools", [])
+            if not x.get("sufficient")]
+    if thin:
+        log(f"       ! too few admits held to assess fit at: {', '.join(thin)}")
+
     log("  4/9  Gap Analyst ....... current profile vs cards")
     state["gap"], _ = _gated("gap", {"profile_json": profile, "cards_json": mr["cards"],
                                   "reference_json": context.for_gap(profile),
                                    "tally_json": mr["tally"],
+                                   "admit_pattern_json": state["admit_pattern"],
                                    "grade": _grade(profile)}, gates.gate_gap, state, log)
 
     log("  5/9  Strategy .......... ranking gaps -> moves")
@@ -80,6 +92,7 @@ def run(intake: dict, log=print) -> dict:
         "strategy",
         {"gap_map_json": state["gap"], "profile_json": profile,
          "reference_json": context.for_strategy(profile),
+         "admit_pattern_json": state["admit_pattern"],
          "intended": profile.get("intended", {})},
         lambda o: gates.gate_strategy(o, state["gap"], profile.get("constraints", {})),
         state, log)
@@ -89,28 +102,68 @@ def run(intake: dict, log=print) -> dict:
         "two_paths",
         {"moves_json": state["strategy"].get("selected_moves", []),
          "profile_json": profile,
-         "admit_pattern_json": mr.get("tally", {}),
+         # Per-school admit pattern, not one corpus-wide tally. Without this, every
+         # school came back "not assessed" — correctly, since the step was never
+         # handed an n it could assert fit from. [#44]
+         "admit_pattern_json": state["admit_pattern"],
+         "corpus_tally_json": mr.get("tally", {}),
          "published_rates_json": context.for_writer(profile, _college_seed(intended)).get("published_rates", {}),
          "constraints_json": profile.get("constraints", {})},
         lambda o: gates.gate_two_paths(o, state["strategy"]),
         state, log)
 
     log("  7/9  Plan ............. goals, tasks, recommendations, tiers")
-    state["plan_goals"], _ = _gated("plan_goals", {"moves_json": state["strategy"].get("selected_moves", []),
-                                                "profile_json": profile, "grade": _grade(profile)}, lambda o: gates.gate_plan(o, state["strategy"]), state, log)
+    grade = _grade(profile)
+    state["capacity"] = modules.capacity_budget(profile, grade)
+    state["capacity_summer"] = modules.capacity_budget(profile, grade, "summer")
+    state["stage_bands"] = modules.stage_bands(grade)
+    log(f"       · capacity: {state['capacity']['free_hours_per_week']} h/week free "
+        f"of {state['capacity']['total_hours_per_week']} ({state['capacity']['committed_hours_per_week']} committed)")
+    state["plan_goals"], _ = _gated(
+        "plan_goals",
+        {"moves_json": state["strategy"].get("selected_moves", []),
+         "profile_json": profile, "grade": grade,
+         "capacity_json": state["capacity"],
+         "summer_capacity_json": state["capacity_summer"],
+         "stage_bands_json": state["stage_bands"],
+         "admit_pattern_json": state["admit_pattern"]},
+        lambda o: gates.gate_plan(o, state["strategy"]), state, log)
     # recommendations for near-term tasks (fan-out; mock returns one)
     constraints = profile.get("constraints", {})
     recs, blocked = [], []
     for goal in state["plan_goals"].get("current_year", [])[:4]:
         for task in goal.get("tasks", [])[:2]:
             pack = context.for_recs(profile, task)
+            catalog = list(pack["catalog"])
+
+            # RESEARCH FIRST WHEN THE REGISTRY DOES NOT COVER THIS. [#45]
+            # The registry is real for debate and thin everywhere else. Sending an
+            # agent an empty catalog and hoping it escalates wastes a call and
+            # produces a weaker recommendation than searching properly. So when the
+            # registry has nothing for this task's activity, research BEFORE asking,
+            # and hand the verified findings over as the catalog. Cost is not the
+            # constraint here; a real, bookable, verified option is.
+            pre = None
+            if not pack.get("coverage"):
+                pre = llm.research_json(_task_text(task), constraints,
+                                        max_searches=settings.RESEARCH_MAX_SEARCHES)
+                for r in (pre.get("recommendations") or []):
+                    r.setdefault("source", "live research (verified)")
+                    catalog.append(r)
+                log(f"       · registry has no {pack.get('activity') or 'match'} rows — "
+                    f"researched live, {len(pre.get('recommendations') or [])} verified option(s)")
+
             rec = _agent("plan_recs", {"task_json": task,
-                                       "catalog_json": pack["catalog"],
+                                       "catalog_json": catalog,
                                        "debate_circuits_json": pack["debate_circuits"],
+                                       "registry_covers": bool(pack.get("coverage")),
                                        "constraints_json": constraints})
-            # Catalog had nothing usable for this task -> research it live, then verify.
-            if rec.get("escalate") or not rec.get("recommendations"):
-                found = llm.research_json(task.get("text") or str(task), constraints)
+            if pre is not None:
+                rec["researched"] = pre
+            # Still nothing usable -> one more live pass, then escalate honestly.
+            if rec.get("escalate") or not (rec.get("recommendations") or rec.get("primary")):
+                found = llm.research_json(_task_text(task), constraints,
+                                          max_searches=settings.RESEARCH_MAX_SEARCHES)
                 rec["researched"] = found
                 if found.get("recommendations"):
                     rec["recommendations"] = found["recommendations"]
@@ -125,7 +178,20 @@ def run(intake: dict, log=print) -> dict:
             else:
                 blocked.append({"task": task.get("task_title"), "violations": violations})
     state["recommendations"] = recs
+    # Sum the YEAR, not just each item. [#51]
+    state["budget"] = modules.budget_ledger(recs, constraints)
+    b = state["budget"]
+    log(f"       · budget: ${b['year_total']:.0f} of ${b['year_ceiling'] or 0:.0f} for the year"
+        + (f", ${b['summer_total']:.0f} of ${b['summer_ceiling'] or 0:.0f} for summer" if b['summer_total'] else ""))
+    if not b["within_budget"]:
+        log(f"       ! over budget by ${b['over_by'] + b['summer_over_by']:.0f} — "
+            f"largest items: {[i['name'] for i in b['items'][:2]]}")
+    for x in b["geographically_blocked"]:
+        log(f"       ! dropped, outside the family's region: {x['name']}")
     grc = gates.gate_recs(recs); state.setdefault("_gates", []).append(grc)
+    gb = gates.gate_budget(state["budget"]); state.setdefault("_gates", []).append(gb)
+    if gb.verdict != gates.PASS:
+        log(f"      gate: {gb.verdict} — {'; '.join(gb.failures)}")
     if grc.verdict == gates.ESCALATE:
         log(f"      gate: ESCALATE — {'; '.join(grc.failures)} ({grc.notes})")
     state["blocked_by_guardrail"] = blocked
@@ -141,7 +207,30 @@ def run(intake: dict, log=print) -> dict:
                                         "profile_json": profile,
                                         "worry": constraints.get("stated_worry", ""),
                                         "numbers_json": {"tiers": state["college_tiers"], "tally": mr["tally"]},
+                                        "stage_bands_json": state["stage_bands"],
+                                        "capacity_json": state["capacity"],
                                         "reference_json": context.for_writer(profile, _college_seed(intended))})
+
+    # gate_draft was defined, documented and drawn on the diagram but never called —
+    # the writer's output reached the critic ungated. [#42]
+    allowed = []
+    for row in (context.for_writer(profile, _college_seed(intended))
+                .get("published_rates", {}) or {}).values():
+        if isinstance(row, dict):
+            r = row.get("rate_pct", row.get("rate"))
+            if r is not None:
+                allowed.append(r)
+    tally = mr.get("tally", {})
+    allowed += [tally.get("gpa_modal_share", 0) * 100, tally.get("test_modal_share", 0) * 100]
+    gd = gates.gate_draft(state["draft"], [a for a in allowed if a is not None])
+    state.setdefault("_gates", []).append(gd)
+    if gd.verdict != gates.PASS:
+        log(f"      gate: {gd.verdict} — {'; '.join(gd.failures)}")
+    # Did every goal the plan produced survive into the document? [#50]
+    gdoc = gates.gate_document(state["draft"], state["plan_goals"])
+    state.setdefault("_gates", []).append(gdoc)
+    if gdoc.verdict != gates.PASS:
+        log(f"      gate: {gdoc.verdict} — {'; '.join(gdoc.failures)}")
 
     log("  9/9  Critic ........... tone / honesty / plain English")
     verdict = _agent("critic", {"strategic_plan_json": state["draft"]})
@@ -165,6 +254,19 @@ def run(intake: dict, log=print) -> dict:
 def _grade(profile):
     return profile.get("cover", {}).get("grade") or \
         profile.get("intended", {}).get("grade") or "9"
+
+
+def _task_text(task):
+    if isinstance(task, str):
+        return task
+    for k in ("task", "task_title", "text", "goal"):
+        if task.get(k):
+            return str(task[k])
+    return json.dumps(task, default=str)[:400]
+
+
+def _seed_names(intended):
+    return [c["college"] if isinstance(c, dict) else c for c in _college_seed(intended)]
 
 
 def _college_seed(intended):

@@ -5,19 +5,20 @@ stat-cards, 4-column tier bands, a roadmap timeline, recommendation cards, numbe
 parent actions, and a dark final note. Data-driven from the `plan` dict — see the schema
 used in neerav_trial.py / mockdata.py.
 """
+import re
 import os
 from jinja2 import Template
 
 CSS = r"""
 @page { size: letter; margin: 0; }
-@page content { margin: 54px 62px 60px; }
+@page content { margin: 44px 58px 44px; }
 * { box-sizing: border-box; }
 :root{
   --ink:#1c2a21; --cream:#f4f1e8; --card:#fbfaf4; --gold:#a5852f; --gold2:#9c7b2e;
   --muted:#6f7469; --line:#e0dccb; --green:#5c6b3d; --greenbg:#e7ecd7;
   --purple:#5b4a86; --purplebg:#e8e4f1; --tan:#efe8d6;
 }
-body{ margin:0; color:#20281f; font-family:'Inter','Helvetica Neue',Arial,sans-serif; font-size:11px; line-height:1.55; }
+body{ margin:0; color:#20281f; font-family:'Inter','Helvetica Neue',Arial,sans-serif; font-size:10.5px; line-height:1.42; }
 .serif{ font-family:'Playfair Display','Georgia',serif; }
 h1,h2,h3,.serif{ font-family:'Playfair Display','Georgia',serif; color:#182117; font-weight:700; }
 
@@ -32,13 +33,13 @@ h1,h2,h3,.serif{ font-family:'Playfair Display','Georgia',serif; color:#182117; 
 
 /* ---------- content page frame ---------- */
 .page{ page: content; padding:0; page-break-before:always; }
-.rhead{ color:#9aa08f; letter-spacing:.18em; font-size:9px; text-transform:uppercase; margin-bottom:18px; }
+.rhead{ color:#9aa08f; letter-spacing:.18em; font-size:9px; text-transform:uppercase; margin-bottom:12px; }
 .slabel{ color:var(--gold2); letter-spacing:.16em; font-size:10px; font-weight:700; text-transform:uppercase; margin-bottom:6px; }
-h2.sec{ font-size:36px; margin:0 0 10px; }
-.lead{ color:var(--muted); font-style:italic; font-size:14px; line-height:1.5; max-width:80%; margin-bottom:20px; }
+h2.sec{ font-size:32px; margin:0 0 8px; }
+.lead{ color:var(--muted); font-style:italic; font-size:13px; line-height:1.42; max-width:82%; margin-bottom:14px; }
 .subhead{ font-size:15px; margin:16px 0 2px; }
 .thesis{ color:var(--gold2); font-style:italic; font-size:12px; margin-bottom:5px; }
-p{ margin:6px 0; }
+p{ margin:4px 0; }
 .small{ font-size:10px; } .mut{ color:var(--muted); }
 
 /* boxes */
@@ -86,6 +87,11 @@ th{ color:#3a463a; letter-spacing:.06em; font-size:9px; text-transform:uppercase
 td.tg{ color:var(--green); } td.st{ color:var(--purple); }
 
 /* roadmap */
+.grow.stretchgoal{ border-left:3px solid var(--purple); padding-left:9px; background:rgba(91,74,134,.045); }
+.trackpill{ font-size:7.5px; letter-spacing:.1em; text-transform:uppercase; padding:1px 5px;
+  border-radius:8px; margin-left:6px; vertical-align:2px; }
+.trackpill.s{ background:var(--purplebg); color:var(--purple); }
+.why{ font-size:9.5px; color:var(--muted); font-style:italic; margin:1px 0 3px; }
 .stages{ display:flex; gap:12px; margin:10px 0; }
 .stage{ flex:1; border:1px solid var(--line); border-top:3px solid var(--gold); border-radius:5px; padding:10px 12px; }
 .stage.g{ border-top-color:var(--green); } .stage.p{ border-top-color:var(--purple); }
@@ -223,9 +229,11 @@ TEMPLATE = Template(r"""
   {% for g in c.roadmap.grades %}
     <div class="gradebar"><span><span class="g">{{ g.grade }}</span> <span class="yrs">{{ g.years }}</span></span><span class="tag">{{ g.tag }}</span></div>
     <div class="gwrap">
-      {% for row in g.rows %}
-        <div class="grow"><div class="t">{{ row.title }}</div>
-          {% for t in row.tasks %}<div class="task"><span class="termpill">{{ t.term }}</span><span>{{ t.text }}</span></div>{% endfor %}
+      {% for row in (g.goals or g.rows) %}
+        <div class="grow {{ 'stretchgoal' if row.track == 'stretch' else '' }}">
+          <div class="t">{{ row.goal or row.title }}{% if row.track == 'stretch' %}<span class="trackpill s">stretch</span>{% endif %}</div>
+          {% if row.why_now %}<div class="why">{{ row.why_now }}</div>{% endif %}
+          {% for t in row.tasks %}<div class="task"><span class="termpill">{{ t.term }}</span><span>{{ t.text }}{% if t.track == 'stretch' and row.track != 'stretch' %}<span class="trackpill s">stretch</span>{% endif %}</span></div>{% endfor %}
         </div>
       {% endfor %}
     </div>
@@ -294,6 +302,9 @@ def _safe(d):
     d.setdefault("cover", {})
     for k, v in {"student": "Student", "grade": "", "prepared": "", "family": "", "date": ""}.items():
         d["cover"].setdefault(k, v)
+    # The template supplies the word "Grade"; a writer that also supplies it printed
+    # "Grade Grade 8" in every running header. Normalise rather than forbid. [#56]
+    d["cover"]["grade"] = re.sub(r"^\s*grade\s+", "", str(d["cover"]["grade"]), flags=re.I)
     d.setdefault("profile", {"title": "", "lead": "", "blocks": [], "flags": ""})
     for key in ("target", "stretch"):
         d.setdefault(key, {"lead": "", "card": {}, "bands": {"intro": "", "bands": []}})

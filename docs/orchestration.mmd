@@ -1,0 +1,82 @@
+flowchart TB
+
+  subgraph OFFLINE["REFERENCE DATA — built once, read by every run"]
+    direction TB
+    SRC[/"Reddit results posts<br/>parsed + verified"/]
+    PUB[/"Published sources<br/>CDS / official"/]
+    CORPUS[("corpus.csv<br/>2,613 students")]
+    APPROWS[("application rows<br/>30,414 after explode")]
+    RATES[("admit_rates.json<br/>33 schools + aliases")]
+    FIND[("findings.json")]
+    TAB[("tabroom_circuits.csv<br/>debate")]
+    MORE[("more competition DBs<br/>robotics · math · venture …")]
+    PROG[("programs.csv<br/>common program schema")]
+    SRC --> CORPUS
+    CORPUS -->|"load_corpus(applications=True)"| APPROWS
+    PUB -->|"refresh_rates.ensure_rate()"| RATES
+    REG["sources.json + programs.py<br/>registry → one common schema"]
+    TAB --> REG
+    PROG --> REG
+    MORE -.->|"register, don't rewire"| REG
+    CTX["context.py<br/>retrieval layer"]
+    RATES --> CTX
+    FIND --> CTX
+    REG --> CTX
+  end
+
+  subgraph RUNTIME["RUNTIME — per student"]
+    direction TB
+    IN[/"Intake form<br/>parent + student"/]
+    G0{{"gate: intake"}}
+    S1(["1 · Profile<br/>describes the kid"])
+    G1{{"gate: profile"}}
+    S2(["2 · Projected Profile<br/>best-case anchor"])
+    S3["3 · Match &amp; Rank<br/>modules.match_rank"]
+    G3{{"gate: retrieval"}}
+    S4(["4 · Gap Analyst<br/>diagnoses"])
+    G4{{"gate: gap"}}
+    S5(["5 · Strategy<br/>decides the moves"])
+    G5{{"gate: strategy"}}
+    S6(["6 · Two Paths<br/>target / stretch fork"])
+    G6{{"gate: two_paths"}}
+    S7(["7a · Plan Goals<br/>schedules"])
+    G7{{"gate: plan"}}
+    S8(["7b · Recommendations<br/>fan-out, one call per task"])
+    RES(["live research<br/>verified web lookup"])
+    S9["7c · Constraint Guardrail<br/>modules.constraint_guardrail"]
+    G8{{"gate: recs"}}
+    S10["7d · Tiering<br/>modules.tiering"]
+    S11(["8 · Writer<br/>composes the plan"])
+    G9{{"gate: draft"}}
+    S12(["9 · Critic<br/>tone / honesty / plain English"])
+    RENDER["render.py"]
+    PDF[("Strategic Plan PDF")]
+    TRAIL["quality trail<br/>gates.summarise()"]
+    HUMAN["Human review<br/>no PDF"]
+
+    IN --> G0 --> S1 --> G1 --> S2 --> S3 --> G3 --> S4 --> G4 --> S5 --> G5 --> S6 --> G6 --> S7 --> G7 --> S8
+    S8 -->|"catalog empty for this task"| RES
+    RES --> S9
+    S8 --> S9 --> G8 --> S10 --> S11 --> G9 --> S12 --> RENDER --> PDF
+
+    G1 -.->|"retry once, failure as feedback"| S1
+    G4 -.->|"retry once"| S4
+    G5 -.->|"retry once"| S5
+    G6 -.->|"retry once"| S6
+    G7 -.->|"retry once"| S7
+    G9 -.->|"rewrite"| S11
+    S12 -.->|"findings"| S11
+
+    G0 -.->|"ESCALATE"| HUMAN
+    G3 -.->|"ESCALATE: no admits / mock fallback"| HUMAN
+    G8 -.->|"ESCALATE: nothing verifiable"| HUMAN
+    G3 -.->|"DEGRADE: marked, run continues"| TRAIL
+    TRAIL --> PDF
+  end
+
+  APPROWS -->|"admit cards for the intended colleges"| S3
+  CTX -->|"ladder + findings"| S4
+  CTX -->|"what moved the needle"| S5
+  CTX -->|"published rates"| S6
+  CTX -->|"programs for this task"| S8
+  CTX -->|"published rates + evidence"| S11

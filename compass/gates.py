@@ -57,6 +57,16 @@ def gate_intake(intake):
         f.append("no constraints — every recommendation would be unbounded")
     if not (pa.get("intended_direction") or pa.get("intended")):
         f.append("no intended direction — retrieval has no target")
+    # Q8: "Has [child] mentioned any schools they like — even casually?" The form asks
+    # it; a record that does not carry it cannot be retrieved against, and the run
+    # will stop at step 3 rather than at step 0 where it is cheap to fix. [#46]
+    q8 = pa.get("schools_child_mentioned")
+    if q8 is None:
+        f.append("Q8 (schools the child has mentioned) missing from the record — "
+                 "map it from the intake form")
+    elif isinstance(q8, dict) and not q8.get("answer"):
+        f.append("Q8 was not answered — ask the parent which schools have come up, "
+                 "even casually. A parent's own alma mater is not an answer.")
     return GateResult("intake", ESCALATE if f else PASS, f,
                       "ask the parent before running" if f else "")
 
@@ -97,9 +107,12 @@ def gate_gap(gap):
     gaps = gap.get("gaps") or []
     if not gaps:
         f.append("no gaps produced")
-    VALID = {"at-or-above", "missing", "lower-level", "unknown-interest"}
+    # Accept either spelling of the closed set. The prompt names these with
+    # underscores and the gate was written with hyphens, so a correctly
+    # categorised gap map failed the gate on punctuation. [#54]
+    VALID = {"at_or_above", "missing", "lower_level", "unknown_interest"}
     bad = [g.get("category") for g in gaps if isinstance(g, dict)
-           and str(g.get("category", "")).lower() not in VALID]
+           and str(g.get("category", "")).lower().replace("-", "_") not in VALID]
     if bad:
         f.append(f"invalid categories: {bad[:3]}")
     nofreq = [g for g in gaps if isinstance(g, dict) and not g.get("frequency")]
@@ -120,22 +133,57 @@ def gate_strategy(strategy, gap, constraints):
         f.append("no moves selected — nothing was decided")
     if gaps and len(moves) >= len(gaps) and len(gaps) > 2:
         f.append(f"selected {len(moves)} of {len(gaps)} gaps — a pass-through, not a choice")
-    if len(moves) > 6:
-        f.append(f"{len(moves)} moves — no spike; effort is spread")
+    # A spike is ONE thread at core intensity, not a short list. Counting moves
+    # measured the wrong thing: a plan with seven moves and one core is a spike
+    # with support; a plan with four moves all marked core is not. The prompt was
+    # changed to say exactly that (#39) and the gate was still counting. [#54]
+    core = [m for m in moves if str(m.get("intensity", "")).lower() == "core"]
+    if moves and not core:
+        f.append("nothing marked core — no spike; the plan has no centre")
+    if len(core) > 1:
+        f.append(f"{len(core)} moves at core intensity — a spike is exactly one")
+    if len(moves) > 9:
+        f.append(f"{len(moves)} moves — more threads than a week can hold")
     if (strategy.get("dropped_moves") or []) and not (strategy.get("tensions") or []):
         f.append("moves dropped but no tensions recorded — the reasoning is invisible")
     return GateResult("strategy", RETRY if f else PASS, f)
 
 
 def gate_plan(plan_goals, strategy):
+    """R6 now returns `grades[]` covering every year to 12, with `is_current_year`
+    on one of them. The old gate only knew about `current_year` and failed a
+    correct five-year plan for not having the one-year shape. [#54]"""
     f = []
-    cur = plan_goals.get("current_year") or []
+    grades = plan_goals.get("grades") or []
+    cur = ([g for g in grades if g.get("is_current_year")]
+           or grades[:1] or plan_goals.get("current_year") or [])
     if not cur:
         f.append("no current-year plan — the parent has nothing to act on")
+    if grades and len(grades) < 2:
+        f.append("only one grade planned — this is a multi-year plan, not a year plan")
+    thin = [g.get("grade") for g in grades if len(g.get("goals") or []) < 2]
+    if thin:
+        f.append(f"grade(s) with fewer than two goals: {thin}")
     moves = strategy.get("selected_moves") or []
-    if moves and not plan_goals.get("multi_year_arc"):
+    if moves and not (plan_goals.get("multi_year_arc") or grades):
         f.append("no multi-year arc")
-    dated = [t for g in cur for t in (g.get("tasks") or []) if isinstance(t, dict) and t.get("term")]
+    # Walk the plan whatever depth it nests to. R6 legitimately returns either
+    # current_year -> goals -> tasks, or current_year -> TERMS -> goals -> tasks.
+    # The old version only looked one level down, so a correctly dated plan in the
+    # deeper shape was rejected for "carrying no dates" — a false failure that cost
+    # a retry on every run. Shape is the schema's job; the gate checks substance.
+    def _tasks(node):
+        if isinstance(node, dict):
+            for k in ("tasks", "goals", "terms", "rows"):
+                for child in (node.get(k) or []):
+                    yield from _tasks(child)
+            if node.get("term") or node.get("by_when") or node.get("date"):
+                yield node
+        elif isinstance(node, list):
+            for child in node:
+                yield from _tasks(child)
+
+    dated = list(_tasks(cur))
     if cur and not dated:
         f.append("no current-year task carries a term/date")
     return GateResult("plan_goals", RETRY if f else PASS, f)
@@ -148,11 +196,23 @@ def gate_recs(recs):
     t = _txt(recs)
     if "[CATALOG]" in t or "a local program" in t.lower():
         f.append("placeholder shipped")
+    # Accept every shape R7 actually returns. The old check looked only for a
+    # `recommendations` key, so a rec returning primary/alternates passed unread —
+    # including one whose own escalate flag was true. A gate that passes bad work
+    # is worse than one that fails good work.
+    def _payload(r):
+        for k in ("recommendations", "primary", "alternates", "name", "options"):
+            if r.get(k):
+                return True
+        return False
+
     unver = [r for r in (recs or []) if isinstance(r, dict)
-             and not r.get("escalate") and not r.get("verified")
-             and (r.get("recommendations") or r.get("name"))]
+             and not r.get("escalate") and not r.get("verified") and _payload(r)]
     if unver:
         f.append(f"{len(unver)} recommendation(s) neither verified nor escalated")
+    flagged = [r for r in (recs or []) if isinstance(r, dict) and r.get("escalate")]
+    if flagged:
+        f.append(f"{len(flagged)} recommendation(s) raised their own escalate flag")
     return GateResult("plan_recs", ESCALATE if f else PASS, f,
                       "a parent will phone this number" if f else "")
 
@@ -165,12 +225,26 @@ def gate_draft(draft, allowed_numbers):
     missing = [k for k in REQUIRED if not draft.get(k)]
     if missing:
         f.append(f"missing sections: {missing}")
-    pcts = set(re.findall(r"(\d{1,3}(?:\.\d)?)\s?%", _txt(draft)))
-    allowed = {str(a) for a in allowed_numbers} | {str(int(float(a))) for a in allowed_numbers}
-    stray = sorted(pcts - allowed)
+    # Match the WHOLE number, decimals and all. The old pattern allowed one decimal
+    # place, so "15.64%" matched as "64" and was reported as a number nobody handed
+    # over — a false failure on a correctly cited rate.
+    txt = _txt(draft)
+    pcts = {float(x) for x in re.findall(r"(\d{1,3}(?:\.\d+)?)\s?%", txt)}
+    allowed = set()
+    for a in allowed_numbers:
+        try:
+            v = float(a)
+        except (TypeError, ValueError):
+            continue
+        allowed |= {round(v, 2), round(v, 1), float(round(v))}
+    stray = sorted(v for v in pcts
+                   if not any(abs(v - a) < 0.051 for a in allowed))
     if stray:
         f.append(f"percentages not handed to the writer: {stray[:6]}")
-    if re.search(r"\b(his|her|their) (chance|odds|probability)\b", _txt(draft), re.I):
+    # "not his odds" is the rule being OBEYED, not broken. Only flag the phrase when
+    # it is asserting odds, i.e. when it is not negated right before.
+    if re.search(r"(?<!not )(?<!never )\b(his|her|their) (chance|odds|probability)\b",
+                 txt, re.I):
         f.append("personal-odds phrasing")
     return GateResult("writer", RETRY if f else PASS, f)
 
@@ -236,3 +310,115 @@ def gate_two_paths(tp, strategy=None):
     if re.search(r"moves? (up|from) .{0,20}(reach|target|likely)", _txt(tp), re.I):
         f.append("implies a SCHOOL changed band — fit moves, selectivity does not")
     return GateResult("two_paths", RETRY if f else PASS, f)
+
+
+def gate_document(draft, plan_goals):
+    """PLAN -> DOCUMENT RECONCILIATION. [#50]
+
+    We already reconcile the Outcome Card against the plan in both directions (#17).
+    The equivalent check for the roadmap never existed, so when the writer was told to
+    cut, it cut R6's goals and nothing noticed. A goal that exists in the plan and not
+    in the document is the plan quietly shrinking between two steps.
+    """
+    f = []
+    planned = []
+    for gr in (plan_goals.get("grades") or plan_goals.get("current_year") or []):
+        for go in (gr.get("goals") or []):
+            t = go.get("goal") or go.get("title")
+            if t:
+                planned.append((gr.get("grade"), t))
+    if not planned:
+        return GateResult("document", PASS, [], "no goals to reconcile")
+
+    rendered = _txt(draft.get("roadmap", {})).lower()
+    missing = [f"grade {g}: {t[:48]}" for g, t in planned
+               if not _overlap(t.lower(), rendered)]
+    if missing:
+        f.append(f"{len(missing)} plan goal(s) never reach the document: {missing[:3]}")
+
+    # Normalise before comparing: the plan says 8, the document says "Grade 8".
+    # This is the fourth gate to fail correct work on a representation difference
+    # rather than a substance one — compare meaning, never spelling. [#54]
+    def _num(x):
+        import re
+        m = re.search(r"\d+", str(x))
+        return m.group(0) if m else str(x).strip().lower()
+
+    grades_planned = {g for g, _ in planned if g}
+    grades_rendered = {_num(x.get("grade")) for x in (draft.get("roadmap", {}).get("grades") or [])}
+    gone = [g for g in grades_planned if _num(g) not in grades_rendered]
+    if gone:
+        f.append(f"grade(s) in the plan but not in the roadmap: {sorted(gone)}")
+
+    # TASK FIDELITY. [#56] Rendering every goal is not enough — the last run rendered
+    # all 20 and still lost the plan, because each task row was compressed from ~19
+    # words to ~11 and the names, fees and deadlines went out with the connective
+    # tissue. Presence was checked; substance was not. Check substance.
+    import re as _re
+
+    def _tasks_of(container, key_goals="goals", key_tasks="tasks"):
+        out = []
+        for gr in (container.get("grades") or container.get("current_year") or []):
+            for go in (gr.get(key_goals) or gr.get("rows") or []):
+                for t in (go.get(key_tasks) or []):
+                    txt = t.get("text") if isinstance(t, dict) else t
+                    if txt:
+                        out.append(str(txt))
+        return out
+
+    plan_tasks = _tasks_of(plan_goals)
+    doc_tasks = _tasks_of(draft.get("roadmap", {}))
+
+    if plan_tasks and doc_tasks:
+        stubs = [t for t in doc_tasks if len(t.split()) < 12]
+        if len(stubs) > len(doc_tasks) * 0.15:
+            f.append(f"{len(stubs)} of {len(doc_tasks)} task rows are under 12 words "
+                     f"(e.g. {stubs[0][:60]!r}) — rows were compressed, not the prose")
+
+        # A fact R6 put in a task must survive somewhere in the rendered roadmap.
+        # Capitalised multi-word names, prices and deadlines are the ones that vanish.
+        def _facts(s):
+            return set(_re.findall(r"\$[\d,]+|\b[A-Z][a-z]{2,}(?: [A-Z][a-z]{2,})+\b", s))
+
+        plan_facts = set().union(*[_facts(t) for t in plan_tasks]) if plan_tasks else set()
+        lost = sorted(x for x in plan_facts if x.lower() not in rendered)
+        if lost:
+            f.append(f"{len(lost)} fact(s) the plan put in a task never reach the "
+                     f"roadmap: {lost[:4]}")
+
+    return GateResult("document", RETRY if f else PASS, f,
+                      "the writer cut the plan, not the prose" if f else "")
+
+
+def _overlap(goal_text, haystack, need=0.5):
+    """Did this goal survive into the document, in any wording?"""
+    import re
+    words = {w for w in re.findall(r"[a-z]{4,}", goal_text)
+             if w not in {"with", "that", "this", "から", "keep", "from", "into", "year"}}
+    if not words:
+        return True
+    hit = sum(1 for w in words if w in haystack)
+    return hit / len(words) >= need
+
+
+def gate_budget(ledger):
+    """The year's recommendations must fit the family's stated ceiling. [#51]
+
+    A plan a family cannot afford is not a plan; it is a sales document. This is a
+    RETRY rather than an escalation because the fix is in our hands — drop or
+    substitute the expensive item — not the parent's.
+    """
+    f = []
+    if not ledger:
+        return GateResult("budget", PASS, [])
+    if not ledger.get("within_budget"):
+        over = (ledger.get("over_by") or 0) + (ledger.get("summer_over_by") or 0)
+        biggest = [i["name"] for i in (ledger.get("items") or [])[:2]]
+        f.append(f"over the family's stated budget by ${over:.0f} — largest: {biggest}")
+    if ledger.get("geographically_blocked"):
+        f.append(f"{len(ledger['geographically_blocked'])} recommendation(s) outside the "
+                 "family's stated region reached the plan")
+    if ledger.get("above_session_ceiling"):
+        f.append(f"{len(ledger['above_session_ceiling'])} above the per-session ceiling")
+    return GateResult("budget", RETRY if f else PASS, f,
+                      "a plan they cannot afford is not a plan" if f else "")

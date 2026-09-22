@@ -755,3 +755,376 @@ hypothesis to verify against the intake and reference data, never content to tra
 - **Also encoded:** distrust any synthesis arriving with the source data — read the raw outcomes
   and form conclusions from them, because third-party optimism routinely outruns the outcomes.
   Two pages is a hard constraint; no cover, no how-to-read page, no synthesis page.
+
+---
+
+# Rules 32–42 — from the first real run
+
+Everything above came from reading output. **These came from running it.** On 18–21 Sep 2026
+Neerav's intake went through all ten agents with the live prompts, real modules and real gates,
+and every step was graded blind against its rubric. Nine of eleven findings below are things
+no amount of reading the prompts would have surfaced.
+
+## 32. One fact, one place
+- **Found:** the generated plan ran 9,200 words against a 4,036-word benchmark — 20 pages
+  where 12 were wanted. The excess was almost entirely repetition: the business-fair
+  registration dates appeared three times, the tennis-clinic rationale three times, roadmap
+  stage bodies restated the task rows printed directly beneath them.
+- **Rule:** a date, price, programme name, contact or rationale appears exactly ONCE, in the
+  section that owns it. Elsewhere, point to it. Never restate.
+- **Lands in:** `PROSE` contract — inherited by profile, gap, strategy, plan, writer.
+
+## 33. Never narrate our own inputs to a parent
+- **Found:** the draft told the reader "the intake does not say X" in nine places, and the
+  profile lead opened with "Everything here comes from what the family and he said in the
+  intake."
+- **Rule:** "the intake does not say X" is a note to ourselves. The reader gets the action it
+  implies — "confirm X". Provenance lives in the `flags` field and nowhere else.
+- **Lands in:** `PROSE` contract.
+
+## 34. No markdown in any string
+- **Found:** four `**bold**` markers printed literally in the finished PDF. The Outcome Card
+  takeaway reached the parent as `**One thread, carried the whole way**`.
+- **Rule:** no `**`, no `_`, no backticks, no bullet characters inside a string. Emphasis is
+  the template's job.
+- **Lands in:** `PROSE` contract.
+
+## 35. THE OUTPUT SHAPE CONTRACT — the largest single finding
+- **Found:** four of nine gate verdicts on the first run were WRONG, and every one traced to
+  shape drift. R1 returned `constraints` as a list of `{item, value}` pairs where the code
+  reads `constraints.location` — that crashed the retrieval layer. R6 nested tasks one level
+  deeper than `gate_plan` looked. R7 returned `primary`/`alternates` where the pipeline reads
+  `recommendations`, so `gate_recs` passed a recommendation whose own escalate flag was true.
+  Every prompt named its keys; none named its container types.
+- **Rule:** a new shared `SCHEMA` contract. Return every key named in the spec even when
+  empty; return each in the container type the spec names; never rename, abbreviate or nest
+  deeper; no prose outside the JSON.
+- **Lands in:** `SCHEMA` contract, plus an explicit shape block in PROFILE and PLAN_GOALS.
+- **Note:** a false PASS is worse than a false FAIL. `gate_recs` was the only gate that let
+  bad work through, and it was the one whose shape assumption was wrong.
+
+## 36. Identity must be carried, and the cover must be read
+- **Found:** the finished plan never named the child. Its cover read "Student name to be
+  confirmed — the intake does not carry one." The name was in the intake; R1's schema had no
+  field for it, so it was dropped before the writer ever saw it. The writer behaved correctly,
+  flagging rather than inventing. The critic then missed it across all twelve of its findings —
+  it audited the body closely and never read the cover.
+- **Rule:** R1 returns an `identity` object (first_name, last_initial, grade, school, location,
+  parent, class_of), copied verbatim. The writer uses the real name. The critic runs a cover
+  and identity sweep FIRST, and any placeholder reaching the reader forces `escalate`.
+- **Lands in:** PROFILE shape spec, WRITER, CRITIC section 0b.
+
+## 37. Target colleges come from the family, never from inference
+- **Found:** the run could not complete. The intake never asks which colleges the family is
+  aiming at; R1 correctly refused to invent them; retrieval had no target and `gate_retrieval`
+  escalated at step 3. The only college names anywhere in the intake were the mother's alma
+  mater and the stepfather's employer.
+- **Rule:** `intended.colleges` is a list. Empty if the intake names none, plus a
+  flags_to_confirm entry. Never infer a target from a parent's own degree — a mother's Columbia
+  degree is a fact about her, not a target for him. An empty list correctly stops the run; an
+  invented one produces a confident plan aimed at schools nobody chose.
+- **Lands in:** PROFILE shape spec. **Also an intake change:** the form must ask.
+
+## 38. Length is a hard constraint, because a section is a page
+- **Found:** cutting 5,700 words to 4,100 did not reduce the page count at all. Each section
+  starts on a fresh page, so a section running four lines long costs a whole page, and the page
+  it spills onto carries fifty words and looks broken. Five sections were each doing this.
+- **Rule:** a per-section word budget totalling ~3,700, stated in the writer prompt as a defect
+  of the same order as a wrong number. Plus the three section shapes that hold it:
+  roadmap = three 35–45-word stage cards and one detailed year; this_year cards = two-sentence
+  body then specification lines (`Primary — name · age fit · format · price`), with contact and
+  plan-by untouchable; course = at most 4 target bullets and 3 stretch bullets, targets only.
+- **Lands in:** WRITER. Also `render.py` CSS was tightened (body 11px/1.55 → 10.5px/1.42,
+  narrower page margins) so a few long lines no longer cost a page.
+
+## 39. Exactly one thread at core intensity
+- **Found:** strategy returned twelve selected moves with no spike. The gate caught it, the
+  retry came back with six — but still four of them marked `core`, which is the same failure
+  one level down.
+- **Rule:** whatever is marked `core`, there is ONE of it. Everything else is steady, maintain
+  or subtracted. If two candidates both look core, the one with existing evidence wins and the
+  other becomes its support.
+- **Lands in:** STRATEGY.
+
+## 40. Three rules that keep the Gap Analyst in its lane
+- **Found:** graded C — the lowest score of the run. It counted the student's activities itself
+  and got it wrong; it used categories outside the defined set; it made fit and priority
+  judgments that belong to strategy; and its gaps carried no school stamp, so nothing
+  downstream could reconcile them.
+- **Rule:** count nothing yourself — every number was handed to you. The category set is
+  closed: at_or_above / missing / lower_level, and an activity that exists at any level is
+  `lower_level`, never `missing`. No fit or priority judgments anywhere, including in
+  `grade_context`. Stamp every gap with its school and major.
+- **Lands in:** GAP.
+
+## 41. A task without a date is a wish
+- **Found:** after the roadmap was cut to fit, the grade-8 rows had become stubs — "Register
+  him.", "Check the next fair window." Technically dated, useless to a parent.
+- **Rule:** each task is a full sentence saying what happens and why it falls in that week,
+  roughly 12–20 words. The current year gets dated rows; grades 9–12 get none.
+- **Lands in:** PLAN_GOALS shape spec, WRITER roadmap shape.
+
+## 42. Two gate bugs, and one gate that was never switched on
+- **Found:** `gate_draft` was defined in `gates.py`, documented in `GATES.md` and drawn on the
+  orchestration diagram — and `pipeline.py` never called it. The writer's output reached the
+  critic ungated. When finally run by hand it failed a correct document twice, on two bugs of
+  its own: its percentage regex allowed one decimal place, so "15.64%" read as an unauthorised
+  "64%", and its odds check fired on the phrase "not his odds" — the rule being obeyed.
+  `gate_plan` and `gate_recs` had the shape bugs in #35.
+- **Rule:** gates are code and get the same scrutiny as code. A gate nobody runs is worse than
+  no gate, because the diagram says it is there.
+- **Lands in:** `gates.py` (regexes fixed; `gate_plan` now walks the plan at any depth;
+  `gate_recs` reads every shape R7 returns and honours a rec's own escalate flag) and
+  `pipeline.py` (gate_draft wired in after the writer).
+
+## 43. Write about the child, not about our file on him
+- **Flagged on:** the generated plan, after the length and structure were already right.
+  Aayushi: *"check the writing part on the profile and overall, it is way overboard. dont put
+  what you are thinking on the pdf."*
+- **What it was doing:** narrating the system's reading of a record instead of describing a boy.
+  "The one thing in his record that is entirely his own is a Pokemon card business." "Five other
+  activities sit alongside the business, each recorded at a different level, and two of his
+  stated interests have nothing attached to them yet." Both are true, both are about our file.
+  The same facts, written correctly: "He started it on his own, without anyone assigning it."
+  "He competes across several areas — and tends to place when he does."
+- **Rule:** say the thing, never how we came to know it, how complete it is, or what we were
+  able to do with it. Banned in any sentence a parent reads: on record · recorded · no record ·
+  stated · verbatim · as listed · as given · supplied · attached · not assessed · to be
+  confirmed · evidence · the intake · what the plan can use. Anything that genuinely needs
+  confirming is named once, as an action, in the flags box or the parent-action list.
+  And one idea per sentence — three clauses with two qualifiers is two sentences, or a cut.
+- **Lands in:** the shared `PROSE` contract, so profile, gap, strategy, plan and writer all
+  inherit it.
+- **Note:** this is the rule that separates the generated plan from the hand-written one. The
+  structure, the facts and the length were already matched; the voice was the whole remaining
+  gap.
+
+## 44. Per-school admit pattern — the fix for "not assessed", and the calibration mechanism
+- **Flagged on:** every school on the Two Paths card came back `sufficient: false`, fit "not
+  assessed". The step was handed one corpus-wide tally — 67 students across six schools — and
+  asked to assess fit school by school. It refused, correctly. A wiring failure, not a prompt one.
+- **Fix:** `modules.admit_pattern_by_school()` — per college: how many admits we actually hold,
+  their GPA and test bands, which credential types appear among them and how often, and the
+  rung each credential typically reached. Wired into the Two Paths payload; the corpus-wide
+  tally rides along separately.
+- **It also answers the calibration question** Nick raised — *did we aim too high or too low?*
+  For Neerav's six schools we hold 79–280 admits each. School/club level is modal for every
+  credential type; national sits at roughly 10–20% of admits who hold that credential. So a
+  national result is a real differentiator rather than the baseline, our target plan sits at
+  the modal admit, and our stretch sits about one rung above it. That is the number to aim at:
+  **the middle of the distribution, not the tail.**
+- **One precision bug worth recording.** The first version read the level from the whole post,
+  so "National Honor Society" and "international student" made *every* credential national at
+  *every* school — a confidently wrong calibration that looked authoritative. The level is now
+  read from a ±140-character window around the credential itself, with those phrases stripped.
+  A calibration number that is wrong is worse than none.
+- **Honest limit:** a level is only counted when the applicant stated one, and many do not.
+  Modal level means modal *among those who said*.
+
+## 45. Live research is the mechanism, not the fallback
+- **Aayushi:** *"the program registry that we have is only for the debate. So if you are looking
+  for any recommendation which is out of debate, then go to the live web search… Don't worry
+  about the cost."*
+- **Was:** the agent got an empty catalog, tried anyway, and research only ran afterwards if it
+  escalated — a wasted call and a weaker recommendation.
+- **Now:** when the registry has no rows for a task's activity, the pipeline researches FIRST and
+  hands the verified findings over as the catalog. The after-the-fact pass stays as a second
+  chance. Search depth is a setting (`RESEARCH_MAX_SEARCHES`, default 8) rather than a constant,
+  and it is set for thoroughness.
+- **Unchanged:** verification. A researched option still has to be real and bookable, or it
+  escalates. Spending more does not lower the evidence bar.
+
+## 46. Q8 exists — the engine was not reading it
+- **Aayushi:** *"there is a question where it specifically asks… which colleges he intends to go.
+  So look into that."* She was right. **Q8: "Has [child] mentioned any schools they like — even
+  casually?"** is in the live intake form; real answers in the export read "NYU, Stanford,
+  Berkeley, Chicago", "Michigan, Texas, Wisconsin, Duke, Vanderbilt, Indiana", "mit", "no".
+  Our intake record simply never carried it, so the run stopped at step 3 every time.
+- **Fix:** `schools_child_mentioned` (Q8), `college_ambition` (Q1) and `alumni_connections` (Q45)
+  are now intake fields; `gate_intake` fails at step 0 with a specific message rather than
+  letting the run die at step 3; R1 maps Q8 into `intended.colleges`; `data/INTAKE_FIELD_MAP.md`
+  documents the mapping and the questions still unmapped.
+- **The three traps, now written into the prompt:** a parent's own alma mater (Q45) is a hook and
+  never a target; an ambition band (Q1) says how high, not where; a field of study is a major.
+  Each of these was a plausible wrong answer to "which colleges", and R1 fell for the first one.
+
+# Rules 47–51 — the positive structure
+
+Rules 1–46 were almost all prohibitions. Given a list of things not to do and a hard
+word budget, a model complies the cheapest way available: by deleting substance. That
+is how a five-year plan became a date ledger for one year. These five say what a plan
+must CONTAIN.
+
+## 47. Capacity is computed, and homework is in it
+- **Aayushi:** goals have to fit the hours the child actually has left. She worked the
+  arithmetic out loud: 24 hours, minus school, minus sleep, minus leisure, minus what
+  he already does — what remains is what a new goal may cost.
+- **`modules.capacity_budget()`** computes it per grade: sleep, school and commute,
+  homework, meals and downtime, then subtracts the hours already committed, read from
+  the profile's own activity hours. So dropping a low-value activity returns its hours
+  to the budget — subtraction is a real planning move, not a tidy-up.
+- **Homework was missing from her arithmetic**, and it is the line that grows: ten
+  minutes per grade per night, so an hour more per day by grade 11 than grade 8. Left
+  out, every plan overcommits, worst in the years that matter most. For Neerav: 16.8
+  free hours a week at grade 8, 13.5 by grade 12.
+- **Summer is a separate pool** — no school, no homework, roughly 45 hours a week. The
+  budget switches rather than scales, which is why the big commitments live there.
+- **A correction made on the way.** The first version tapered sleep with age. That
+  exactly cancelled the homework growth and made the budget look flat, so the claim
+  "it tightens every year" was false as coded. Teens need 8–10 hours at every one of
+  these ages, so sleep is now held constant and the budget genuinely tightens.
+- **R1 must carry `hours_per_week` per activity.** It was in the intake and dropped in
+  the profile, so the budget had nothing to subtract.
+
+## 48. The arc, the goals, and what a task is not
+- **Stages are relative to the student's grade.** Explore runs from now to grade 9,
+  Solidify is always grade 10, Specialize is always 11–12. A grade 7 child explores
+  for three years; a grade 9 child for one. Labels are two or three plain words and a
+  colour — a visual band, not a paragraph.
+- **Every grade gets its own goals, every goal its own tasks**, current grade through
+  12. Not just this year. 3–5 goals for the current grade, 2–4 for later ones.
+- **Target and stretch, at two levels.** A stretch GOAL is its own bullet in the
+  semester or year it belongs to, never folded inside a target goal. A target goal may
+  carry a stretch TASK beneath it. Both goals and tasks carry `track`, and the renderer
+  colours each.
+- **A task is a step sized to a term, not a diary entry.** "Enter one local tournament
+  in whichever format he liked best" is a task. "Sept 22 — he decides what he is
+  selling and sketches the booth" is a calendar, and it is what a plan looks like when
+  it has no goals above it. Dates belong on the recommendation cards.
+- **Levels, never ranks.** Taking part at a level is target; placing at it is stretch.
+  No source we hold publishes a national ranking, so none is ever stated.
+
+## 49. Three tiers, and the lead-time rule
+- **Every recommendation shows free, budget and premium**, each with what it is, who it
+  is for, format and cost, plus a budget check naming the family's ceiling when an
+  option exceeds it. Where no free option exists, the card says so rather than dropping
+  the tier. A single option is an instruction, not a recommendation.
+- **`plan_by` is when to ACT, not the deadline** — weeks earlier, with the reason.
+  **Never recommend something already inside its lead time.** If today is too close to
+  the next occurrence, name the one after it with its date. A fair three days away is
+  not a recommendation; it is a reason the family feels behind.
+- **No quantity targets, ever.** Not revenue, sales, followers or hours raised. Any
+  number a family can manufacture proves nothing, and inventing one is the failure the
+  rule exists to stop. The outcome is verifiable instead — sell to customers outside
+  the family and record what it made — and the figure comes back from the student
+  afterwards. That also turns it from a number we invent into one we learn.
+- **What counts, per category:** a deliverable, or a real outside body that can vouch.
+  Research needs a paper or a recognised programme; arts a competition or a real
+  institution; sports varsity or district/state/national; service a named organisation;
+  venture registration and a ledger, or a role inside something that already exists —
+  joining something real usually beats founding something small.
+
+## 50. Plan → document reconciliation
+- We already reconcile the Outcome Card against the plan in both directions (#17). The
+  equivalent check for the roadmap never existed. So when the writer was told to cut,
+  it cut R6's goals, and nothing noticed. **That is why the five-year plan could vanish
+  silently between two steps.**
+- **`gate_document`** fails the run when a goal in the plan never reaches the document,
+  or when a whole grade does. Failure message: "the writer cut the plan, not the prose."
+
+## 51. The budget ledger — sum the year, not the item
+- **Aayushi:** the total of everything we recommend has to sit under the ceiling the
+  parent gave. `constraint_guardrail` only ever checked one recommendation at a time,
+  so four options could each be affordable and total nearly twice the limit. Nobody was
+  adding them up.
+- **`modules.budget_ledger()`** totals the year and the summer separately against their
+  own ceilings, and enforces geography at the same time: an in-person option outside
+  the family's stated region is dropped, and reported separately because it is not a
+  money problem — dropping something else does not make it possible.
+- **Three bugs found while testing it**, all of which would have blocked legitimate
+  options: a stated range is a ceiling at its TOP ("$2,000–$5,000" means they can go to
+  $5,000); a per-hour ceiling only compares against a per-hour price, never against a
+  semester fee; and summer items must be detected to be charged to the summer ceiling.
+- **`gate_budget`** retries rather than escalates: the fix is ours — drop or substitute
+  the expensive item — not the parent's.
+
+## 52. The calibration evidence reaches the steps that decide
+- **The bug:** `admit_pattern_by_school` (#44) was computed just before Two Paths, at
+  step 6. Gap is step 4 and Strategy is step 5. So the step that MEASURES the distance
+  and the step that DECIDES what to do about it were the only two working without the
+  evidence — and Plan, which sizes the goals, got it only by accident of ordering.
+- **Fix:** computed once straight after retrieval, then handed to Gap, Strategy, Two
+  Paths and Plan alike. Three lines of payload and one moved computation.
+- **The rule all four now share:** aim at the MODAL level among admits who held that
+  credential; the stretch is one rung above it. A credential a tenth of admits reached
+  is a differentiator, not a baseline — putting it in the target plan states it as a
+  requirement, which is both false and discouraging. Where a school's `sufficient` is
+  false, say the distance cannot be measured there rather than borrowing another
+  school's pattern.
+- **This is the answer to "did we aim too high or too low."** It is the only check we
+  have, and until now it reached one step out of four.
+
+## 53. The critic could not see the contracts it enforces
+- The critic is the enforcement layer, and it carried none of the five shared contracts —
+  only its own numbered checks, written months of rules ago. So every rule added since
+  (#32–#52: one-fact-one-place, no self-narration, no markdown, the plan's shape, levels
+  not ranks, no quantity targets) was unenforced at the last gate before the PDF.
+- **Fix:** CRITIC now carries EVIDENCE, TONE, PROSE, PLANNING_STRUCTURE and CARD_GRAMMAR
+  verbatim, with one line above them: *the checks are the failures we have already seen;
+  the contracts are the standard.* An audit of contract injection across all ten prompts
+  also found gap, strategy, two_paths, projected and plan_recs missing the output-shape
+  contract, and writer missing the plan's shape. All filled.
+
+## 54. Four gates failed correct work on spelling, not substance
+Found by running the whole pipeline on the new prompts. Every one of these rejected
+output that was right:
+- **`gate_gap`** held the category set with hyphens (`lower-level`) while the prompt
+  specifies underscores (`lower_level`). A correctly categorised 66-gap map failed on
+  punctuation.
+- **`gate_strategy`** counted moves — "more than 6 is no spike" — while the prompt had
+  been changed to require exactly one move at core intensity. Seven moves with one core
+  is a spike with support; four moves all marked core is not. It was measuring the wrong
+  thing.
+- **`gate_plan`** knew only the old `current_year` shape and failed a correct five-year
+  plan for not being a one-year plan.
+- **`gate_document`** compared the plan's `8` against the document's `"Grade 8"` and
+  reported all five grades missing.
+- **The pattern, and the rule:** every time a prompt's contract changes, its gate is part
+  of that change. A gate compares MEANING, never spelling — normalise both sides first.
+  Four false failures in one run is what happens when prompt and gate drift apart, and a
+  false failure costs a retry on every run until someone looks.
+
+## 55. Three kinds of non-task
+- **Found:** reading the grade-8 page, almost every row was something other than a task.
+  *Research assignments handed back* — "Find out how a business his age registers and files
+  here", "Find his high school's league", "Tell us which organisations ran the chess
+  tournaments". The engine already knew the first: R7's free tier named the San Jose business
+  tax registration and the Santa Clara County fictitious-name filing. That answer sat in the
+  recommendations output and never reached the task. *States, not actions* — "Keep the ledger
+  current", "Let it run", "Keep the same slot without growing it": nothing happens on any given
+  day. *Decisions* — "Decide whether he wants a second fair": that is what a task produces.
+  Plus one goal, "Go into grade nine with a week that fits", carrying course selection, French,
+  dropping three activities, a question back to the parent, ping-pong and tennis.
+- **Rule:** a task is ONE ACTION A PERSON CAN START. A task beginning "find out" / "confirm
+  how" / "check whether" is resolved from the inputs, or its question goes in a new
+  `needs_lookup` field for the recommendation step — never into the text a parent reads. A
+  continuing commitment states what continuing looks like, with a check on it. A decision is
+  written as the step that makes the decision possible. And one goal, one subject: if you
+  cannot say what it is for without the word "and", split it.
+- **Lands in:** PLAN_GOALS. Adds `needs_lookup` to the task schema.
+
+## 56. The word budget ate the plan
+- **Found:** R6 produced good tasks and the document printed fragments. Mean task length fell
+  19.5 → 11.4 words, below the 12–20 floor rule #41 had already set. R6 wrote "Register for the
+  Children's Business Fair – San Jose, run by Acton, at childrensbusinessfair.org — closes
+  Oct 17, $50 booth fee"; the page read "Register for the Children's Business Fair." Three
+  proper nouns vanished. `gate_document` (#50) passed it, because it checks that every goal is
+  PRESENT and never that it still carries anything.
+  The cause was arithmetic in my own prompt: roadmap was budgeted at 500 words for 60 tasks.
+  At the 12-word floor that is 720 words of task text alone. The budget was unsatisfiable, so
+  the model satisfied it the only way available — by deleting substance. This is the mechanism
+  behind "the more rules I give you, the worse the PDF gets": a prohibition with no room left
+  to obey it is an instruction to cut the content.
+- **Rule:** the roadmap is a table of the plan, not a prose section, and has NO word budget —
+  its length is whatever the plan needs. The budget is what you cut *from*: the prose sections.
+  A task row is a full sentence, 12–20 words; every proper noun, price, age limit, named
+  organisation and registration deadline R6 put in a task survives into the row. Only a diary
+  date moves out; a registration deadline is what makes the row actionable and stays.
+- **Lands in:** WRITER (budget rebalanced, roadmap exempted, compression banned),
+  `gates.py` — `gate_document` now checks task-row length and fact survival, not just presence.
+  Run against the failing document it reported: *48 of 60 rows under 12 words; 3 facts lost.*
+- **Also:** the roadmap row spec named `{title, tasks}` while the template reads `row.goal`,
+  `row.track` and `row.why_now` — #35 again, in my own spec, so every goal lost its why-now
+  line. Spec corrected. And `cover.grade` carrying "Grade 8" into a template that supplies the
+  word printed "Grade Grade 8" in every running header; normalised in `render.py`.
+- **Result:** 11 pages, 62 of 62 rows rendered, mean 19.5 words, both gates PASS.

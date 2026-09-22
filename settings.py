@@ -28,6 +28,11 @@ MODEL_MID = os.environ.get("COMPASS_MODEL_MID", "claude-sonnet-4-20250514")   # 
 
 MAX_TOKENS = 4096
 TEMPERATURE = 0.2          # low — we want reproducible-ish structure
+# Live research depth. The program registry only really covers debate, so every
+# other activity is researched live — that is the mechanism, not a fallback. Set
+# generously: a verified, bookable option is worth far more than a saved call. [#45]
+RESEARCH_MAX_SEARCHES = int(os.environ.get("COMPASS_RESEARCH_SEARCHES", "8"))
+
 MAX_JSON_RETRIES = 2       # reask once if the model returns invalid JSON
 
 # ---------------------------------------------------------------------------
@@ -47,8 +52,17 @@ CORPUS_CSV = os.environ.get(
 # IPEDS institution DB (published admit rates, test bands) — used for tiering.
 IPEDS_SQLITE = os.environ.get("COMPASS_IPEDS", os.path.join(DATA_DIR, "ipeds.sqlite"))
 
-# Hand-seeded program catalog (name, category, cost, format, location, url, ...).
+# Hand-seeded program catalog (legacy shape — superseded by programs.csv below,
+# still read so nothing that referenced it breaks).
 CATALOG_CSV = os.environ.get("COMPASS_CATALOG", os.path.join(DATA_DIR, "catalog.csv"))
+
+# --- PROGRAM / COMPETITION REGISTRY -----------------------------------------
+# sources.json is the list of databases we draw on (one entry per source, with
+# the adapter that maps it into the common schema). programs.csv is that common
+# schema. Adding a new competition database means editing these two files, not
+# the engine. See compass/programs.py and data/README.md.
+SOURCES_JSON = os.environ.get("COMPASS_SOURCES", os.path.join(DATA_DIR, "sources.json"))
+PROGRAMS_CSV = os.environ.get("COMPASS_PROGRAMS", os.path.join(DATA_DIR, "programs.csv"))
 
 # --- COLUMN MAP -------------------------------------------------------------
 # Rename these to match the real headers in your corpus CSV. The code only ever

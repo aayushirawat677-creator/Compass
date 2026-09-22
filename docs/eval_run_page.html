@@ -1,0 +1,163 @@
+<title>First Real Run</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --ground:#eceff0; --surface:#ffffff; --panel:#f6f8f8;
+    --ink:#11171b; --muted:#5d6b72; --line:#d3dadd;
+    --a:#1d6b62; --b:#2f4f8f; --c:#9a6310; --f:#94362a;
+    --a-s:#e4f0ee; --b-s:#e9eff9; --c-s:#f7eede; --f-s:#f8e8e5;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#0e1418; --surface:#151d22; --panel:#111a1f;
+      --ink:#e4eaec; --muted:#93a3aa; --line:#27333a;
+      --a:#57bfb2; --b:#8fb2ea; --c:#dfa242; --f:#e08072;
+      --a-s:#11292a; --b-s:#18263a; --c-s:#2b2115; --f-s:#2d1815;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0e1418; --surface:#151d22; --panel:#111a1f;
+    --ink:#e4eaec; --muted:#93a3aa; --line:#27333a;
+    --a:#57bfb2; --b:#8fb2ea; --c:#dfa242; --f:#e08072;
+    --a-s:#11292a; --b-s:#18263a; --c-s:#2b2115; --f-s:#2d1815;
+  }
+  body{background:var(--ground); color:var(--ink);
+    font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,sans-serif;
+    font-size:15px; line-height:1.5; margin:0;}
+  .wrap{max-width:900px; margin:0 auto; padding-inline:20px; padding-block:36px 56px;}
+  h1{font-size:clamp(25px,4vw,34px); font-weight:600; letter-spacing:-.02em; margin:0 0 8px; text-wrap:balance;}
+  h2{font-size:18px; font-weight:600; margin:0 0 10px; letter-spacing:-.01em;}
+  p{margin:0 0 12px; max-width:66ch;}
+  .eyebrow{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--muted); margin:0 0 8px;}
+  .lede{color:var(--muted); font-size:16px; max-width:62ch; margin-bottom:20px;}
+  section{margin-top:36px;}
+  code{font-family:"IBM Plex Mono",monospace; font-size:.88em;}
+
+  .headline{display:grid; gap:10px; margin-top:18px;}
+  .find{background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--fc,var(--line));
+    border-radius:2px; padding:13px 15px;}
+  .find h3{margin:0 0 4px; font-size:15px; font-weight:600;}
+  .find p{margin:0; font-size:13.5px; color:var(--muted); max-width:70ch;}
+  .stop{--fc:var(--f);} .warn{--fc:var(--c);} .info{--fc:var(--b);}
+
+  .tablewrap{overflow-x:auto; border:1px solid var(--line); border-radius:3px; background:var(--surface);}
+  table{border-collapse:collapse; width:100%; min-width:640px; font-size:13.5px;}
+  th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--line); vertical-align:top;}
+  th{font-size:11px; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); font-weight:500; white-space:nowrap;}
+  tbody tr:last-child td{border-bottom:0;}
+  .g{font-family:"IBM Plex Mono",monospace; font-weight:500; font-size:13px;
+    padding:1px 8px; border-radius:2px; display:inline-block;}
+  .gA{color:var(--a); background:var(--a-s);} .gB{color:var(--b); background:var(--b-s);}
+  .gC{color:var(--c); background:var(--c-s);} .gF{color:var(--f); background:var(--f-s);}
+  .gate{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--muted); white-space:nowrap;}
+  .bad{color:var(--f);}
+
+  ol.fixes{margin:0; padding-left:0; list-style:none; counter-reset:f; display:grid; gap:12px;}
+  ol.fixes li{counter-increment:f; background:var(--panel); border:1px solid var(--line);
+    border-radius:3px; padding:14px 16px 14px 46px; position:relative;}
+  ol.fixes li::before{content:counter(f); position:absolute; left:16px; top:14px;
+    font-family:"IBM Plex Mono",monospace; font-size:16px; color:var(--muted);}
+  ol.fixes h3{margin:0 0 4px; font-size:15px; font-weight:600;}
+  ol.fixes p{margin:0 0 6px; font-size:13.5px; color:var(--muted); max-width:70ch;}
+  .lift{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--a);}
+
+  footer{margin-top:44px; padding-top:14px; border-top:1px solid var(--line);
+    color:var(--muted); font-size:12.5px;}
+  footer p{max-width:70ch; margin:0 0 6px;}
+</style>
+
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Compass · Neerav U. · grade 8 · 18 Sep 2026</p>
+  <h1>First real run</h1>
+  <p class="lede">Nine agent steps run with the live prompts and real data, graded blind against your rubrics. Not mock mode — real generated output, for the first time.</p>
+</header>
+
+<section>
+  <h2>Three things before the grades</h2>
+  <div class="headline">
+    <div class="find stop">
+      <h3>The run cannot finish on its own</h3>
+      <p>It stops at step 3. The intake never asks which colleges the family is aiming at, and R1 correctly refuses to invent them — so retrieval has no target and <code>gate_retrieval</code> escalates. Everything below required a human to supply six target schools. This is the blocker: one intake question fixes it.</p>
+    </div>
+    <div class="find stop">
+      <h3>The finished plan does not name the child</h3>
+      <p>The cover reads <em>"Student name to be confirmed."</em> The name is in the intake; R1's schema has no field for it, so it is dropped before the writer ever sees it. The writer behaved correctly — it flagged rather than invented. The critic then missed it across all 12 of its findings.</p>
+    </div>
+    <div class="find warn">
+      <h3>Three of eight gate verdicts were wrong</h3>
+      <p>Two false failures — <code>gate_profile</code> tripped on the word "tier" in ordinary prose, <code>gate_plan</code> looked for dates in the wrong place. One false pass — <code>gate_recs</code> waved through a recommendation whose own <code>escalate</code> flag was true. The false pass is the dangerous one.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Grades</h2>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Step</th><th>Grade</th><th>Gate</th><th>The one change that makes it an A</th></tr></thead>
+      <tbody>
+        <tr><td>1 · Profile</td><td><span class="g gB">B</span></td><td class="gate bad">RETRY — false</td>
+          <td>No claim stronger than its quote. "Legacy at Columbia" is an inference from "mother is a Columbia graduate" — it belongs in flags, not facts.</td></tr>
+        <tr><td>3 · Match &amp; Rank</td><td><span class="g gA">—</span></td><td class="gate">ESCALATE — real</td>
+          <td>Ask the parent for target colleges at intake. 497 cards from 67 students the moment they exist.</td></tr>
+        <tr><td>4 · Gap</td><td><span class="g gC">C</span></td><td class="gate">PASS</td>
+          <td>One gap set per school, stamped with school + evidence IDs, and never let the agent count anything itself. It miscounted activities and judged fit, which is R4's job.</td></tr>
+        <tr><td>5 · Strategy</td><td><span class="g gB">B</span></td><td class="gate">RETRY — real, fixed</td>
+          <td>Exactly one thread at core intensity. It kept four, which is a spread, not a spike — the same failure the gate caught, one level down.</td></tr>
+        <tr><td>6 · Two Paths</td><td><span class="g gB">B</span></td><td class="gate bad">RETRY — bad input</td>
+          <td>Hand it per-school admit counts. It was given a corpus-wide tally only, so all six schools came back "not assessed" — correctly, but uselessly.</td></tr>
+        <tr><td>7a · Plan Goals</td><td><span class="g gB">B</span></td><td class="gate bad">RETRY — false</td>
+          <td>Emit capacity as numbers, not prose, and put term + by_when on each task object.</td></tr>
+        <tr><td>7b · Recommendations</td><td><span class="g gC">C</span></td><td class="gate bad">PASS — false</td>
+          <td>Carry ambiguity through instead of resolving it. Handed "Oct 3 or Oct 17", it picked one and marked it verified. Also: it had exactly one catalog row to work with.</td></tr>
+        <tr><td>8 · Writer</td><td><span class="g gB">B</span></td><td class="gate">PASS</td>
+          <td>Never describe our own inputs to a parent. "The intake does not say X" becomes "confirm X". Keep the family's budget out of the child's profile.</td></tr>
+        <tr><td>9 · Critic</td><td><span class="g gB">B</span></td><td class="gate">—</td>
+          <td>Read the cover as carefully as the body. A placeholder on line one should force escalate.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>Four fixes, in order of leverage</h2>
+  <ol class="fixes">
+    <li>
+      <h3>Write down the output schema for every step</h3>
+      <p>Not a style issue — the single largest cause of failure in this run. R1 returned constraints as a list where the code expects an object. R6 nested tasks one level deeper than the gate looks. R7 returned <code>primary</code>/<code>alternates</code> where the pipeline reads <code>recommendations</code>. Each prompt names its keys but never their shape, so every step is free to guess differently.</p>
+      <p class="lift">Fixes both false gate failures, the false pass, one crash, and the missing name.</p>
+    </li>
+    <li>
+      <h3>Add two questions to the intake</h3>
+      <p>Which colleges are you aiming at — and how many hours a week can he actually give this. The first unblocks the whole run. The second is why the plan's capacity reasoning stays qualitative and the schedule can't be checked against anything.</p>
+      <p class="lift">Unblocks step 3; lifts Plan Goals and Two Paths.</p>
+    </li>
+    <li>
+      <h3>Give Two Paths and Recommendations real inputs</h3>
+      <p>Two Paths needs per-school admit counts, not one corpus-wide tally. Recommendations was handed a single catalog row with no contact field. Both behaved correctly on thin input and produced thin output — that is a wiring and data problem, not a prompt problem, and no prompt edit will fix it.</p>
+      <p class="lift">Two Paths B → A; Recommendations C → B.</p>
+    </li>
+    <li>
+      <h3>Tighten three prompts</h3>
+      <p>Strategy: exactly one core thread. Gap: closed category set, no counting, no fit judgments. Writer: never narrate our own inputs. These are the real prompt-quality gaps — and they are the smallest part of the problem.</p>
+      <p class="lift">Strategy and Writer B → A; Gap C → B.</p>
+    </li>
+  </ol>
+</section>
+
+<section>
+  <h2>What worked</h2>
+  <p><strong>The retry mechanism works.</strong> Strategy returned 12 moves with no spike, the gate caught it, the retry with the failure as feedback came back with 6 and a spike, and passed. First time that has ever been observed.</p>
+  <p><strong>No step invented a number.</strong> Every figure in every output traced back to something handed to it. Where data was missing, agents said so rather than estimating — Two Paths refused to fabricate a fit percentage, the writer refused to invent a name. The evidence contract is holding.</p>
+  <p><strong>Retrieval is real.</strong> 497 admit cards across 67 students, once targets exist.</p>
+</section>
+
+<footer>
+  <p><strong>Method.</strong> Each step ran in a clean agent given only its exact prompt from <code>prompts.py</code> and its real input JSON — no repo access, no sight of previous outputs. Modules and gates ran as real code. Each step was then graded by a second clean agent against its rubric file, blind to who produced the output.</p>
+  <p><strong>Caveat.</strong> This approximates a real API run; it does not measure latency or cost, and it is one run on one intake. Treat the grades as directional and the defects as real — every failure above was reproduced from actual output, not predicted.</p>
+</footer>
+
+</div>
