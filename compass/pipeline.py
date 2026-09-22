@@ -161,8 +161,20 @@ def run(intake: dict, log=print) -> dict:
          "capacity_json": state["capacity"],
          "summer_capacity_json": state["capacity_summer"],
          "stage_bands_json": state["stage_bands"],
-         "admit_pattern_json": state["admit_pattern"]},
+         "admit_pattern_json": state["admit_pattern"],
+         # The ladders the later grades name come from here, already source-checked.
+         # Without them grade 11 reads "carry it one rung further" and names no rung. [#61]
+         "appraisals_json": appraisals},
         lambda o: gates.gate_plan(o, state["strategy"]), state, log)
+
+    # Correct step order does not make the plan obey. The appraiser runs before strategy
+    # and the plan and both are TOLD to honour it; nothing checked that they did. [#60]
+    for g in (gates.gate_honours_appraisal(state["plan_goals"], appraisals),
+              gates.gate_open_questions(state["plan_goals"], appraisals),
+              gates.gate_horizon(state["plan_goals"], grade)):
+        state.setdefault("_gates", []).append(g)
+        if g.failures:
+            log(f"      gate: {g.verdict} ({g.step}) — {'; '.join(g.failures[:2])}")
     # recommendations for near-term tasks (fan-out; mock returns one)
     constraints = profile.get("constraints", {})
     recs, blocked = [], []

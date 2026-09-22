@@ -545,3 +545,215 @@ def gate_appraisal(appraisals, activities):
     return GateResult("appraisal", RETRY if f else PASS, f,
                       note or ("an activity carried by default is the failure this "
                                "step removes" if f else ""))
+
+
+def _plan_goal_rows(plan_goals):
+    """(grade, goal_text, goal_dict) for every goal in the plan, at any depth. [#60]"""
+    out = []
+    for gr in (plan_goals.get("grades") or plan_goals.get("current_year") or []):
+        g = gr.get("grade")
+        buckets = list(gr.get("goals") or gr.get("rows") or [])
+        for tm in (gr.get("terms") or []):
+            buckets += list(tm.get("goals") or [])
+        for go in buckets:
+            t = str(go.get("goal") or go.get("title") or "")
+            if t:
+                out.append((g, t, go))
+    return out
+
+
+def gate_honours_appraisal(plan_goals, appraisals):
+    """DOES THE PLAN ACTUALLY DO WHAT THE APPRAISAL SAID? [#60]
+
+    Correct step order is necessary and not sufficient. The appraiser runs before strategy
+    and the plan, and both are TOLD to honour its verdicts — and telling a model something
+    has never been a guarantee here. That is the whole lesson of #50 and #56: when the
+    writer quietly cut the plan's goals, the ordering was fine; what was missing was a
+    check reconciling the two.
+
+    We reconcile writer-against-plan. This reconciles plan-against-appraisal, which was the
+    one direction nothing looked at.
+    """
+    import re
+    f = []
+    rows = _plan_goal_rows(plan_goals)
+    if not rows or not appraisals:
+        return GateResult("honours_appraisal", PASS, [], "nothing to reconcile")
+
+    def _gnum(x):
+        m = re.search(r"\d+", str(x))
+        return int(m.group(0)) if m else None
+
+    def _mentions(text, name):
+        """Does this goal concern that activity? Match on distinctive words, not the
+        literal string — the plan says 'the card business', the intake says 'Pokemon card
+        business'. Comparing spelling where the rule is about substance is the mistake
+        five gates have already made. [#54]"""
+        stop = {"the", "and", "his", "her", "for", "with", "business", "club", "team"}
+        toks = [w for w in re.findall(r"[a-z]{4,}", str(name).lower()) if w not in stop]
+        return any(t in str(text).lower() for t in toks) if toks else False
+
+    for a in appraisals:
+        name = str(a.get("activity", ""))
+        ap = a.get("appraisal") or {}
+        verdict = str(ap.get("verdict", "")).lower()
+        hits = [(g, t, go) for g, t, go in rows if _mentions(t, name)]
+
+        if verdict == "convert":
+            conv = ap.get("conversion") or {}
+            by = _gnum(conv.get("grade"))
+            becomes = str(conv.get("becomes") or "")
+            key = [w for w in re.findall(r"[a-z]{5,}", becomes.lower())][:6]
+            landed = [g for g, t, _ in hits
+                      if any(k in t.lower() for k in key)] if key else []
+            if not landed:
+                f.append(f"{name[:30]}: appraised CONVERT but no goal in any grade carries "
+                         f"the conversion — the verdict reached the document and not the plan")
+            elif by is not None:
+                early = [g for g in landed if _gnum(g) is not None and _gnum(g) <= by]
+                if not early:
+                    f.append(f"{name[:30]}: conversion lands at grade {sorted(landed)} but "
+                             f"the appraisal placed it by grade {by}")
+
+        if verdict == "retire":
+            live = [g for g, t, go in hits
+                    if str((go or {}).get("track", "target")).lower() != "dropped"]
+            if live:
+                f.append(f"{name[:30]}: appraised RETIRE but still carries goals in "
+                         f"grade(s) {sorted({g for g in live})}")
+
+        if verdict == "keep_as_interest":
+            # It is protected and asked nothing of. A performance target attached to it is
+            # the plan quietly promoting it back into a credential.
+            #
+            # But a goal that REMOVES performance pressure names the same words. The first
+            # version of this check failed "Free up hours by taking chess, cooking and
+            # theater off the competition calendar" — the plan doing precisely the right
+            # thing — because "competition" appeared in it. Sixth gate bug of this family:
+            # matching a word where the rule is about direction. Check the verb. [#60]
+            PERF = r"\b(qualify|place|win|rank|compet\w*|championship|state|national|" \
+                   r"regional|award|title|varsity)\b"
+            REMOVES = r"\b(off|out of|drop\w*|stop\w*|free up|remove\w*|no longer|" \
+                      r"without|leave\w*|keep\w* (?:it|them|both|all)? ?as)\b"
+            pushed = [t for _, t, _ in hits
+                      if re.search(PERF, t, re.I) and not re.search(REMOVES, t, re.I)]
+            if pushed:
+                f.append(f"{name[:30]}: appraised KEEP_AS_INTEREST but the plan attaches a "
+                         f"performance target: {pushed[0][:52]!r}")
+
+    return GateResult("honours_appraisal", RETRY if f else PASS, f,
+                      "correct order does not make the plan obey" if f else "")
+
+
+def gate_open_questions(plan_goals, appraisals, draft=None):
+    """A QUESTION ASKED MUST STAY OPEN UNTIL IT IS ANSWERED. [#60]
+
+    The appraiser sets `needs_family_input` on the calls we decided not to make alone —
+    a convert or retire on the student's longest-running or heaviest thread. The document
+    then prints that question to the parent.
+
+    The failure this catches is the one the first appraiser PDF actually committed: page 2
+    asks the family for their view on the card business, and the roadmap four pages later
+    has already chosen. Printing a question and then acting as though it were answered is
+    worse than never asking, because it tells the family their answer mattered when it did
+    not.
+    """
+    import re
+    f = []
+    open_ones = [a for a in (appraisals or []) if a.get("needs_family_input")]
+    if not open_ones:
+        return GateResult("open_questions", PASS, [], "nothing was asked")
+
+    rows = _plan_goal_rows(plan_goals)
+    for a in open_ones:
+        name = str(a.get("activity", ""))
+        if not str(a.get("family_question") or "").strip():
+            f.append(f"{name[:30]}: flagged for the family with no question written")
+
+        # The plan may CARRY the activity as it stands — that is what it is told to do
+        # while waiting. What it may not do is enact the branch we asked about.
+        verdict = str((a.get("appraisal") or {}).get("verdict", "")).lower()
+        conv = (a.get("appraisal") or {}).get("conversion") or {}
+        becomes = str(conv.get("becomes") or "")
+        key = [w for w in re.findall(r"[a-z]{6,}", becomes.lower())][:5]
+        if verdict in ("convert", "retire") and key:
+            enacted = [t for _, t, _ in rows
+                       if sum(k in t.lower() for k in key) >= 2]
+            if enacted and not _asks_in_document(draft, name):
+                f.append(f"{name[:30]}: the plan enacts the branch we said we would ask "
+                         f"about ({enacted[0][:44]!r}) and the document never puts the "
+                         f"question to the family")
+    return GateResult("open_questions", RETRY if f else PASS, f,
+                      "a question printed and then overruled is worse than no question"
+                      if f else "")
+
+
+def _asks_in_document(draft, activity_name):
+    """Is the question actually in front of the parent? Absent a draft we cannot tell, and
+    we do not fail a step for something we cannot see."""
+    if draft is None:
+        return True
+    import re
+    qs = ((draft.get("profile") or {}).get("family_questions") or [])
+    stop = {"the", "and", "his", "her", "business"}
+    toks = [w for w in re.findall(r"[a-z]{4,}", activity_name.lower()) if w not in stop]
+    blob = _txt(qs).lower()
+    return any(t in blob for t in toks) if toks else bool(qs)
+
+
+# Bodies that run youth competition ladders. Naming one in a grade the student has not
+# reached assumes a chapter at a school they have not started. [#62]
+_NAMED_BODIES = (r"\b(DECA|FBLA|FCCLA|ProStart|NSDA|CHSSA|NFTE|Diamond Challenge|"
+                 r"Conrad Challenge|Blue Ocean|Model UN|MUN|USACO|USAMO|Science Olympiad|"
+                 r"Congressional Debate|Public Forum|Lincoln[- ]Douglas|Acton|"
+                 r"National Leadership Conference|Invitational)\b")
+
+
+def gate_horizon(plan_goals, current_grade):
+    """DEPTH BY HORIZON — and it fails in both directions. [#62]
+
+    The near year must be specific enough to act on; the later years must be personalised
+    without being instantiated. Those are opposite failures, and fixing one by loosening
+    the other is exactly the mistake this gate exists to stop — the rule that made later
+    grades name their ladders was written to cure vagueness and would have printed a DECA
+    chapter for a high school the student has not chosen.
+    """
+    import re
+    f = []
+    try:
+        cur = int(re.search(r"\d+", str(current_grade)).group(0))
+    except (AttributeError, TypeError, ValueError):
+        return GateResult("horizon", PASS, [], "no current grade to measure against")
+
+    for grade, text, go in _plan_goal_rows(plan_goals):
+        try:
+            g = int(re.search(r"\d+", str(grade)).group(0))
+        except (AttributeError, TypeError, ValueError):
+            continue
+        body = text + " " + _txt(go.get("tasks") or [])
+
+        if g > cur:
+            named = sorted(set(m.group(0) for m in re.finditer(_NAMED_BODIES, body, re.I)))
+            money = re.findall(r"\$\s?\d[\d,]*", body)
+            dated = re.findall(r"\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)"
+                               r"[a-z]*\.? ?\d{1,2}\b", body)
+            if named:
+                f.append(f"grade {g}: names {named[:2]} — we do not know his high school, "
+                         f"so a chapter there is a fact we do not have")
+            if money or dated:
+                f.append(f"grade {g}: carries a price or date "
+                         f"({(money + [d for d, in [(x,) for x in dated]])[:2]}) "
+                         f"beyond the horizon it can be known at")
+        else:
+            # The current year. Specificity here is the whole point of the near horizon.
+            has_name = bool(re.search(r"[A-Z][a-z]+ [A-Z][a-z]+", body))
+            has_hook = bool(re.search(r"\$\s?\d|\bregist\w+|\bdeadline|\bcontact|"
+                                      r"\bby [A-Z][a-z]+ \d|\bcall\b|\.org|\.com", body))
+            if not has_name and not has_hook:
+                f.append(f"grade {g} (this year): {text[:40]!r} carries no name, price or "
+                         f"contact — near work that is not actionable is the plan failing "
+                         f"at the only horizon where it could help")
+
+    return GateResult("horizon", RETRY if f else PASS, f,
+                      "near work must be actionable; far work must not be instantiated"
+                      if f else "")

@@ -860,10 +860,46 @@ ONE GOAL, ONE SUBJECT. [#55]
   with a title on it. Split it, or drop what does not belong to the outcome. The test:
   can you say in one clause what this goal is for, without the word "and"?
 
-LATER GRADES CARRY NO SPECIFICS
-  Any grade beyond the next two terms gets goals and tasks only — no programme names,
-  no prices, no dates. They cannot be known yet, and inventing them is the fastest way
-  to make the whole document untrustworthy.
+DEPTH BY HORIZON — the two registers this plan is written in. [#62]
+
+  The failure at each end is different, so the rules are different.
+  Vague later grades fail because they could be about any child.
+  Over-specified later grades fail because they promise something we cannot know.
+  The fix for the first is NOT the specificity that causes the second. [#62]
+
+  THE CURRENT YEAR — its three terms go as deep as we can verify.
+    Named programmes, real prices, age ranges, contacts, registration windows, and the
+    LEAD TIME. If something next spring needs six months of preparation, it appears in
+    THIS fall's tasks, because that is when the family has to act on it. Near work that
+    is not specific is the plan failing at the only horizon where it could have helped.
+
+  GRADES BEYOND THE NEXT TWO TERMS — personalised, never instantiated.
+    Write THE KIND OF THING, not the named instance:
+      YES  "Take the trading into a competition where outside judges score it, run
+            through a business organisation at his high school."
+      NO   "Qualify into the state DECA Entrepreneurship Series."
+      YES  "Move from club practice into the league his high school competes in, and
+            aim at the level above school."
+      NO   "Enter the CHSSA spring qualifier."
+    Three reasons the named instance is wrong this far out, and only the first is the
+    one people usually give:
+      1. What colleges weight shifts over four years.
+      2. WE DO NOT KNOW HIS HIGH SCHOOL. Naming a chapter assumes it exists at a school
+         he has not started. That is not caution, it is a fact we do not have.
+      3. A named body four years out reads as a commitment. When it turns out his school
+         has no chapter, the plan looks wrong and the family stops trusting the parts
+         that were right.
+
+  YOU STILL KNOW THE LADDER, AND IT STILL SHAPES THE GOAL.
+    `appraisals_json` names the real structures — that is what makes "a competition where
+    outside judges score it" the correct goal rather than a guess. Reason from it; do not
+    print it. The engine knowing DECA exists is why the grade-11 goal is right. The
+    document naming DECA in grade 11 is why it would be wrong. [#62]
+
+  THE TEST, FOR EVERY YEAR: a parent reads it and can tell it was written for THEIR child
+  and nobody else. A later-grade goal that would be true of any eighth-grader who likes
+  business has failed, even though it named nothing. Personalisation comes from HIS
+  history, HIS constraints and the rung HE is at — never from naming a programme.
 
 Return ONLY the plan JSON: grades[], multi_year_arc[]."""
 
@@ -1343,8 +1379,16 @@ seen; the contracts are the standard.
      answer; a plausible-sounding placeholder is not.
 
 9. PLANNING-CONTRACT BREACHES [#21]
-   - A named program, price, date or contact for any year beyond the current one (horizon rule),
-     or later years left thin WITHOUT the plain line explaining why.
+   - HORIZON, BOTH DIRECTIONS. [#62] Beyond the current year, flag any named programme,
+     organisation, chapter, competition, price, date or contact — we do not yet know his
+     high school, so naming a chapter there is a fact we do not have, and a family reads
+     it as a promise. In the CURRENT year, flag the opposite: a task with no name, no
+     price and no contact, or one whose lead time has been lost, is the plan failing at
+     the only horizon where it could have helped.
+   - A later-grade goal that would be true of ANY student with this interest. It has to
+     be built from this child's own history and rung, not from naming a programme — a
+     goal can name nothing and still be unmistakably his. [#62]
+   - Later years left thin WITHOUT the plain line explaining why.
    - A spike declared in the first year, or the explore -> commit -> deepen arc collapsed so the
      student is locked in at 13.
    - Any instruction to START a club, FOUND a nonprofit, or launch their own programme. The

@@ -1273,3 +1273,65 @@ makes the entrant credible instead. The cache working as designed on its first r
   relative to nothing. True — the wiring didn't pass it. Fixed, and `conversion.grade` is now
   constrained to an integer with the dependency in `grade_note`, because the agent wrote a
   paragraph into a field the plan schedules on.
+
+## 60. Correct order does not make the plan obey
+The appraiser already ran before strategy and the plan — the position was right. What was
+missing was any check that the steps downstream actually honoured it. They are *told* to,
+and telling a model something has never been a guarantee here: that is the whole lesson of
+#50 and #56, where the writer quietly cut the plan's goals with the ordering perfectly fine.
+We reconcile writer-against-plan. Nothing reconciled plan-against-appraisal.
+
+Two gates:
+- **`gate_honours_appraisal`** — a `convert` verdict must produce a conversion goal at or
+  before its grade; nothing `retire`d may still carry goals; nothing `keep_as_interest` may
+  have a performance target attached, which is the plan quietly promoting it back into a
+  credential.
+- **`gate_open_questions`** — an activity with `needs_family_input` must not have its branch
+  enacted in the plan while the document prints the question. The first appraiser PDF did
+  exactly this: page 2 asked the family for their view on the card business and the roadmap
+  four pages later had already chosen. Printing a question and then overruling it is worse
+  than never asking, because it tells the family their answer mattered when it did not.
+
+**Sixth gate bug, same family as the other five.** The keep_as_interest check fired on
+"Free up hours by taking chess, cooking and theater off the competition calendar" — the plan
+doing precisely the right thing — because the word "competition" appeared in it. It now
+checks the verb's direction, not the presence of a word. Every gate bug so far has been
+matching spelling where the rule is about meaning.
+
+**A note on how this was found.** The symptom was a self-contradicting PDF, and the diagnosis
+offered was that the step sat in the wrong place. It did not. The contradiction came from my
+running the appraiser standalone and hand-patching its output into a writer JSON produced
+before the appraiser existed — a stitched artifact, presented as a finding. Checking the
+actual step order before agreeing was what turned a no-op fix into the real one.
+
+## 61 → 62. Naming the ladder: right problem, wrong fix, corrected within the hour
+**#61 said** later grades must name their competitive ladder — DECA, FCCLA, the NSDA circuit —
+on the reasoning that banning names was what made grade 11 read "carry the venture one rung
+further". Diagnosis right, remedy wrong, and it was reverted the same session.
+
+**#62 replaces it.** The real objection is not that colleges change what they weight, though
+they do. It is that **we do not know his high school.** Naming a DECA chapter in grade 11
+assumes one exists at a school he has not started — that is not caution, it is a fact we do
+not have, and a family reads a named body four years out as a commitment. When it turns out
+his school has no chapter, the plan looks wrong and they stop trusting the parts that were
+right.
+
+The line is not *structure vs dates*. It is **the kind vs the named instance**:
+    YES  "Take the trading into a competition where outside judges score it, run through a
+          business organisation at his high school."
+    NO   "Qualify into the state DECA Entrepreneurship Series."
+The engine still knows about DECA — the appraiser found it, and that is what makes the goal
+correct rather than a guess. **Reason from the ladder; do not print it.**
+
+And the near horizon runs the opposite way: the current year's three terms carry names,
+prices, contacts and the LEAD TIME — something needing six months of preparation next spring
+belongs in this fall's tasks, because that is when the family must act.
+
+`gate_horizon` enforces both directions, because they are opposite failures and curing one by
+loosening the other is exactly what #61 did. Beyond the current year it fails a named body,
+price or date; inside it, it fails a task with no name, price or contact.
+
+**The test, for every year:** a parent reads it and can tell it was written for their child
+and nobody else. A later-grade goal that would be true of any eighth-grader who likes business
+has failed even though it named nothing — personalisation comes from his history, his
+constraints and the rung he is at, never from naming a programme.
