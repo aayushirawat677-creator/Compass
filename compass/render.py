@@ -106,6 +106,26 @@ td.tg{ color:var(--green); } td.st{ color:var(--purple); }
 .grow .t:before{ content:'■'; position:absolute; left:0; font-size:9px; }
 .grow .task{ display:flex; gap:8px; margin:3px 0 3px 14px; }
 .termpill{ background:var(--tan); color:#5a5030; border-radius:3px; padding:2px 7px; font-size:8.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; white-space:nowrap; height:fit-content; }
+/* current year: the semester is the container, named once */
+.termblock{ margin:9px 0 2px; }
+.termblock + .termblock{ border-top:1px solid var(--line); padding-top:8px; }
+.termhead{ display:flex; align-items:baseline; gap:8px; margin-bottom:5px; }
+.termhead .tname{ font-size:14px; font-weight:700; color:#182117; }
+.termhead .tspan{ color:var(--muted); letter-spacing:.12em; font-size:8.5px; text-transform:uppercase; }
+.termhead .ttag{ margin-left:auto; color:var(--gold2); font-style:italic; font-size:10.5px; }
+.catchip{ font-size:7.5px; letter-spacing:.1em; text-transform:uppercase; padding:1px 6px; border-radius:3px;
+  margin-right:7px; vertical-align:1px; background:#e6e3d6; color:#4b4a3a; }
+.catchip.debate{ background:var(--purplebg); color:var(--purple); }
+.catchip.venture{ background:#f3e9cf; color:#8a6a1c; }
+.catchip.service{ background:var(--greenbg); color:var(--green); }
+.catchip.academics{ background:#e2e5dd; color:#3a463a; }
+.catchip.summer{ background:#f6ecd8; color:#96762a; }
+.catchip.schedule{ background:#eceadf; color:#6a6450; }
+.grow.again .t{ font-weight:600; color:#41493d; }
+.contpill{ font-size:7.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--muted);
+  border:1px solid var(--line); border-radius:8px; padding:1px 6px; margin-left:7px; vertical-align:2px; }
+.subtask{ margin:2px 0 2px 16px; padding-left:11px; position:relative; }
+.subtask:before{ content:'·'; position:absolute; left:0; color:var(--gold2); font-weight:700; }
 
 /* recommendation cards */
 .reccard{ border:1px solid var(--line); border-left:4px solid var(--gold); border-radius:5px; background:var(--card); padding:12px 14px; margin:10px 0; }
@@ -229,13 +249,37 @@ TEMPLATE = Template(r"""
   {% for g in c.roadmap.grades %}
     <div class="gradebar"><span><span class="g">{{ g.grade }}</span> <span class="yrs">{{ g.years }}</span></span><span class="tag">{{ g.tag }}</span></div>
     <div class="gwrap">
-      {% for row in (g.goals or g.rows) %}
-        <div class="grow {{ 'stretchgoal' if row.track == 'stretch' else '' }}">
-          <div class="t">{{ row.goal or row.title }}{% if row.track == 'stretch' %}<span class="trackpill s">stretch</span>{% endif %}</div>
-          {% if row.why_now %}<div class="why">{{ row.why_now }}</div>{% endif %}
-          {% for t in row.tasks %}<div class="task"><span class="termpill">{{ t.term }}</span><span>{{ t.text }}{% if t.track == 'stretch' and row.track != 'stretch' %}<span class="trackpill s">stretch</span>{% endif %}</span></div>{% endfor %}
-        </div>
-      {% endfor %}
+      {% if g.terms %}
+        {# CURRENT YEAR — the semester is the container, the goals sit inside it. The
+           term is stated once as a heading instead of repeated on every task row. #}
+        {% set seen = namespace(g=[]) %}
+        {% for tm in g.terms %}
+          <div class="termblock">
+            <div class="termhead"><span class="tname serif">{{ tm.term }}</span>{% if tm.span %}<span class="tspan">{{ tm.span }}</span>{% endif %}{% if tm.tag %}<span class="ttag">{{ tm.tag }}</span>{% endif %}</div>
+            {% for row in tm.goals %}
+              {# A goal that runs across terms states itself ONCE, in the term it starts.
+                 On later terms it carries its short form and no why-now line — the term
+                 block is what has changed, not the reasoning. [#57] #}
+              {% set gk = (row.goal or row.title) %}
+              {% set again = gk in seen.g %}
+              {% if not again %}{% set _ = seen.g.append(gk) %}{% endif %}
+              <div class="grow {{ 'stretchgoal' if row.track == 'stretch' else '' }}{{ ' again' if again else '' }}">
+                <div class="t">{% if row.cat %}<span class="catchip {{ row.cat_class }}">{{ row.cat }}</span>{% endif %}{{ (row.goal_short or gk.split(',')[0].split(' - ')[0]) if again else gk }}{% if again %}<span class="contpill">continued</span>{% elif row.track == 'stretch' %}<span class="trackpill s">stretch</span>{% endif %}</div>
+                {% if row.why_now and not again %}<div class="why">{{ row.why_now }}</div>{% endif %}
+                {% for t in row.tasks %}<div class="subtask">{{ t.text or t }}{% if t.track == 'stretch' and row.track != 'stretch' %}<span class="trackpill s">stretch</span>{% endif %}</div>{% endfor %}
+              </div>
+            {% endfor %}
+          </div>
+        {% endfor %}
+      {% else %}
+        {% for row in (g.goals or g.rows) %}
+          <div class="grow {{ 'stretchgoal' if row.track == 'stretch' else '' }}">
+            <div class="t">{{ row.goal or row.title }}{% if row.track == 'stretch' %}<span class="trackpill s">stretch</span>{% endif %}</div>
+            {% if row.why_now %}<div class="why">{{ row.why_now }}</div>{% endif %}
+            {% for t in row.tasks %}<div class="task"><span class="termpill">{{ t.term }}</span><span>{{ t.text }}{% if t.track == 'stretch' and row.track != 'stretch' %}<span class="trackpill s">stretch</span>{% endif %}</span></div>{% endfor %}
+          </div>
+        {% endfor %}
+      {% endif %}
     </div>
   {% endfor %}
 </div>

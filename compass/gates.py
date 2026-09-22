@@ -356,14 +356,23 @@ def gate_document(draft, plan_goals):
     # tissue. Presence was checked; substance was not. Check substance.
     import re as _re
 
-    def _tasks_of(container, key_goals="goals", key_tasks="tasks"):
-        out = []
+    def _goals_of(container):
+        """Yield (grade, goal_dict). The current year nests goals under terms[]; the
+        later grades keep them under rows[]/goals[]. [#57]"""
         for gr in (container.get("grades") or container.get("current_year") or []):
-            for go in (gr.get(key_goals) or gr.get("rows") or []):
-                for t in (go.get(key_tasks) or []):
-                    txt = t.get("text") if isinstance(t, dict) else t
-                    if txt:
-                        out.append(str(txt))
+            for tm in (gr.get("terms") or []):
+                for go in (tm.get("goals") or []):
+                    yield gr.get("grade"), go
+            for go in (gr.get("goals") or gr.get("rows") or []):
+                yield gr.get("grade"), go
+
+    def _tasks_of(container, key_tasks="tasks"):
+        out = []
+        for _, go in _goals_of(container):
+            for t in (go.get(key_tasks) or []):
+                txt = t.get("text") if isinstance(t, dict) else t
+                if txt:
+                    out.append(str(txt))
         return out
 
     plan_tasks = _tasks_of(plan_goals)
@@ -381,10 +390,41 @@ def gate_document(draft, plan_goals):
             return set(_re.findall(r"\$[\d,]+|\b[A-Z][a-z]{2,}(?: [A-Z][a-z]{2,})+\b", s))
 
         plan_facts = set().union(*[_facts(t) for t in plan_tasks]) if plan_tasks else set()
-        lost = sorted(x for x in plan_facts if x.lower() not in rendered)
+
+        # Match on the distinctive token, not the exact string. The plan says "Acton
+        # Children's Business Fair" and the document says "the Children's Business Fair,
+        # run by Acton" — the organisation is named, shorter. Demanding the bigram fails
+        # correct work on spelling, which is the #54 mistake a fifth time. A name has
+        # survived when its rarest word has. [#57]
+        _COMMON = {"business", "fair", "children", "school", "high", "middle", "county",
+                   "city", "the", "of", "and", "grade", "summer", "fall", "spring"}
+
+        def _survives(name):
+            if name.startswith("$"):
+                return name.lower() in rendered
+            toks = [t for t in _re.findall(r"[A-Za-z]{3,}", name)
+                    if t.lower() not in _COMMON]
+            if not toks:
+                return name.lower() in rendered
+            return all(t.lower() in rendered for t in toks)
+
+        lost = sorted(x for x in plan_facts if not _survives(x))
         if lost:
             f.append(f"{len(lost)} fact(s) the plan put in a task never reach the "
                      f"roadmap: {lost[:4]}")
+
+    # A goal in a later grade may carry at most one row per term. The term repeated
+    # down a single goal is the term stated four times, with the grouping left to the
+    # reader. The current year does not hit this: its container IS the term. [#57]
+    for gr in (draft.get("roadmap", {}).get("grades") or []):
+        for go in (gr.get("rows") or gr.get("goals") or []):
+            terms = [str((t or {}).get("term", "")).strip().lower()
+                     for t in (go.get("tasks") or []) if isinstance(t, dict)]
+            dupes = {t for t in terms if t and terms.count(t) > 1}
+            if dupes:
+                f.append(f"grade {gr.get('grade')}, goal "
+                         f"{str(go.get('goal') or go.get('title'))[:40]!r}: "
+                         f"{sorted(dupes)} appears more than once — one row per term")
 
     return GateResult("document", RETRY if f else PASS, f,
                       "the writer cut the plan, not the prose" if f else "")

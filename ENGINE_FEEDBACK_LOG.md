@@ -1128,3 +1128,33 @@ output that was right:
   line. Spec corrected. And `cover.grade` carrying "Grade 8" into a template that supplies the
   word printed "Grade Grade 8" in every running header; normalised in `render.py`.
 - **Result:** 11 pages, 62 of 62 rows rendered, mean 19.5 words, both gates PASS.
+
+## 57. The term repeated is the term not organised
+- **Found:** reading grade 8, the same goal carried two rows both tagged FALL — "Register
+  the business" and "Open a ledger" — and the courses goal carried three tagged SPRING. The
+  term was being stated four times down one goal and the grouping left to the reader. v10
+  never does this: every goal there has at most one row per term. Worse, the current year is
+  the one the family acts on, and goal-major ordering makes them assemble "what happens this
+  fall" from five separate places.
+- **Rule, two parts:**
+  * THE CURRENT YEAR IS ORGANISED BY SEMESTER. `Fall 2026` / `Spring 2027` / `Summer 2027`
+    are containers; the goals with work in that term sit inside, each with a track chip
+    (DEBATE / VENTURE / SERVICE / ACADEMICS / SUMMER) and its tasks as plain bullets. Tasks
+    carry no term field — the block above them already says it.
+  * LATER GRADES keep the goal as container, with AT MOST ONE ROW PER TERM. Two same-term
+    tasks merge into one row.
+- **And the failure the fix created:** a goal spanning two terms printed its full title and
+  its why-now line again in each. That is #32 on a new axis. A goal now states itself once,
+  in the term it starts; later terms carry its short form, a `continued` marker and no
+  why-now. Handled in the template, not the prompt — it is a rendering concern and the
+  writer should not be asked to track what it has already said.
+- **Lands in:** WRITER roadmap spec (two shapes, one per grade class), `render.py` (term
+  blocks, track chips, continued-marker dedup), `gates.py` — `gate_document` walks
+  `terms[]` and fails a later-grade goal with two rows of the same term.
+- **Evidence:** run against the previous document the new gate reported the defect in 9 of
+  20 goals across all five grades. Against the rebuilt one, PASS. 12 pages.
+- **Fifth spelling bug in a gate.** The fact-survival check demanded the exact string:
+  the plan said "Acton Children's Business Fair", the document said "the Children's Business
+  Fair, run by Acton", and the gate called the name lost. It now matches on distinctive
+  tokens rather than the literal phrase. Every gate bug so far has been this same mistake —
+  comparing spelling where the rule is about substance. [#54]
