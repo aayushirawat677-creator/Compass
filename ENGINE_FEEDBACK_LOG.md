@@ -1167,3 +1167,42 @@ to learn a second layout to read it; less detail is a legitimate difference betw
 a different format is not. All five grades now use `terms[]`, with the later years carrying
 fewer goals and shorter task lists inside the same shape. `gate_document` fails any grade
 that is not term-organised — which is how the previous document was caught.
+
+## 58. Making the rules reach the steps that need them
+Rules #55-#57 were written into the writer alone, which is where the defects showed up. That
+is not where several of them belong. This pass pushed them to the right steps and fixed three
+inconsistencies the edits had left behind.
+
+- **The term contract is now shared.** `PLANNING_STRUCTURE` carries "the term is the unit of
+  time, and the unit of reading", so R4, R5, R6, R7, the writer and the critic all have it.
+  Six of ten prompts; profile, gap, projected and comparisons do not plan and do not get it.
+- **R6 must stamp every task with one of four terms.** The document is assembled by grouping
+  on that field, so a missing or invented term silently drops a task out of the reader's view.
+  Previously the field was described but not constrained.
+- **A contradiction in the writer.** The roadmap spec still said "each task tagged by term"
+  two bullets below the rule that the term is now a heading. Removed.
+- **A boundary that did not exist.** The roadmap and `this_year` both cover the current year
+  and both are now term-organised, so without a line between them the writer says everything
+  twice — and `this_year` ran over budget in both runs, which was the symptom. The roadmap
+  owns what happens and when; `this_year` owns which programme and what it costs. Stated.
+- **The critic got a structure section.** Sections 1-9 read the document sentence by sentence,
+  which is why four rounds of review never caught a layout problem. Section 10 reads the
+  roadmap as a shape first and reconciles it against the plan row by row.
+
+### What running the critic found
+First run of R8 on a real document with the contracts in it. Verdict **escalate**, 30 findings.
+Section 10 worked: it reconciled all 5 grades, 19 goals and 62 rows, confirmed none missing and
+none under 12 words. The serious findings were not structural at all —
+  * an invented closing date ("registration closes that day" for Sept 26; nothing supplied it),
+  * two cohort claims stated as "a majority of admits" where the corpus says 23-31% and 21-37%,
+  * `n` stripped from all 14 cohort figures although the source supplies it for every one,
+  * an invented "Far Reach" band the tiering module never produced.
+The structure held and the evidence contract leaked. That is the opposite of what the last four
+rounds suggested, and it is only visible because the critic finally ran.
+
+**One false positive, and it is a design question.** Section 10 flagged all 17 multi-term goals
+for repeating their title and why-now in every term. True of the JSON, false of the PDF — the
+renderer collapses repeats to a short form with a `continued` marker. The critic reads JSON and
+judges a document; those are different artifacts. Told it so explicitly. The general rule: when
+a defect is fixed deterministically in the template, the critic has to be told, or it reports it
+forever and its real findings get lost in the noise.

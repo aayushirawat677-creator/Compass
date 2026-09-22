@@ -171,6 +171,18 @@ CAPACITY IS A HARD CEILING
   The budget tightens every year as homework grows. A plan that fits in grade 8 and
   not in grade 11 is a plan that fails in grade 11.
 
+THE TERM IS THE UNIT OF TIME, AND THE UNIT OF READING [#57]
+  Every task belongs to exactly one term: Fall, Spring, Summer, or All year. Not a
+  month, not a week, not a date — a term. This holds in every grade, including the
+  ones four years out.
+  The reader gets the plan grouped BY TERM, with each term named once and the goals
+  that have work in it beneath. Not goal-by-goal with the term stamped on every line:
+  a parent asking "what do we do this fall" should find one block, not five places to
+  look. A goal with work in two terms appears in both, carrying only that term's work
+  each time, and states its reasoning once.
+  A goal appears at most ONCE inside a term. Two entries for one goal in one term
+  means the work was split where it should have been merged.
+
 TARGET AND STRETCH
   Every plan has both, and they are visually distinct wherever they appear.
     - A STRETCH GOAL is its own bullet, in the semester or year it belongs to,
@@ -622,7 +634,10 @@ five-year plan. Each grade gets its own goals; each goal gets its own tasks.
       why_now           one sentence tying it to the gap or the target schools
       hours_per_week    what it costs. Must fit the free hours in capacity_json.
       tasks[]
-        term            "Fall" | "Spring" | "Summer" | "All year"
+        term            "Fall" | "Spring" | "Summer" | "All year" — EXACTLY one of
+                        these four, spelled this way, on EVERY task. The document is
+                        assembled by grouping on this field, so a missing or invented
+                        term silently drops the task out of the reader's view. [#57]
         text            what happens, in a full sentence a parent can act on
         track           "target" | "stretch"
         needs_lookup    "" normally. Otherwise the ONE fact you could not resolve
@@ -977,16 +992,30 @@ SECTION SHAPES THAT KEEP IT AT TWELVE PAGES [#38]
       goals and shorter task lists than grade 8; it has the same shape.
     * `cat` is the track chip — DEBATE, VENTURE, SERVICE, ACADEMICS, SUMMER, SCHEDULE —
       so a parent can scan any year by strand.
-    * A goal is a bullet with its tasks beneath, each task tagged by term. A STRETCH
-      GOAL IS ITS OWN BULLET in the same grade, marked `track: "stretch"` so it renders
-      in the stretch colour. A target goal may carry a stretch task beneath it, marked
-      the same way.
+    * A STRETCH GOAL IS ITS OWN BULLET inside its term, marked `track: "stretch"` so it
+      renders in the stretch colour. A target goal may carry a stretch task beneath it,
+      marked the same way.
     * NO DIARY DATES IN THE ROADMAP. A roadmap row reading "Sept 22 — he decides what
       he is selling" is a diary entry, not a plan. A registration deadline or closing
       date that R6 attached to a task is NOT a diary date — it is what makes the row
       actionable, and it stays. [#56]
 
   this_year — the next two terms plus the summer that follows, in full. [#49]
+
+    THE LINE BETWEEN THIS SECTION AND THE ROADMAP. [#57] Both now cover the current year
+    and both are organised by term, so without a boundary the writer says everything
+    twice — and #32 says a fact appears exactly once, in the section that owns it.
+        The roadmap owns WHAT HAPPENS AND WHEN.        A goal, its tasks, its term.
+        this_year owns WHICH ONE AND WHAT IT COSTS.    The programme name, the three
+                                                      price tiers, the age range, the
+                                                      contact, the plan-by date.
+    So a roadmap row says "Register him for the Children's Business Fair in San Jose,
+    run by Acton, open entry and held in the fall." The this_year card carries the $50
+    booth fee, the 6-14 age band, the October 17 closing date, the URL and the plan-by.
+    Neither repeats the other's half. If this section is running over budget, the
+    overage is almost always roadmap material that has been restated here — cut that
+    before cutting a price or a contact.
+
     * Which terms: the current one, the next one, and the summer after. A student in
       spring gets spring and summer only. Beyond that, the roadmap carries it.
     * `body`: at most TWO short sentences — what this is, and why it fits this student.
@@ -1146,6 +1175,30 @@ seen; the contracts are the standard.
      "a pitch competition") — name the actual body, circuit or organization.
    - An alternative route raised but not operationalised (no system, deadline, test or document).
    - The application arc never named in the essay-drafting year.
+
+10. STRUCTURE BREACHES — read the roadmap as a shape before reading it as prose. [#57]
+   These do not show up sentence by sentence, which is why they survived four reviews.
+   - A GRADE NOT ORGANISED BY TERM. Every grade, 8 through 12, groups its goals under
+     Fall / Spring / Summer headings. A grade that lists goals with the term stamped on
+     each task row is the old shape; a document carrying both is worse still, because
+     the parent has to learn two layouts to read one plan.
+   - THE SAME GOAL TWICE IN ONE TERM. Merge it; the work was split where it belonged
+     together.
+     NOT a defect: the same goal appearing in two DIFFERENT terms with its title and
+     why_now repeated in the JSON. That is how the writer is told to emit it, and the
+     renderer collapses the repeat to a short form with a `continued` marker. You are
+     judging the document a parent reads, not the JSON — do not report a duplication
+     the template removes. [#57]
+   - A TASK ROW UNDER 12 WORDS, or one that has lost a name, price, age limit or closing
+     date the plan gave it. Compare the roadmap against `plan_json` row by row: the
+     writer cutting the plan to meet a word budget is the single most damaging failure
+     this document has had, and it is invisible unless you check for it. [#56]
+   - A ROADMAP ROW AND A THIS-YEAR CARD SAYING THE SAME THING. The roadmap owns what
+     happens and when; this_year owns which programme and what it costs. Each fact once.
+   - A TASK THAT IS NOT AN ACTION — one that reads "find out", "confirm how" or "check
+     whether" and hands the research back to the family; one that describes a state
+     holding rather than something to start; one that is a decision rather than the step
+     that makes the decision possible. [#55]
 
 Pass only if a real parent would find the whole document clear, warm, honest, specific and easy,
 and would recognise their own child in it without wincing once.
