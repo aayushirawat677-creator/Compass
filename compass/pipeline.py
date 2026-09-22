@@ -69,10 +69,22 @@ def run(intake: dict, log=print) -> dict:
     if mr.get("escalate_thin_data"):
         log("       ! thin data for the intended college(s) — flag for human review")
 
+    # Computed HERE, not before Two Paths, so the steps that DECIDE can see it. [#52]
+    # Gap measures distance against it; Strategy picks the rung to aim at; Plan sizes
+    # the goals to it. Producing it late meant the two steps that choose what the
+    # student should actually do were the only ones working blind.
+    state["admit_pattern"] = modules.admit_pattern_by_school(
+        intended or _seed_names(intended), major)
+    thin = [x["college"] for x in state["admit_pattern"].get("schools", [])
+            if not x.get("sufficient")]
+    if thin:
+        log(f"       ! too few admits held to assess fit at: {', '.join(thin)}")
+
     log("  4/9  Gap Analyst ....... current profile vs cards")
     state["gap"], _ = _gated("gap", {"profile_json": profile, "cards_json": mr["cards"],
                                   "reference_json": context.for_gap(profile),
                                    "tally_json": mr["tally"],
+                                   "admit_pattern_json": state["admit_pattern"],
                                    "grade": _grade(profile)}, gates.gate_gap, state, log)
 
     log("  5/9  Strategy .......... ranking gaps -> moves")
@@ -80,14 +92,10 @@ def run(intake: dict, log=print) -> dict:
         "strategy",
         {"gap_map_json": state["gap"], "profile_json": profile,
          "reference_json": context.for_strategy(profile),
+         "admit_pattern_json": state["admit_pattern"],
          "intended": profile.get("intended", {})},
         lambda o: gates.gate_strategy(o, state["gap"], profile.get("constraints", {})),
         state, log)
-
-    state["admit_pattern"] = modules.admit_pattern_by_school(intended or _seed_names(intended), major)
-    thin = [x["college"] for x in state["admit_pattern"].get("schools", []) if not x.get("sufficient")]
-    if thin:
-        log(f"       ! too few admits held to assess fit at: {', '.join(thin)}")
 
     log("  6/9  Two Paths ........ target & stretch variants")
     state["two_paths"], _ = _gated(

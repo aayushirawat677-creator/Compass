@@ -462,6 +462,17 @@ RULES
 {EVIDENCE}
 {TONE}
 
+USING `admit_pattern_json` — what admits to THESE schools actually held. [#52]
+Per school it gives: how many admits we hold, whether that is enough to say anything
+(`sufficient`), which credential types those admits had, what share had each, and the
+rung each credential typically reached (`modal_level`).
+  - Measure the student's distance against the MODAL level, not the top of the range.
+    If most admits who did debate reached school or district level and a tenth reached
+    national, the gap to close is to the middle, and national is a stretch.
+  - A share is a description of admits, never an admission rate and never odds.
+  - Where `sufficient` is false, say the gap cannot be measured for that school. Do not
+    borrow another school's pattern to fill it.
+
 THREE RULES THAT KEEP THIS STEP IN ITS LANE [#40]
 - COUNT NOTHING YOURSELF. Every number you state was handed to you in the tally or the
   reference pack. Do not count the student's activities, the admits, or anything else — a
@@ -537,6 +548,17 @@ RULES
 {TONE}
 {PLANNING}
 
+AIM AT THE MIDDLE OF THE DISTRIBUTION, NOT THE TAIL. [#52]
+`admit_pattern_json` tells you, per school, what admits actually held and the rung
+each credential typically reached. Use it to set the level a move aims at:
+  - The TARGET is the modal level among admits who held that credential.
+  - The STRETCH is one rung above it.
+  - A credential a tenth of admits reached is a differentiator, not a baseline. Saying
+    a student must reach it to be competitive is both false and discouraging.
+  - Where a school's `sufficient` is false, aim from the schools where it is true and
+    say so, rather than inventing a level.
+This is the check against aiming too high or too low, and it is the only one we have.
+
 ONE THREAD AT CORE INTENSITY. EXACTLY ONE. [#39]
 A spike is one thing taken far, not four things carried at once. Whatever you mark `core`,
 there is one of it. Everything else is `steady`, `maintain`, or subtracted — and subtracting
@@ -600,6 +622,13 @@ five-year plan. Each grade gets its own goals; each goal gets its own tasks.
         text            what happens, in a full sentence a parent can act on
         track           "target" | "stretch"
   multi_year_arc        one line per stage, in plain words
+
+SIZE THE GOALS TO THE EVIDENCE [#52]
+`admit_pattern_json` says, per target school, what admits actually held and the rung
+each credential typically reached. A target goal aims at the MODAL level; a stretch
+goal aims one rung above it. A credential only a tenth of admits reached is a
+differentiator and belongs on the stretch track — never in the target plan, where it
+reads as a requirement the student has to meet.
 
 TASKS: WHAT THEY ARE AND ARE NOT
   A task is a step toward its goal, sized to a term. Not a diary entry.

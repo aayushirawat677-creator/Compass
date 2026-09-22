@@ -1037,3 +1037,19 @@ must CONTAIN.
   semester fee; and summer items must be detected to be charged to the summer ceiling.
 - **`gate_budget`** retries rather than escalates: the fix is ours — drop or substitute
   the expensive item — not the parent's.
+
+## 52. The calibration evidence reaches the steps that decide
+- **The bug:** `admit_pattern_by_school` (#44) was computed just before Two Paths, at
+  step 6. Gap is step 4 and Strategy is step 5. So the step that MEASURES the distance
+  and the step that DECIDES what to do about it were the only two working without the
+  evidence — and Plan, which sizes the goals, got it only by accident of ordering.
+- **Fix:** computed once straight after retrieval, then handed to Gap, Strategy, Two
+  Paths and Plan alike. Three lines of payload and one moved computation.
+- **The rule all four now share:** aim at the MODAL level among admits who held that
+  credential; the stretch is one rung above it. A credential a tenth of admits reached
+  is a differentiator, not a baseline — putting it in the target plan states it as a
+  requirement, which is both false and discouraging. Where a school's `sufficient` is
+  false, say the distance cannot be measured there rather than borrowing another
+  school's pattern.
+- **This is the answer to "did we aim too high or too low."** It is the only check we
+  have, and until now it reached one step out of four.
