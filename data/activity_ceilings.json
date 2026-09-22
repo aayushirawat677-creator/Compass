@@ -1,0 +1,255 @@
+{
+  "_README": [
+    "LAYER-1 KNOWLEDGE ONLY: what an activity TYPE can reach, what transfers out of it,",
+    "and the routes people take. True for every student who has one of these. Nothing here",
+    "may name a child, a school the child is aiming at, or a number of hours a child spends.",
+    "",
+    "This file starts empty and fills itself. The appraiser agent runs on every activity of",
+    "every student; when it finishes it writes its type_knowledge back here, keyed by",
+    "`type_name`. The next family with the same activity type gets a cache hit and the agent",
+    "skips straight to the child-specific judgment. Cold start costs a few web searches per",
+    "family; it drops toward zero as this file fills.",
+    "",
+    "The cache is a convenience, never an authority. The agent may override an entry when the",
+    "student's situation genuinely differs, and MUST override one whose `verified_on` is more",
+    "than 18 months old for anything with dates, prices or programme names in it.",
+    "",
+    "EDIT THIS FILE BY HAND FREELY. It is meant to be read and corrected by the team - that",
+    "is the whole reason the knowledge lives here rather than inside a prompt.",
+    "",
+    "ceiling_rung uses the shared ladder, ordered:",
+    "  school -> district -> regional -> state -> national -> international",
+    "An empty or unknown rung is written as \"\" and means we have not established one, which",
+    "is different from establishing that it is low."
+  ],
+  "_schema": {
+    "type_name": "slug, singular, describes the activity not the child",
+    "what_it_is": "one sentence a parent would recognise",
+    "ceiling_rung": "highest rung this credibly reaches AS IT STANDS, on the ladder above",
+    "ceiling_reason": "why it stops there - the structural reason, not a prediction",
+    "what_raises_it": [
+      "conditions that move the ceiling, each one checkable"
+    ],
+    "transfers_to": [
+      "what a student carries OUT of this into something else"
+    ],
+    "typical_routes": [
+      {
+        "becomes": "what it converts into",
+        "earliest_grade": 9,
+        "uses_history_how": "why the prior years qualify the student for this"
+      }
+    ],
+    "sources": [
+      "urls or 'model reasoning' - never left empty"
+    ],
+    "verified_on": "YYYY-MM-DD",
+    "seen_count": "how many students this entry has been applied to"
+  },
+  "types": {
+    "solo_resale_venture": {
+      "type_name": "solo_resale_venture",
+      "what_it_is": "A student buys items at retail or secondhand and resells them at a margin - trading cards, sneakers, clothing, collectibles - working alone, usually online or within their own network. Revenue is real and the customers are real, but the whole operation sits outside any school, club, employer or organising body.",
+      "ceiling_rung": "district",
+      "ceiling_reason": "Buying and reselling at prevailing prices produces no result that an outside body can vouch for. There is no judge, no customer base beyond the student's own reach, and no artefact a reader can evaluate. More years of it produce a longer duration, not a higher level, because nothing about the structure creates external validation. Revenue does not change this: a larger margin is still a private number nobody outside the household has checked. It is also not a proxy for admission - a corpus test of 2,617 posts (756 mentioning a venture) found the relationship between reported traction and top-25 admission disappears once post length is controlled for (70.7% with traction vs 72.2% without, p=0.82), so no traction threshold should be invented for this type. Activity-tier language from admissions consultancies is a shared vocabulary here, not a rule any college publishes.",
+      "what_raises_it": [
+        "Entering the operation, or the skill behind it, into a school-chapter competitive-events ladder - DECA's Entrepreneurship Series (ENT), or FBLA's Sales Presentation, Entrepreneurship or Business Plan events - where scoring is done by outside judges and advancement runs through qualifying levels to a national or international conference. FBLA's Sales Presentation asks the competitor to sell a product or service of their own choosing, which is the closest fit for someone with an operating business; FBLA's Business Plan event is written for launching a NEW business, so an existing operation supplies the material rather than being the entry itself.",
+        "Selling to strangers at an organised, ticketed event rather than within the student's own network - a vendor or dealer table at a named card-show circuit such as Collect-A-Con, Card Party, Front Row Card Show or a regional show listed in a card-show directory. The organiser, the table fee and the public are the outside structure the solo operation lacks.",
+        "A second person involved whom the student directs, which turns trading into running something",
+        "An artefact others use: a price guide, a grading write-up, a tool or marketplace other collectors rely on",
+        "Outside recognition - press, an award, a grant, acceptance to a young-entrepreneur programme"
+      ],
+      "transfers_to": [
+        "Inventory, margin and cash-flow literacy that most students of the same age do not have",
+        "Direct negotiation and pricing experience with real counterparties",
+        "Domain fluency in the category traded, which is genuine and specific",
+        "A demonstrated willingness to do commercial work unsupervised"
+      ],
+      "typical_routes": [
+        {
+          "becomes": "A role in a school chapter of DECA or FBLA, competing in an entrepreneurship or sales event (DECA Entrepreneurship Series; FBLA Sales Presentation, Entrepreneurship, or Business Plan), where outside judges score the work and the ladder runs upward through qualifying levels to a national or international conference",
+          "earliest_grade": 9,
+          "uses_history_how": "The trading history is the preparation and the material. A student who has actually priced, sourced and sold in a category walks into a sales or entrepreneurship event with real answers where peers have hypotheticals, and the organisation supplies the judges and the rung ladder the solo venture has no way to generate. Note that the qualifying structure varies by state association and both organisations are school-chapter based, so this route exists only where a chapter exists - confirm with the chapter adviser rather than assuming."
+        },
+        {
+          "becomes": "A part-time or weekend role at an established business in the same category - a card or collectibles shop, a game store, a resale platform, a local e-commerce operation",
+          "earliest_grade": 10,
+          "uses_history_how": "The trading history is the qualification. A student who has bought and sold in this category is a credible hire for it in a way a student with no history is not, and the work then carries a supervisor who can speak to it - which is the outside voucher the solo operation never produces."
+        },
+        {
+          "becomes": "A judged entry in a named high-school entrepreneurship competition - Diamond Challenge, Blue Ocean Student Entrepreneur Competition, Conrad Challenge, NFTE World Series of Innovation, or a DECA/FBLA event",
+          "earliest_grade": 9,
+          "uses_history_how": "The operation is the student's evidence rather than the entry. A survey of the main high-school entrepreneurship competition listings found none that explicitly accept an already-operating business as the submission - they ask for an idea, a concept or a plan - so the realistic use of the history is that it makes the plan concrete and the founder credible, not that the business is itself judged. Treat any claim that a competition accepts a live operation as something to verify against that competition's own rules first."
+        }
+      ],
+      "sources": [
+        "https://www.deca.org/compete/entrepreneurship-series",
+        "https://www.deca.org/compete",
+        "https://www.fbla.org/high-school/competitive-events/",
+        "https://www.teenlife.com/blog/competitions-for-teen-entrepreneurs/",
+        "https://thecardshopfinder.com/guides/card-shows/",
+        "https://frontrowcardshow.com/collections/dealers",
+        "https://blog.collegevine.com/breaking-down-the-4-tiers-of-extracurricular-activities",
+        "https://www.usnews.com/education/best-high-schools/articles/how-colleges-weigh-high-school-extracurriculars",
+        "https://www.koppelmangroup.com/blog/2025/3/6/how-to-get-an-internship-as-a-high-school-sophomore",
+        "model reasoning"
+      ],
+      "verified_on": "2026-09-22",
+      "seen_count": 2
+    },
+    "recreational_racquet_sport_table_tennis_or_tennis_played_outside_school_no_sanctioned_competitive_record": {
+      "type_name": "recreational_racquet_sport_table_tennis_or_tennis_played_outside_school_no_sanctioned_competitive_record",
+      "what_it_is": "Regular play of a racquet sport at a club, a public facility or at home, outside any school team and outside the sanctioned tournament systems of the sport's national governing body. Nothing about the play is recorded by a body other than the player and the people they play with. Both sports have a US national governing body that runs the only ladder producing an outside record: USA Table Tennis (USATT) for table tennis and the United States Tennis Association (USTA) for tennis.",
+      "ceiling_rung": "school",
+      "ceiling_reason": "By definition this type produces no artefact an outside body holds. Both governing bodies issue records only from sanctioned events: USATT rankings are built from performance in sanctioned tournaments over a rolling 24 months and require a player to win at least one match at a qualifying tournament to earn any points at all, and USTA junior ranking points are awarded on wins inside its numbered tournament levels. A player who never enters those events has no rung above whatever a school will vouch for, and hours of recreational play do not substitute, because the record is generated by entry, not by volume.",
+      "what_raises_it": [
+        "Entering USATT-sanctioned tournaments and accumulating a ranking: USATT weights U.S. Nationals and the U.S. Open at 10x points, USATT Regional Championships at 3x, and State Opens, State Championships and Ranking Tournaments at 1x, with junior categories at U11, U13, U15, U17 and U19 and points decaying to 50% after 12 months",
+        "Entering USTA Junior Tournaments, which run Levels 7 through 1 with different ranking-point values at each level, Level 7 aimed at intermediate players and Level 1 at advanced players, with ranking points given on wins",
+        "A role inside something larger rather than solo play: a place on a school team, or an officer role in a club or league",
+        "The teaching side of the sport: the USTA Coaching pathway begins with the Development Coach badge, earned through introductory modules plus a half-day in-person workshop, and continues to Professional certification, with Specialist and Master levels coming in 2026 and 2027 (the published pathway does not state a minimum age, so eligibility for a high-school-age student has to be checked locally rather than assumed)"
+      ],
+      "transfers_to": [
+        "Coaching or assisting with junior instruction, where years of playing is the credible basis for the role rather than a credential in itself",
+        "Running a school club, ladder or intramural league, which converts solo play into an organising role",
+        "Event organisation and officiating at local tournaments"
+      ],
+      "typical_routes": [
+        "Sanctioned ladder: local sanctioned play, then State Opens and State Championships, then USATT Regional Championships, then U.S. Nationals or the U.S. Open; or, in tennis, USTA Junior Tournament Level 7 upward toward the advanced levels",
+        "School route: recreational play becomes a place on a school team, which is a school-rung credential and the most common shape athletics takes",
+        "Teaching route: the player becomes an instructor or assistant, formalised through the USTA Coaching Development Coach badge and then Professional certification",
+        "It stays recreational, which is the most common outcome and is a legitimate one"
+      ],
+      "sources": [
+        "https://www.usta.com/en/home/play/youth-tennis/programs/national/the-usta-junior-competitive-pathway.html",
+        "https://www.usatt.org/ranking-system-explained",
+        "https://coachcare.usta.com/hc/en-us/articles/39937118667156-Education-Pathways-and-Certifications"
+      ],
+      "verified_on": "2026-09-22",
+      "seen_count": 1
+    },
+    "scholastic_competitive_chess_over_the_board_tournament_play_under_us_chess": {
+      "type_name": "scholastic_competitive_chess_over_the_board_tournament_play_under_us_chess",
+      "what_it_is": "Individual rated competition at club, state and national tournaments, governed in the United States by the US Chess Federation (US Chess), which administers the national rating system, sanctions over twenty national championships annually, awards norms-based titles, and represents the United States in FIDE, the world federation. Every game played at a sanctioned event feeds a published rating, so the activity generates its own outside verification without anyone having to vouch for the player.",
+      "ceiling_rung": "international",
+      "ceiling_reason": "The type carries an outside body at every rung. US Chess publishes rating classes running from Class J (100-199) up to Senior Master (2400+) and norms-based titles including Candidate Master, Life Master and Life Senior Master, and it runs a named national scholastic ladder. Through its FIDE affiliation the ladder continues past national into internationally rated and titled play. That is unusual: most activities have to manufacture legibility, while this one is legible by construction, and the rung a player reaches is simply the rung their results reach.",
+      "what_raises_it": [
+        "A published US Chess rating earned in sanctioned over-the-board play, which is what converts 'plays in tournaments' into a number a reader can look up",
+        "A placing result at a state scholastic championship run by a state affiliate of US Chess",
+        "A placing result at a US Chess national scholastic event: the National Elementary, National Middle School and National High School (K-12) Championships in the spring, the National K-12 Grade Championships in December, or SuperNationals, which combines the three spring nationals and is held no more frequently than every four years",
+        "Qualifying through state tournaments that feed the national invitational events (senior, middle, elementary and girls divisions), which is a different and narrower door than the open nationals",
+        "FIDE-rated play and FIDE titles, which is where the ladder continues above national"
+      ],
+      "transfers_to": [
+        "Teaching and coaching younger players through school programmes and through nonprofit chess-education organisations such as Chess in the Schools and Chess for Success, both of which run volunteer programmes",
+        "Founding or running a school or community club, which turns individual competition into an organising role",
+        "Tournament direction through the US Chess TD ladder, which begins at Club TD (requirements: read the Official Rules of Chess, complete SafeSport training, sign a rules attestation, hold active US Chess membership; no exam for the initial term) and rises through Local TD, Senior TD, Associate National TD and National TD"
+      ],
+      "typical_routes": [
+        "Club and local rated play builds a rating, then a state scholastic championship, then US Chess national scholastic events — noting that the spring and grade nationals take entries without requiring a state qualifying result, so attendance at a national event is open and is not itself a national-rung result",
+        "The organising route: a strong club player becomes a Club TD and directs local events, or founds and runs a school club",
+        "The teaching route: a rated player instructs beginners through a school programme or a chess-education nonprofit",
+        "Club play continues without a competitive climb, which is the most common outcome"
+      ],
+      "sources": [
+        "https://chesstournamentguide.com/parents/path-to-national-scholastic-chess/",
+        "https://en.wikipedia.org/wiki/United_States_Chess_Federation",
+        "https://chesstournamentguide.com/rules-ratings/uscf-tournament-director-levels/",
+        "https://chessintheschools.org/",
+        "https://chessforsuccess.org/get-involved/volunteer"
+      ],
+      "verified_on": "2026-09-22",
+      "seen_count": 1
+    },
+    "judged_youth_cooking_competition": {
+      "type_name": "judged_youth_cooking_competition",
+      "what_it_is": "A student cooks to a brief in front of judges at a local or district-level competition and is scored on the plate produced - taste, technique, safety and sanitation - with the result expressed as a placement or a medal. The competitor works as an individual or on a small team, and the competition is often run by a school, a county or community organiser rather than by a body that also runs the level above it.",
+      "ceiling_rung": "district",
+      "ceiling_reason": "A cooking result travels upward only along a ladder somebody operates. Where the organising body runs a single local event and nothing feeds out of it, a placement is complete at the level it was won: repeating it produces another district placement, not a state one, because there is no qualification route attached to the win. The judging is real and the artefact is real - which is more than many activities have - but the level is capped by the organiser, not by the cooking.",
+      "what_raises_it": [
+        "Competing through a body that operates the levels above the entry point. FCCLA STAR Events run at three levels - region, state, and national - and the top two competitors at a level advance, with Culinary Arts and Baking & Pastry as named events and the National Leadership Conference as the national rung.",
+        "A school ProStart program, where the state competition run by the state restaurant association feeds the National ProStart Invitational, run by the National Restaurant Association Educational Foundation; the national event runs Culinary and Management categories and awards scholarships to the top five teams in each.",
+        "A certification an outside body issues rather than a placement it awards - FCCLA lists an American Culinary Federation certification pathway for student members.",
+        "A role rather than an entry: leading a team, or running a repeating programme other people attend, which makes the student the organiser of something instead of a competitor in it.",
+        "Work in a real kitchen with a supervisor who can describe the work, which supplies outside verification that a competition placement claimed at home does not."
+      ],
+      "transfers_to": [
+        "Producing a finished result to an external standard under a time limit, judged by strangers rather than by a teacher",
+        "Working to a published rubric - the scoring sheet is the spec, and the skill is reading it and hitting it",
+        "Kitchen-floor competence that makes a student employable in food service earlier than most peers",
+        "Costing, menu design and service planning where the competition ladder includes a management category"
+      ],
+      "typical_routes": [
+        {
+          "becomes": "Entry into a sanctioned competition ladder through the school - FCCLA Culinary Arts or Baking & Pastry STAR Events (region to state to the National Leadership Conference), or a ProStart team competing at the state restaurant association event that feeds the National ProStart Invitational",
+          "earliest_grade": 9,
+          "uses_history_how": "The existing placement is the qualification and the rehearsal. A competitor who has already cooked to a brief in front of judges and finished in the top five enters the ladder knowing what the room is, which a student entering cold does not."
+        },
+        {
+          "becomes": "Paid or unpaid kitchen work - a restaurant, bakery, catering operation or institutional kitchen - with a named supervisor",
+          "earliest_grade": 10,
+          "uses_history_how": "A competition record is the credential that gets a teenager hired into a kitchen rather than a front-of-house job; the cooking history is the reason the hire is credible, and the supervisor then becomes the outside voice the competition never provided."
+        },
+        {
+          "becomes": "A repeating programme the student runs rather than enters - a class, a community kitchen shift series, a food programme inside an existing organisation",
+          "earliest_grade": 9,
+          "uses_history_how": "The competition result is what persuades an organisation to hand over a programme; the organisation then supplies the structure, the continuity and the outside validation the one-off contest lacked."
+        }
+      ],
+      "sources": [
+        "https://chooserestaurants.org/events/national-prostart-invitational/",
+        "https://www.georgiafccla.org/star-events",
+        "https://fcclainc.org/sites/default/files/Culinary%20Arts.pdf",
+        "https://fcclainc.org/engage/certifications/american-culinary-federation-certification",
+        "Provenance: the cached candidate type offered for this activity was 'solo_resale_venture' - a student buying goods and reselling them at a margin. It does not match a judged cooking competition: resale has no judge, no rubric and no artefact, while this type is defined by all three, and its ceiling is capped for a different reason. The candidate was rejected rather than adapted, and this type was built fresh from live search on 2026-09-22."
+      ],
+      "verified_on": "2026-09-22",
+      "seen_count": 1
+    },
+    "school_musical_cast_performance": {
+      "type_name": "school_musical_cast_performance",
+      "what_it_is": "A student is cast in a musical produced by their own school and performs in it. The production is not judged, there is no qualification attached to appearing in it, and the credential such a student holds is participation in a school production plus whatever role they were given.",
+      "ceiling_rung": "school",
+      "ceiling_reason": "A school production is complete in itself. Nobody outside the school evaluates it, nothing advances out of it, and being cast again next year produces a second school production rather than a higher rung. Everything above the school rung in theatre is administered by a separate body that the student has to be inside - an honour society troupe, a regional awards programme, a national foundation - and casting into those routes is decided by other people, so the level is set by which organisations the student is enrolled in and which roles they are given, not by how many shows they appear in.",
+      "what_raises_it": [
+        "Membership of an International Thespian Society troupe at the school - ITS is run by the Educational Theatre Association, is the theatre honour society for middle and high school students, and inducts by a points system earned through performance and production work; middle schoolers are inducted as Junior Thespians and high schoolers as Thespians.",
+        "A Thespys placement at a chapter or state Thespian festival, which is the qualifying layer that carries work to the International Thespian Festival.",
+        "Being cast in a named role in a qualifying show at one of the 60 regional programmes of the National High School Musical Theatre Awards, each of which selects two performers to advance to the national Jimmy Awards, presented by The Broadway League Foundation.",
+        "A national application route judged on submitted work rather than on casting - YoungArts runs theatre competitions and grants for high school students.",
+        "Casting outside the school entirely - community, regional or professional productions - where the producing organisation is the outside body that vouches.",
+        "A production role rather than a performing one: directing, stage managing or designing a show puts the student in charge of something, which is a different and often more legible claim than appearing in it."
+      ],
+      "transfers_to": [
+        "Sustained public performance in front of an audience of strangers, including memorised delivery under pressure",
+        "Rehearsal discipline - showing up to a fixed schedule over weeks for a result delivered on a fixed date",
+        "Working as one part of a large cast to a director's instruction",
+        "Stage comfort that carries into any activity whose credential is delivered out loud, such as speech, debate or advocacy"
+      ],
+      "typical_routes": [
+        {
+          "becomes": "Induction into the school's International Thespian Society troupe and entry of a piece into the Thespys at the chapter or state festival, with the International Thespian Festival as the level above",
+          "earliest_grade": 6,
+          "uses_history_how": "ITS induction is earned by accumulating points for performance and production work, so prior shows are literally the currency of entry; a student with productions behind them is inducted on the strength of them, and Junior Thespian membership is available at the middle-school level."
+        },
+        {
+          "becomes": "A named role in a qualifying high school musical entered through a regional High School Musical Theatre Awards programme, which advances two performers a year to the Jimmy Awards",
+          "earliest_grade": 9,
+          "uses_history_how": "Casting is competitive and prior stage experience is what auditions on; the route uses the performance history but does not guarantee it, because the role is another person's decision."
+        },
+        {
+          "becomes": "A production-side role - stage manager, director, designer - inside the school's theatre programme or a community company",
+          "earliest_grade": 9,
+          "uses_history_how": "Time already spent in casts is what makes a student trusted with the running of a show, and it converts a participation credential into a leadership one without leaving the activity."
+        }
+      ],
+      "sources": [
+        "https://schooltheatre.org/international-thespian-society/",
+        "https://www.jimmyawards.com/participation/regional-awards-programs",
+        "https://www.jimmyawards.com/",
+        "https://youngarts.org/discipline/theater/",
+        "Provenance: no cached knowledge and no candidate types were supplied for this activity; the type was built from live search on 2026-09-22."
+      ],
+      "verified_on": "2026-09-22",
+      "seen_count": 1
+    }
+  }
+}

@@ -121,6 +121,17 @@ td.tg{ color:var(--green); } td.st{ color:var(--purple); }
 .catchip.academics{ background:#e2e5dd; color:#3a463a; }
 .catchip.summer{ background:#f6ecd8; color:#96762a; }
 .catchip.schedule{ background:#eceadf; color:#6a6450; }
+.catchip.other{ background:#eceadf; color:#6a6450; }
+/* profile: where each existing thread can reach */
+.threads{ border:1px solid var(--line); border-radius:5px; padding:11px 14px; margin:12px 0 4px; background:var(--card); }
+.thlab{ color:var(--gold2); letter-spacing:.14em; font-size:9.5px; font-weight:700; text-transform:uppercase; margin-bottom:6px; }
+.throw{ display:flex; align-items:baseline; gap:9px; margin:5px 0 0; }
+.throw .thname{ font-weight:700; }
+.throw .threach{ color:var(--muted); font-size:10px; }
+.throw .thdisp{ margin-left:auto; color:var(--green); font-style:italic; font-size:10px; white-space:nowrap; }
+.thnote{ font-size:9.5px; color:var(--muted); font-style:italic; margin:0 0 3px 46px; }
+.box.ask{ background:#efeaf4; border-left-color:var(--purple); }
+.box.ask .lab{ color:var(--purple); }
 .grow.again .t{ font-weight:600; color:#41493d; }
 .contpill{ font-size:7.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--muted);
   border:1px solid var(--line); border-radius:8px; padding:1px 6px; margin-left:7px; vertical-align:2px; }
@@ -196,6 +207,26 @@ TEMPLATE = Template(r"""
     <div class="thesis">{{ blk.thesis }}</div>
     <p>{{ blk.body }}</p>
   {% endfor %}
+  {% if c.profile.threads %}
+  <div class="threads">
+    <div class="thlab">His threads, and where they reach</div>
+    {% if c.profile.threads_lead %}<p class="small mut" style="margin:0 0 6px">{{ c.profile.threads_lead }}</p>{% endif %}
+    {% for t in c.profile.threads %}
+      <div class="throw">
+        <span class="catchip {{ t.cat_class }}">{{ t.cat }}</span>
+        <span class="thname">{{ t.name }}</span>
+        <span class="threach">{{ t.reach }}</span>
+        <span class="thdisp">{{ t.disposition }}</span>
+      </div>
+      {% if t.note %}<div class="thnote">{{ t.note }}</div>{% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% if c.profile.family_questions %}
+  <div class="box ask"><div class="lab">We'd like your view before we decide</div>
+    {% for q in c.profile.family_questions %}<p class="small" style="margin:4px 0"><strong>{{ q.about }}</strong> — {{ q.question }}</p>{% endfor %}
+  </div>
+  {% endif %}
   <div class="box"><div class="lab">Flags to confirm</div><p class="small">{{ c.profile.flags }}</p></div>
 </div>
 

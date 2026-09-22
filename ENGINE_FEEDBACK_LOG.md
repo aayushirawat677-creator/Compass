@@ -1206,3 +1206,70 @@ renderer collapses repeats to a short form with a `continued` marker. The critic
 judges a document; those are different artifacts. Told it so explicitly. The general rule: when
 a defect is fixed deterministically in the template, the critic has to be told, or it reports it
 forever and its real findings get lost in the noise.
+
+## 59. The appraiser — asking whether an activity is worth the years
+Until now no step was allowed to ask whether an activity the family already does could ever
+amount to anything. R1 describes and is forbidden from judging; Gap was narrowed in #40 for
+straying into exactly this; Strategy takes the activities as given. So a thread with a low
+ceiling was carried to grade 12 by default, and a student spent five years on something an
+admissions reader would find nothing in. Those are years they do not get back.
+
+### What was measured first
+The idea rests on a claim we had never tested: that ventures with traction do better. Against
+our own corpus — 2,617 valid posts, 756 mentioning a venture, 540 with a traction signal — the
+raw numbers look supportive (68.5% top-25 admit with traction vs 65.3% without). They are a
+confound. Post length alone moves the outcome from 51.6% to 71.1% across quartiles, and once
+matched on length the traction effect is gone:
+    Q2 62.8 vs 57.1 (p=.51) · Q3 69.3 vs 66.7 (p=.75) · Q4 71.6 vs **78.3** (p=.34)
+    pooled Q3+Q4  70.7% (n=427) vs 72.2% (n=126)  **p=0.82**
+It reverses in the longest quartile. Third hypothesis in a row that measurement killed, after
+the major/retail rule and the corpus admit-rate idea. **So the step reasons and cites; it never
+asserts a traction threshold, and the rubric fails any output that invents one.**
+
+### Where it sits, and why there
+After Gap, before Strategy — not before Gap, which was my first placement and was worse.
+Sitting after Gap it gets `admit_pattern_by_school`, so a ceiling is set beside what admits to
+*this student's six schools* actually held in that credential rather than against a generic
+tier opinion. Strategy consumes the verdicts immediately as a fifth move, CONVERT.
+
+### Two layers, and only one of them is cacheable
+The TYPE — what a solo resale venture reaches, what transfers out of it, the routes — is true
+for every student who has one. THIS STUDENT is never cacheable. So the agent runs on every
+activity of every student, every time; `data/activity_ceilings.json` only saves it from
+re-researching layer 1, and starts empty. Nothing is blocked on having a dataset first, which
+was the right objection to my first framing of this as data-file-first.
+
+### CONVERT
+Not "stop doing this". The early grades build the skill; a later grade spends it somewhere with
+outside validation. A conversion that does not USE the history is a replacement dressed as one
+— the gate rejects it, because the history is the very thing that makes the student a credible
+candidate for the new thing.
+
+### The family decides the hard ones
+A convert or retire on the student's longest-running or highest-hours thread sets
+`needs_family_input` and writes a plain question. The plan is built as the activity stands
+until they answer. We have never met this child; they have.
+
+### What running it found
+Five activities, cold cache, 3-5 searches each. Gate PASS, low confidence flagged on chess.
+  card business  district  convert   ask  -> DECA/FBLA event ladder, or a shop role at grade 10
+  ping-pong      school    keep_as_interest
+  chess          state     carry     ask  (tenure and hours are both null — asked rather than guessed)
+  cooking        district  convert   ask  -> FCCLA Culinary STAR / ProStart, which run the rungs above
+  theater        school    keep_as_interest
+The agent **corrected the seed cache entry**: I had written that an operating business can be
+entered directly into a youth pitch competition; it checked the actual competition rules, found
+they ask for an idea or plan rather than a live operation, and rewrote the route so the history
+makes the entrant credible instead. The cache working as designed on its first run.
+
+### Three bugs the run found
+- `gate_appraisal` crashed on `hours_per_week: "4-6"`. Same range-parsing bug as the budget
+  ledger. Takes the top of a range now. **Fifth** gate bug, and the second of this exact kind.
+- The layer-separation guard rejected the pronoun "his" and threw away all five cache entries
+  — "a student carries his trading history into the role" is generic prose. A pronoun is not a
+  fact. It now matches child-specific FACTS: a grade number, an hours figure, a tenure, a named
+  target school. All five stored after the fix.
+- The agent reported the payload never carried the student's grade, so every timing judgment was
+  relative to nothing. True — the wiring didn't pass it. Fixed, and `conversion.grade` is now
+  constrained to an integer with the dependency in `grade_note`, because the agent wrote a
+  paragraph into a field the plan schedules on.

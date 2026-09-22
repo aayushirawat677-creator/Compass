@@ -5,7 +5,7 @@ Agent steps -> compass.llm ; deterministic steps -> compass.modules.
 import json, os, sys
 import settings
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
-from compass import llm, modules, context, gates
+from compass import llm, modules, context, gates, appraise
 from compass.prompts import BY_STEP
 
 
@@ -35,7 +35,7 @@ def _gated(step, payload, gate_fn, state, log, tier_retry=True):
 def run(intake: dict, log=print) -> dict:
     state = {"intake": intake}
 
-    log("  1/9  Profile ............ reading the kid")
+    log("  1/10 Profile ............ reading the kid")
     g0 = gates.gate_intake(intake)
     state.setdefault("_gates", []).append(g0)
     if g0.verdict == gates.ESCALATE:
@@ -47,11 +47,11 @@ def run(intake: dict, log=print) -> dict:
                                  gates.gate_profile, state, log)
     profile = state["profile"]
 
-    log("  2/9  Projected Profile .. backend best-case card")
+    log("  2/10 Projected Profile .. backend best-case card")
     state["projected"] = _agent("projected", {"profile_json": profile,
                                               "intended": profile.get("intended", {})})
 
-    log("  3/9  Match & Rank ....... pulling + ranking admit cards  [deterministic]")
+    log("  3/10 Match & Rank ....... pulling + ranking admit cards  [deterministic]")
     intended = profile.get("intended", {}).get("colleges", [])
     major = profile.get("intended", {}).get("major", "")
     mr = modules.match_rank(intended, major, state["projected"])
@@ -80,24 +80,59 @@ def run(intake: dict, log=print) -> dict:
     if thin:
         log(f"       ! too few admits held to assess fit at: {', '.join(thin)}")
 
-    log("  4/9  Gap Analyst ....... current profile vs cards")
+    log("  4/10 Gap Analyst ....... current profile vs cards")
     state["gap"], _ = _gated("gap", {"profile_json": profile, "cards_json": mr["cards"],
                                   "reference_json": context.for_gap(profile),
                                    "tally_json": mr["tally"],
                                    "admit_pattern_json": state["admit_pattern"],
                                    "grade": _grade(profile)}, gates.gate_gap, state, log)
 
-    log("  5/9  Strategy .......... ranking gaps -> moves")
+    # 4b. APPRAISER — one call per activity. Sits AFTER gap so it can judge each thread
+    # against what admits to THIS student's schools actually held, and BEFORE strategy,
+    # which consumes the verdicts as its CONVERT move. Until this existed, an activity
+    # with a low ceiling was carried to grade 12 because no step could ask whether it
+    # would ever amount to anything. [#59]
+    acts = profile.get("activities") or []
+    log(f"  4b/10 Appraiser ........ how far can each of {len(acts)} threads go?")
+    appraisals = []
+    for act in acts:
+        cached = appraise.lookup(act.get("type_name") or act.get("name"))
+        out = _agent("appraiser", {
+            "grade": _grade(profile),
+            "activity_json": act,
+            "admit_pattern_json": state["admit_pattern"],
+            "intended_json": profile.get("intended", {}),
+            "cached_json": cached or {},
+            "candidates_json": [] if cached else appraise.candidates(
+                f"{act.get('name','')} {act.get('detail','')}"),
+        })
+        appraisals.append(out)
+        # Write layer-1 knowledge back so the next family with this activity type is
+        # cheaper. A rejected write is logged, never fatal — the cache is a convenience.
+        ok, why = appraise.record(out.get("type_knowledge") or {})
+        if not ok:
+            log(f"        cache: not stored for {act.get('name','?')!r} — {why}")
+    state["appraisals"] = appraisals
+    ga = gates.gate_appraisal(appraisals, acts)
+    state.setdefault("_gates", []).append(ga)
+    if ga.failures:
+        log(f"      gate: {ga.verdict} — {'; '.join(ga.failures[:2])}")
+    asked = [a for a in appraisals if a.get("needs_family_input")]
+    if asked:
+        log(f"        {len(asked)} thread(s) go back to the family as a question")
+
+    log("  5/10 Strategy .......... ranking gaps -> moves")
     state["strategy"], _ = _gated(
         "strategy",
         {"gap_map_json": state["gap"], "profile_json": profile,
          "reference_json": context.for_strategy(profile),
          "admit_pattern_json": state["admit_pattern"],
+         "appraisals_json": appraisals,
          "intended": profile.get("intended", {})},
         lambda o: gates.gate_strategy(o, state["gap"], profile.get("constraints", {})),
         state, log)
 
-    log("  6/9  Two Paths ........ target & stretch variants")
+    log("  6/10 Two Paths ........ target & stretch variants")
     state["two_paths"], _ = _gated(
         "two_paths",
         {"moves_json": state["strategy"].get("selected_moves", []),
@@ -112,7 +147,7 @@ def run(intake: dict, log=print) -> dict:
         lambda o: gates.gate_two_paths(o, state["strategy"]),
         state, log)
 
-    log("  7/9  Plan ............. goals, tasks, recommendations, tiers")
+    log("  7/10 Plan ............. goals, tasks, recommendations, tiers")
     grade = _grade(profile)
     state["capacity"] = modules.capacity_budget(profile, grade)
     state["capacity_summer"] = modules.capacity_budget(profile, grade, "summer")
@@ -200,7 +235,7 @@ def run(intake: dict, log=print) -> dict:
     # 6d tiering seed
     state["college_tiers"] = modules.tiering(intended, _college_seed(intended))
 
-    log("  8/9  Writer ........... composing the plan")
+    log("  8/10 Writer ........... composing the plan")
     state["draft"] = _agent("writer", {"plan_json": {"profile": profile, "gap": state["gap"],
                                         "strategy": state["strategy"], "plan": state["plan_goals"], "two_paths": state.get("two_paths", {}),
                                         "recommendations": recs, "college_tiers": state["college_tiers"]},
@@ -232,7 +267,7 @@ def run(intake: dict, log=print) -> dict:
     if gdoc.verdict != gates.PASS:
         log(f"      gate: {gdoc.verdict} — {'; '.join(gdoc.failures)}")
 
-    log("  9/9  Critic ........... tone / honesty / plain English")
+    log("  9/10 Critic ........... tone / honesty / plain English")
     verdict = _agent("critic", {"strategic_plan_json": state["draft"]})
     state["critic"] = verdict
 

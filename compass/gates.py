@@ -467,3 +467,81 @@ def gate_budget(ledger):
         f.append(f"{len(ledger['above_session_ceiling'])} above the per-session ceiling")
     return GateResult("budget", RETRY if f else PASS, f,
                       "a plan they cannot afford is not a plan" if f else "")
+
+
+def gate_appraisal(appraisals, activities):
+    """ACTIVITY APPRAISAL. [#59]
+
+    The appraiser is the first step allowed to say an activity is not worth five years, so
+    it is also the first step that can do real damage by being wrong about a child nobody
+    here has met. This gate checks the three ways that happens.
+    """
+    import json
+    f = []
+    appraisals = list(appraisals or [])
+    activities = list(activities or [])
+
+    # 1. Every activity gets appraised. A silently skipped one is carried by default, which
+    #    is exactly the failure this step exists to remove.
+    done = {str((a or {}).get("activity", "")).strip().lower() for a in appraisals}
+    missed = [str(a.get("name") or a.get("activity") or a)[:40] for a in activities
+              if str(a.get("name") or a.get("activity") or a).strip().lower() not in done]
+    if missed:
+        f.append(f"{len(missed)} activity(ies) never appraised: {missed[:3]}")
+
+    VERDICTS = {"carry", "convert", "keep_as_interest", "retire"}
+    for a in appraisals:
+        name = str(a.get("activity", "?"))[:34]
+        ap = a.get("appraisal") or {}
+        v = str(ap.get("verdict", "")).strip().lower()
+
+        if v not in VERDICTS:
+            f.append(f"{name}: verdict {v!r} is not one of {sorted(VERDICTS)}")
+
+        # 2. A ceiling with no reason cannot be reviewed, argued with, or corrected — and a
+        #    judgment nobody can argue with is the one most likely to stand while wrong.
+        if not str(ap.get("why") or "").strip():
+            f.append(f"{name}: verdict with no stated reason")
+        if v == "convert":
+            c = ap.get("conversion") or {}
+            if not c.get("becomes") or not c.get("uses_history_how"):
+                f.append(f"{name}: convert without a route that uses the student's history "
+                         f"— that is a replacement, not a conversion")
+
+        # 3. The family decides the hard ones. A convert or retire on the student's longest
+        #    or heaviest thread must reach them as a question. [#59]
+        src = next((x for x in activities
+                    if str(x.get("name") or x.get("activity") or "").strip().lower()
+                    == str(a.get("activity", "")).strip().lower()), {}) or {}
+        sig = (src.get("signals") or {})
+        # Intake values arrive as ranges and prose — "4-6", "about 5", "<1 yr". Take the
+        # TOP of a range, because the question is whether this is one of the student's
+        # heavier threads and the ceiling is what decides that. The same range bug bit
+        # the budget ledger; parse it here rather than crashing on it. [#54]
+        def _hi(v):
+            import re as _r
+            nums = _r.findall(r"\d+(?:\.\d+)?", str(v or ""))
+            return max((float(n) for n in nums), default=0.0)
+
+        anchor = (_hi(sig.get("hours_per_week")) >= 4
+                  or _hi(sig.get("years") or sig.get("years_involved")) >= 2)
+        if v in ("convert", "retire") and anchor and not a.get("needs_family_input"):
+            f.append(f"{name}: {v} on a long-running or high-hours thread without "
+                     f"needs_family_input — the family never gets to correct it")
+        if a.get("needs_family_input") and not str(a.get("family_question") or "").strip():
+            f.append(f"{name}: needs_family_input with no question written")
+
+        # Layer separation. A cached type entry that names a child poisons every future
+        # family that gets the cache hit.
+        tk = json.dumps(a.get("type_knowledge") or {}).lower()
+        if any(k in tk for k in ("grade 8", "grade 9", "grade 10", "grade 11", "grade 12")):
+            f.append(f"{name}: child-specific detail in type_knowledge — it would be cached")
+
+    low = [str(a.get("activity", "?"))[:24] for a in appraisals
+           if str(a.get("confidence", "")).lower() == "low"]
+    note = ""
+    if low and not f:
+        note = f"low confidence on {low[:3]} — carry these gently"
+    return GateResult("appraisal", RETRY if f else PASS, f,
+                      note or ("an activity carried by default is the failure this "
+                               "step removes" if f else ""))
