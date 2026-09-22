@@ -1335,3 +1335,44 @@ price or date; inside it, it fails a task with no name, price or contact.
 and nobody else. A later-grade goal that would be true of any eighth-grader who likes business
 has failed even though it named nothing — personalisation comes from his history, his
 constraints and the rung he is at, never from naming a programme.
+
+### 62a. Two more gates failing correct work, and both were our own rules colliding
+Bugs seven and eight, found by running the clean pass. Neither was a regex slip — each was
+one of our rules demanding the opposite of another.
+
+- **`gate_horizon` vs `gate_honours_appraisal`.** The near-horizon rule requires a current-year
+  goal to carry a name, price or contact. The appraisal rule requires a `keep_as_interest`
+  thread to have nothing asked of it. "Keep chess running at the size it is" satisfied the
+  second and failed the first. The specificity requirement now applies only to goals asking
+  for something NEW — a goal whose own verb is maintain-or-reduce is exempt, whether the
+  exemption comes from the verdict or from the goal's own language. Chess exposed it because
+  its verdict was `carry` while the strategy move was MAINTAIN, so the verdict alone did not
+  cover it.
+- **`gate_document` (#56) vs the section boundary (#57).** #56 requires every fact R6 put in a
+  task to survive into the roadmap. #57 then gave the roadmap and `this_year` half the job
+  each — what happens and when, versus which programme and what it costs — so the $50 booth
+  fee correctly LEAVES the roadmap for the card. The gate failed the writer for obeying the
+  newer rule. It now checks the whole document: a fact must reach the reader, not a
+  particular page.
+
+Eight gate bugs now. The first five were spelling-versus-substance; these two are a different
+and more interesting class — **a new rule invalidating an older gate's assumption**. Worth a
+standing habit: when a rule changes what belongs where, re-read the gates that were written
+under the old arrangement.
+
+### 62b. The clean run
+Appraiser → strategy → plan → writer → render, one artifact rather than two glued together.
+All gates PASS: plan, honours_appraisal, open_questions, horizon, document, draft. 13 pages.
+
+  strategy   8 moves, exactly 1 core, and the core move is the CONVERT on the card business
+  plan       5 grades, 21 goals, 51 tasks; both conversions scheduled
+  writer     21 of 21 goals rendered across 42 term-block appearances, 17 term blocks
+  horizon    grade 8 carries the fair, the organiser, the $50 fee, the 6-14 band, both
+             registration closes, the URL and a 26 Sep plan-by; grades 9-12 carry zero named
+             organisations, zero prices, zero dates
+  questions  3 threads went to the family as questions and no branch was picked for any
+
+Grade 9 reads "In his first high school, have him join the student business organisation
+running selling and entrepreneurship competitions. If his school has none, take a paid weekend
+shift instead at a shop that sells cards or games." Personalised — it exists only because he
+has two years of trading — and it names nothing that might not be there.

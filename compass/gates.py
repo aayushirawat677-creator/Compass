@@ -399,16 +399,26 @@ def gate_document(draft, plan_goals):
         _COMMON = {"business", "fair", "children", "school", "high", "middle", "county",
                    "city", "the", "of", "and", "grade", "summer", "fall", "spring"}
 
-        def _survives(name):
+        def _survives(name, haystack):
             if name.startswith("$"):
-                return name.lower() in rendered
+                return name.lower() in haystack
             toks = [t for t in _re.findall(r"[A-Za-z]{3,}", name)
                     if t.lower() not in _COMMON]
             if not toks:
-                return name.lower() in rendered
-            return all(t.lower() in rendered for t in toks)
+                return name.lower() in haystack
+            return all(t.lower() in haystack for t in toks)
 
-        lost = sorted(x for x in plan_facts if not _survives(x))
+        # Survives into the DOCUMENT, not only into the roadmap. When this check was
+        # written the roadmap was the only place a fact could live; #57 then split the
+        # job between the roadmap and this_year — what happens and when, versus which
+        # programme and what it costs — so a price correctly LEAVES the roadmap for the
+        # card. Checking only the roadmap made rule #56 fail work that rule #57 required.
+        # Eighth gate bug, and the second where two of our own rules pulled against each
+        # other. A fact must reach the reader; it need not reach a particular page. [#62]
+        whole_doc = " ".join([rendered,
+                              _txt(draft.get("this_year", {})).lower(),
+                              _txt(draft.get("parent_actions", {})).lower()])
+        lost = sorted(x for x in plan_facts if not _survives(x, whole_doc))
         if lost:
             f.append(f"{len(lost)} fact(s) the plan put in a task never reach the "
                      f"roadmap: {lost[:4]}")
@@ -709,7 +719,7 @@ _NAMED_BODIES = (r"\b(DECA|FBLA|FCCLA|ProStart|NSDA|CHSSA|NFTE|Diamond Challenge
                  r"National Leadership Conference|Invitational)\b")
 
 
-def gate_horizon(plan_goals, current_grade):
+def gate_horizon(plan_goals, current_grade, appraisals=None):
     """DEPTH BY HORIZON — and it fails in both directions. [#62]
 
     The near year must be specific enough to act on; the later years must be personalised
@@ -745,7 +755,15 @@ def gate_horizon(plan_goals, current_grade):
                          f"({(money + [d for d, in [(x,) for x in dated]])[:2]}) "
                          f"beyond the horizon it can be known at")
         else:
-            # The current year. Specificity here is the whole point of the near horizon.
+            # The current year. Specificity here is the whole point of the near horizon —
+            # EXCEPT for a thread the appraisal protected. A `keep_as_interest` goal is
+            # meant to ask nothing of the activity, so it correctly has no programme, no
+            # price and no contact. Demanding one contradicts gate_honours_appraisal,
+            # which fails the same goal for having a target attached. Two of our own gates
+            # pulling opposite ways on one goal is a worse failure than either miss, and
+            # it is the seventh gate bug of this family. [#62]
+            if _is_protected(text, appraisals):
+                continue
             has_name = bool(re.search(r"[A-Z][a-z]+ [A-Z][a-z]+", body))
             has_hook = bool(re.search(r"\$\s?\d|\bregist\w+|\bdeadline|\bcontact|"
                                       r"\bby [A-Z][a-z]+ \d|\bcall\b|\.org|\.com", body))
@@ -757,3 +775,35 @@ def gate_horizon(plan_goals, current_grade):
     return GateResult("horizon", RETRY if f else PASS, f,
                       "near work must be actionable; far work must not be instantiated"
                       if f else "")
+
+
+def _is_protected(goal_text, appraisals):
+    """Does this goal belong to an activity the appraisal told us to leave alone?
+
+    `keep_as_interest` means the plan protects it and asks nothing of it — so it is
+    supposed to carry no programme, price or contact, and the near-horizon specificity
+    rule must not fire on it. [#62]
+    """
+    import re
+    # A goal whose own verb is maintain-or-reduce asks nothing new of the student, so it
+    # correctly carries no programme and no price. Chess is the case that exposed this:
+    # the appraisal said `carry` and the strategy said MAINTAIN, so the verdict alone did
+    # not exempt it and the gate demanded a contact for "keep chess running at the size it
+    # is". The requirement is on goals that ask for something NEW. [#62]
+    import re as _re
+    if _re.search(r"\bkeep\w*\b.*\b(size|running|going|as (it|they) (is|are)|unchanged)\b"
+                  r"|\bat the size\b|\bnothing (new|riding)\b|\bwithout growing\b"
+                  r"|\b(hold|leave)\w* .*\b(steady|as it stands|alone)\b",
+                  str(goal_text), _re.I):
+        return True
+
+    for a in (appraisals or []):
+        if str((a.get("appraisal") or {}).get("verdict", "")).lower() not in (
+                "keep_as_interest", "retire"):
+            continue
+        stop = {"the", "and", "his", "her", "for", "with", "business", "club", "team"}
+        toks = [w for w in re.findall(r"[a-z]{4,}", str(a.get("activity", "")).lower())
+                if w not in stop]
+        if toks and any(t in str(goal_text).lower() for t in toks):
+            return True
+    return False
