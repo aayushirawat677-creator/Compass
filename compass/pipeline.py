@@ -171,7 +171,8 @@ def run(intake: dict, log=print) -> dict:
     # and the plan and both are TOLD to honour it; nothing checked that they did. [#60]
     for g in (gates.gate_honours_appraisal(state["plan_goals"], appraisals),
               gates.gate_open_questions(state["plan_goals"], appraisals),
-              gates.gate_horizon(state["plan_goals"], grade, appraisals)):
+              gates.gate_horizon(state["plan_goals"], grade, appraisals),
+              gates.gate_academics(state["plan_goals"], state["admit_pattern"], grade)):
         state.setdefault("_gates", []).append(g)
         if g.failures:
             log(f"      gate: {g.verdict} ({g.step}) — {'; '.join(g.failures[:2])}")

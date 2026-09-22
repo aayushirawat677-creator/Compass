@@ -296,7 +296,6 @@ TEMPLATE = Template(r"""
               {% if not again %}{% set _ = seen.g.append(gk) %}{% endif %}
               <div class="grow {{ 'stretchgoal' if row.track == 'stretch' else '' }}{{ ' again' if again else '' }}">
                 <div class="t">{% if row.cat %}<span class="catchip {{ row.cat_class }}">{{ row.cat }}</span>{% endif %}{{ (row.goal_short or gk.split(',')[0].split(' - ')[0]) if again else gk }}{% if again %}<span class="contpill">continued</span>{% elif row.track == 'stretch' %}<span class="trackpill s">stretch</span>{% endif %}</div>
-                {% if row.why_now and not again %}<div class="why">{{ row.why_now }}</div>{% endif %}
                 {% for t in row.tasks %}<div class="subtask">{{ t.text or t }}{% if t.track == 'stretch' and row.track != 'stretch' %}<span class="trackpill s">stretch</span>{% endif %}</div>{% endfor %}
               </div>
             {% endfor %}
@@ -306,7 +305,6 @@ TEMPLATE = Template(r"""
         {% for row in (g.goals or g.rows) %}
           <div class="grow {{ 'stretchgoal' if row.track == 'stretch' else '' }}">
             <div class="t">{{ row.goal or row.title }}{% if row.track == 'stretch' %}<span class="trackpill s">stretch</span>{% endif %}</div>
-            {% if row.why_now %}<div class="why">{{ row.why_now }}</div>{% endif %}
             {% for t in row.tasks %}<div class="task"><span class="termpill">{{ t.term }}</span><span>{{ t.text }}{% if t.track == 'stretch' and row.track != 'stretch' %}<span class="trackpill s">stretch</span>{% endif %}</span></div>{% endfor %}
           </div>
         {% endfor %}

@@ -706,6 +706,17 @@ Twelve selected moves is not a strategy, it is a list; the runtime gate rejects 
 "core" threads fails the same test one level down. If two candidates both look core, pick the
 one the student already has evidence in and make the other its support.
 
+ACADEMICS CANNOT BE DROPPED. [#64]
+Whatever else you trade away, an `academics_floor` gap survives into the moves. The first
+run of this step was handed six of them — one per target school — and dropped all six, so
+a five-year plan reached the family with nineteen goals and nothing about grades, course
+rigour or testing in any of them. Activities are what a student is remembered for; grades
+are what gets them read at all, and a GPA is cumulative, so the years you skip cannot be
+recovered later.
+
+If you genuinely believe the academic floor needs no move, you must say so in `tensions`
+with the band from `admit_pattern_json` in front of you. Silence is not a decision.
+
 CONVERT IS THE FIFTH MOVE, AND IT IS THE ONE THIS SYSTEM KEPT MISSING. [#59]
 You are handed `appraisals_json` — for every activity the student already does, how far it
 can credibly go, and what transfers out of it if the answer is "not far". Until this existed,
@@ -784,11 +795,11 @@ five-year plan. Each grade gets its own goals; each goal gets its own tasks.
     stage               "Explore" | "Solidify" | "Specialize" — from the arc above
     is_current_year     true on exactly one
     goals[]             3-5 for the current grade, 2-4 for later grades
-      goal              the OUTCOME, in plain words. "Keep his business going — and
-                        track it." Not a task, not a category label.
+      goal              ONE SHORT SENTENCE IN PLAIN ENGLISH. See the rule below.
       track             "target" | "stretch". A stretch goal is its own entry here,
                         never folded inside a target goal.
-      why_now           one sentence tying it to the gap or the target schools
+      why_now           one sentence, for the engine's own reconciliation. NOT PRINTED.
+                        Say why this goal exists; do not write it for a reader. [#63]
       hours_per_week    what it costs. Must fit the free hours in capacity_json.
       tasks[]
         term            "Fall" | "Spring" | "Summer" | "All year" — EXACTLY one of
@@ -803,12 +814,106 @@ five-year plan. Each grade gets its own goals; each goal gets its own tasks.
                         compete in?". Never leave that question inside `text`. [#55]
   multi_year_arc        one line per stage, in plain words
 
+ACADEMICS ARE A THREAD IN EVERY GRADE. THEY ARE NOT OPTIONAL. [#64]
+  The first five-year plan this engine produced carried nineteen goals and not one of them
+  was academic. The gap step had measured an academics floor at all six schools; every one
+  was dropped before the plan. A plan that schedules five years of activities and never
+  once mentions grades, course rigour or testing has left out the part that actually
+  decides the outcome.
+
+  So EVERY grade from the current one to 12 carries at least one academic goal. It is not
+  a category you may trade away to make room for an activity.
+
+  THE CHAIN, AND WHY IT STARTS NOW
+    A weak subject in middle school is not a middle-school problem. It becomes a harder
+    high-school course, then a lower grade in that course, then an AP taken shakily, then
+    a weaker score on the test section that covers it — and a GPA is cumulative, so a bad
+    year early cannot be un-done later, only averaged down. Raising a GPA takes a year or
+    two of consistent work, which is exactly why the work starts in the first term of the
+    plan rather than in the year the number gets reported.
+      weak foundation now -> the course goes badly -> the AP in it goes badly
+      -> the test section goes badly -> and all of it sits inside the GPA permanently
+    A student who shores up the weak subject now walks into the AP prepared. A student who
+    takes an AP to have an AP, while weak in it, lowers the GPA the AP was meant to raise.
+
+  WHAT THE ACADEMIC GOALS LOOK LIKE, BY STAGE
+    CURRENT YEAR and the year after — FIND THE WEAK SPOT AND FIX IT.
+      "Find which subjects he is weakest in and get those up before high school."
+      Tasks: ask the school or look at the last report card for the subjects he is
+      behind in; put regular help in place for the weakest one — a tutor, a teacher's
+      office hours, a study group, whatever the budget allows; check it against the
+      class tests during the term rather than waiting for the report card.
+    MIDDLE — CARRY THE RIGOUR THE COURSES DEMAND.
+      Take the harder course only where the foundation is there. The goal is a strong
+      grade in a demanding course, never a demanding course by itself.
+    LATER — TESTING, WITH THE FOUNDATION ALREADY IN PLACE.
+      Preparation for the college tests begins once, in the year before they are taken,
+      and it is preparation for the test — the subject work behind it was supposed to be
+      done years earlier. If a weak subject has survived to this point, say so plainly:
+      it is now a constraint on the score, not something to be fixed in a summer.
+
+  THE NUMBER COMES FROM THE DATA, NOT FROM FOLKLORE. [#64]
+    `admit_pattern_json` carries the GPA band admits to THESE schools actually held. Use
+    that band. Never invent a threshold, never say a number is "required" — say what
+    admits held, and that the plan aims there. A GPA target for an eighth-grader is an
+    ENTERING target for high school, not a result he has; say that too, once.
+
+  WE DO NOT HAVE HIS TRANSCRIPT, AND THAT IS THE FIRST TASK.
+    When the intake carries no grades, the plan does not guess at them and does not skip
+    the thread. The first academic task ASKS THE FAMILY for the report card, because they
+    are the only people who have it. That is a legitimate task — see the carve-out under
+    the research-assignment rule. Everything after it is written to be true whichever
+    subjects turn out to be weak.
+
+EXPLORE MEANS TRY THE FORMATS, NOT JUST TRY THE THING. [#63]
+  In the Explore years, a student who is drawn to a broad activity should sample its
+  VARIANTS before settling on one. Most families do not know the variants exist, and this
+  is one of the most useful things the plan can tell them.
+    Debate is not one activity: parliamentary, Lincoln-Douglas, Public Forum, Congress,
+    mock trial and Model UN are different formats that reward different people. A student
+    who is quick on his feet may be ordinary at one and strong at another.
+    The same is true elsewhere - a writer has essay, journalism, fiction and speech; a
+    coder has competitive programming, robotics and app work.
+  So in the Explore years the goal is to TRY SEVERAL AND FIND THE ONE HE IS GOOD AT, and
+  the Specialize years go deep on whichever that turned out to be. A plan that commits an
+  eighth-grader to one format has skipped the step that makes the later years work.
+  Write this in plain words: "try a few kinds of debate and see which suits him", not
+  "sample the format space".
+
 SIZE THE GOALS TO THE EVIDENCE [#52]
 `admit_pattern_json` says, per target school, what admits actually held and the rung
 each credential typically reached. A target goal aims at the MODAL level; a stretch
 goal aims one rung above it. A credential only a tenth of admits reached is a
 differentiator and belongs on the stretch track — never in the target plan, where it
 reads as a requirement the student has to meet.
+
+THE GOAL LINE — one short sentence, and a parent understands it alone. [#63]
+  This is the line that gets read. If it needs a second line to explain it, it is wrong.
+
+    BAD   "Put the card business in front of judges and customers from outside the family."
+          Which judges? Judging what? A parent stops here and asks a question.
+    GOOD  "Sell at a business fair where other people can see how he does."
+
+    BAD   "Get the selling scored by someone outside the family in his first high-school year."
+    GOOD  "Join the business club at his new school and enter a selling competition."
+
+  Rules for the line:
+    * ONE sentence. Under about 14 words. No semicolons, no em-dash clauses.
+    * Everyday words. A parent who has never read an admissions document understands it
+      on the first pass, at normal reading speed, without stopping.
+    * Say the THING THAT HAPPENS, not the effect we hope it has. "Sell at a fair" is the
+      thing. "Put it in front of an outside evaluator" is our reasoning wearing the
+      goal's clothes.
+    * No internal vocabulary anywhere in it: rung, credential, ladder, signal, load-bearing,
+      outside body, vouch, scored by, at_or_above, spike, thread, differentiator.
+    * Name the activity the way the FAMILY names it. They say "the card business", not
+      "the venture" and not "the selling".
+    * If you cannot say it plainly, the goal itself is probably muddled. Fix the goal.
+
+  `why_now` is for the engine, not the page. It exists so a later step can reconcile the
+  goal against the gap it came from. It is NOT printed under the goal — a second italic
+  line of our reasoning beneath every goal is clutter the reader did not ask for and
+  cannot act on. [#63]
 
 TASKS: WHAT THEY ARE AND ARE NOT
   A task is ONE ACTION A PERSON CAN START, sized to a term. Not a diary entry.
@@ -834,8 +939,16 @@ TASKS: WHAT THEY ARE AND ARE NOT
               with the county, both of which a parent signs for a minor."
      If the answer genuinely is NOT in your inputs, the task does not say "go find
      out". It states the action and marks the unknown for the recommendation step to
-     resolve: put the question in `needs_lookup` on the task, not in its text. A
-     question to the parent is never a task — it belongs in `flags_to_confirm`.
+     resolve: put the question in `needs_lookup` on the task, not in its text.
+
+     THE CARVE-OUT: this rule is about work WE could have done and pushed back onto
+     them. It does not cover a fact only the FAMILY holds — his report card, which
+     subjects he is behind in, what his school offers, whether he enjoyed something.
+     No amount of searching gets us those. "Look at his last report card and note the
+     two weakest subjects" is a real task and belongs in the plan. "Find out how a
+     business registers in your city" is not, because we can answer that ourselves.
+     The test: could we have found this out? If yes, do it. If only they can know it,
+     asking them IS the task. [#64]
 
   2. THE STATE, NOT THE ACTION — nothing happens on any given day.
      "Keep the ledger current." "Let the business run at its own pace." "Keep the
@@ -854,6 +967,26 @@ TASKS: WHAT THEY ARE AND ARE NOT
        GOOD  "Sit down after the fair with what it earned and what he enjoyed, and
               settle then whether a second one is worth it."
 
+ONE TASK IS ONE SITTING. DO NOT WRITE THE BABY STEPS. [#63]
+  A task is a thing a person sits down and does. The obvious sub-steps inside it are not
+  separate tasks, and listing them insults the reader.
+
+    BAD, three rows for one afternoon:
+        · Register him for a booth at the Children's Business Fair in San Jose.
+        · Open a simple ledger book.
+        · Enter the fair's judging as well as its selling, and aim at placing.
+    GOOD, one row:
+        · Register for a business fair near home, take a booth, and keep a simple record
+          of what he sells.
+
+  The test: WOULD ANYONE DO ONE OF THESE WITHOUT THE OTHERS? Nobody registers for a booth
+  and then does not sell at it. Nobody sells at a fair and then chooses not to write down
+  what it made. Those are one task. Use common sense about what a normal person already
+  knows follows from the first step, and do not spell it out.
+
+  Split into separate tasks only when the parts happen at DIFFERENT TIMES, need DIFFERENT
+  PEOPLE, or could genuinely be done without each other.
+
 ONE GOAL, ONE SUBJECT. [#55]
   A goal covers one outcome. If its tasks touch course selection AND an elective
   language AND dropping two activities AND a sport, that is not a goal — it is a bin
@@ -867,11 +1000,23 @@ DEPTH BY HORIZON — the two registers this plan is written in. [#62]
   Over-specified later grades fail because they promise something we cannot know.
   The fix for the first is NOT the specificity that causes the second. [#62]
 
-  THE CURRENT YEAR — its three terms go as deep as we can verify.
+  THE ROADMAP IS GENERAL IN EVERY GRADE, INCLUDING THIS ONE. [#63]
+    The roadmap is the shape of five years. It says WHAT HE DOES, in plain words, and it
+    names no programme, no price, no date — not even for the current year.
+        ROADMAP       "Register for a business fair near home, take a booth, and keep a
+                       simple record of what he sells."
+        NOT ROADMAP   "Register for the Children's Business Fair - San Jose, run by Acton,
+                       $50 booth fee, closes Oct 17."
+    The second belongs in `this_year`, which exists precisely to go a layer deeper. Putting
+    it in both is the same fact twice, and it makes the roadmap page hard to scan when its
+    job is to be scannable. A reader goes to the roadmap to see the arc and to `this_year`
+    to act. [#32][#63]
+
+  THE CURRENT YEAR, IN THE `this_year` SECTION — as deep as we can verify.
     Named programmes, real prices, age ranges, contacts, registration windows, and the
     LEAD TIME. If something next spring needs six months of preparation, it appears in
-    THIS fall's tasks, because that is when the family has to act on it. Near work that
-    is not specific is the plan failing at the only horizon where it could have helped.
+    THIS fall's card, because that is when the family has to act on it. This is the only
+    place in the document where that detail lives, and it is not optional here.
 
   GRADES BEYOND THE NEXT TWO TERMS — personalised, never instantiated.
     Write THE KIND OF THING, not the named instance:

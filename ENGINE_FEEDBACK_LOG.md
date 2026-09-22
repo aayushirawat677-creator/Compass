@@ -1376,3 +1376,83 @@ Grade 9 reads "In his first high school, have him join the student business orga
 running selling and entrepreneurship competitions. If his school has none, take a paid weekend
 shift instead at a shop that sells cards or games." Personalised — it exists only because he
 has two years of trading — and it names nothing that might not be there.
+
+## 63. Write the goal so a parent understands it without a second line
+Read in situ, the goal lines were failing on their own terms.
+
+- **"Put the card business in front of judges and customers from outside the family."**
+  Which judges? Judging what? A parent stops and asks a question, which is the one thing a
+  goal line cannot afford. It should read "Sell at a business fair where other people can
+  see how he does." One sentence, under about 14 words, everyday words, and none of our
+  vocabulary — rung, credential, vouch, outside body, signal, load-bearing, thread. Say the
+  thing that happens, not the effect we hope it has: "put it in front of an outside
+  evaluator" is our reasoning wearing the goal's clothes.
+
+- **`why_now` is no longer printed.** I had put it back a few rounds ago when the writer
+  dropped it, and in situ it reads as a second italic line of our own reasoning under every
+  goal — clutter the reader did not ask for and cannot act on. It stays in the JSON, for the
+  engine's own reconciliation, and never reaches the page.
+
+- **One task is one sitting; do not write the baby steps.** Three rows — register for the
+  booth / open a ledger / enter the judging — are one afternoon. Nobody registers for a
+  booth and then does not sell at it, or sells and then chooses not to write down what it
+  made. The test is: would anyone do one of these without the others? Split only when the
+  parts happen at different times, need different people, or genuinely stand alone.
+
+- **The roadmap is general in EVERY grade, including the current one.** This reverses the
+  near-horizon half of #62. Putting the named fair, the $50 fee and the October deadline in
+  a grade-8 roadmap row duplicates `this_year`, whose entire job is that layer, and makes
+  the roadmap page hard to scan when being scannable is what it is for. Roadmap: "Register
+  for a business fair near home, take a booth, and keep a simple record of what he sells."
+  `this_year`: the name, the fee, the deadline, the contact. One fact, one place (#32).
+
+- **Explore means try the FORMATS, not just try the thing.** Debate is not one activity —
+  parliamentary, Lincoln-Douglas, Public Forum, Congress, mock trial and Model UN reward
+  different people, and a student quick on his feet may be ordinary at one and strong at
+  another. Most families do not know the variants exist, which makes this one of the more
+  useful things the plan can say. The Explore years sample; the Specialize years go deep on
+  whichever one it turned out to be.
+
+  *A fact worth recording:* the suggestion that came with this was to "solidify" debate
+  because the student already does it. He does not — the intake says debating ideas is what
+  lights him up and lists it among his interests, but there is no debate activity in his
+  record. Checking before building was what kept the plan correct.
+
+## 64. Nineteen goals, five years, and not one of them academic
+The largest hole found so far, and every gate passed the plan that had it.
+
+The gap step measured an `academics_floor` gap at all six target schools. Strategy dropped
+all six. The plan that reached the PDF scheduled five years of activities and never
+mentioned grades, course rigour or testing once. Every gate we had was looking at the
+quality of what was present; **an entire domain going missing is invisible to all of them.**
+
+**The floor is real and it is not folklore.** Across the six schools in this example,
+**80.6% of the admits we hold sat in the 3.8+ band (n=899)** — Georgetown 95%, Berkeley 90%,
+Michigan 82%, Penn 77%, NYU 70%. Measured before the rule was written, as with every other
+number in this system.
+
+**The chain, and why it starts in the first term of the plan.** A weak subject in middle
+school is not a middle-school problem: it becomes a harder high-school course, then a lower
+grade in that course, then an AP taken shakily, then a weaker score on the test section that
+covers it — and a GPA is cumulative, so an early bad year cannot be undone, only averaged
+down. A student who shores the subject up now walks into the AP prepared; a student who
+takes an AP to have an AP while weak in it lowers the GPA the AP was meant to raise. Raising
+a GPA takes a year or two, which is exactly why the work cannot wait for the year the number
+gets reported.
+
+Every grade from the current one to 12 now carries at least one academic goal, and it is not
+a category that may be traded away for an activity. `gate_academics` fails a plan missing
+one in any grade, missing one in the current year, or never mentioning the college tests
+though it runs through the years they are taken in. Strategy may no longer drop an
+`academics_floor` gap silently — if it believes no move is needed it must say so in
+`tensions` with the band in front of it.
+
+**And a carve-out to #55.** That rule bans tasks that hand research back to the family. It
+should never have covered a fact only THEY hold. We have no transcript, and no amount of
+searching produces one — so "look at his last report card and note the two weakest subjects"
+is a real task and belongs in the plan. The test is: could we have found this out? If yes,
+do it ourselves. If only they can know it, asking them IS the task.
+
+*Minor, found in passing:* the corpus GPA query matched 0 admits for UCLA, because the
+accepted-colleges strings spell it out rather than using the acronym. The other five
+matched. School-name aliasing needs the same treatment `admit_rates.json` already has.

@@ -720,60 +720,44 @@ _NAMED_BODIES = (r"\b(DECA|FBLA|FCCLA|ProStart|NSDA|CHSSA|NFTE|Diamond Challenge
 
 
 def gate_horizon(plan_goals, current_grade, appraisals=None):
-    """DEPTH BY HORIZON — and it fails in both directions. [#62]
+    """DEPTH BY HORIZON — and the roadmap is general in EVERY grade. [#63]
 
-    The near year must be specific enough to act on; the later years must be personalised
-    without being instantiated. Those are opposite failures, and fixing one by loosening
-    the other is exactly the mistake this gate exists to stop — the rule that made later
-    grades name their ladders was written to cure vagueness and would have printed a DECA
-    chapter for a high school the student has not chosen.
+    Earlier this gate demanded that the CURRENT year's roadmap rows carry a name, price or
+    contact. That was wrong twice over: it duplicated the `this_year` section, whose whole
+    job is that layer, and it made the roadmap page unscannable when being scannable is
+    what the roadmap is for. One fact, one place (#32).
+
+    So the rule is now simple in one direction: NO roadmap row, in any grade, names a
+    programme, a price or a date. The specificity lives in `this_year`, and `gate_document`
+    already checks that every fact reaches the reader somewhere.
     """
     import re
     f = []
-    try:
-        cur = int(re.search(r"\d+", str(current_grade)).group(0))
-    except (AttributeError, TypeError, ValueError):
-        return GateResult("horizon", PASS, [], "no current grade to measure against")
-
     for grade, text, go in _plan_goal_rows(plan_goals):
-        try:
-            g = int(re.search(r"\d+", str(grade)).group(0))
-        except (AttributeError, TypeError, ValueError):
-            continue
         body = text + " " + _txt(go.get("tasks") or [])
+        named = sorted(set(m.group(0) for m in re.finditer(_NAMED_BODIES, body, re.I)))
+        money = re.findall(r"\$\s?\d[\d,]*", body)
+        dated = re.findall(r"\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)"
+                           r"[a-z]*\.? ?\d{1,2}\b", body)
+        if named or money or dated:
+            bits = (named + money + dated)[:3]
+            f.append(f"grade {grade}: roadmap row carries {bits} — programme names, "
+                     f"prices and dates belong in this_year, not the roadmap")
 
-        if g > cur:
-            named = sorted(set(m.group(0) for m in re.finditer(_NAMED_BODIES, body, re.I)))
-            money = re.findall(r"\$\s?\d[\d,]*", body)
-            dated = re.findall(r"\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)"
-                               r"[a-z]*\.? ?\d{1,2}\b", body)
-            if named:
-                f.append(f"grade {g}: names {named[:2]} — we do not know his high school, "
-                         f"so a chapter there is a fact we do not have")
-            if money or dated:
-                f.append(f"grade {g}: carries a price or date "
-                         f"({(money + [d for d, in [(x,) for x in dated]])[:2]}) "
-                         f"beyond the horizon it can be known at")
-        else:
-            # The current year. Specificity here is the whole point of the near horizon —
-            # EXCEPT for a thread the appraisal protected. A `keep_as_interest` goal is
-            # meant to ask nothing of the activity, so it correctly has no programme, no
-            # price and no contact. Demanding one contradicts gate_honours_appraisal,
-            # which fails the same goal for having a target attached. Two of our own gates
-            # pulling opposite ways on one goal is a worse failure than either miss, and
-            # it is the seventh gate bug of this family. [#62]
-            if _is_protected(text, appraisals):
-                continue
-            has_name = bool(re.search(r"[A-Z][a-z]+ [A-Z][a-z]+", body))
-            has_hook = bool(re.search(r"\$\s?\d|\bregist\w+|\bdeadline|\bcontact|"
-                                      r"\bby [A-Z][a-z]+ \d|\bcall\b|\.org|\.com", body))
-            if not has_name and not has_hook:
-                f.append(f"grade {g} (this year): {text[:40]!r} carries no name, price or "
-                         f"contact — near work that is not actionable is the plan failing "
-                         f"at the only horizon where it could help")
+        # The goal line is the line that gets read. Ours were failing on length and on
+        # internal vocabulary a parent has no reason to know. [#63]
+        JARGON = (r"\b(rung|credential|load[- ]bearing|outside body|vouch\w*|"
+                  r"at_or_above|lower_level|differentiator|spike|signal\w*|"
+                  r"modal|cohort|admit pattern)\b")
+        j = sorted(set(m.group(0).lower() for m in re.finditer(JARGON, text, re.I)))
+        if j:
+            f.append(f"grade {grade}: goal uses our vocabulary, not the family's: {j[:3]}")
+        if len(text.split()) > 16:
+            f.append(f"grade {grade}: goal is {len(text.split())} words — one short "
+                     f"sentence a parent reads once: {text[:46]!r}")
 
     return GateResult("horizon", RETRY if f else PASS, f,
-                      "near work must be actionable; far work must not be instantiated"
+                      "the roadmap shows the arc; this_year carries the detail"
                       if f else "")
 
 
@@ -807,3 +791,78 @@ def _is_protected(goal_text, appraisals):
         if toks and any(t in str(goal_text).lower() for t in toks):
             return True
     return False
+
+
+def gate_academics(plan_goals, admit_pattern=None, current_grade=None):
+    """ACADEMICS IN EVERY GRADE. [#64]
+
+    The first five-year plan carried nineteen goals and not one was academic. The gap step
+    had measured an academics floor at all six target schools; strategy dropped every one
+    and nothing noticed, because no gate had ever been asked to look for the category that
+    was missing rather than at the quality of the categories present.
+
+    That is the general shape of this bug: every other gate checks what IS there. An entire
+    domain going absent is invisible to all of them.
+
+    Measured, for the record: across the six schools in this worked example, 80.6% of the
+    admits we hold sat in the 3.8+ band (n=899) — Georgetown 95%, Berkeley 90%, Michigan
+    82%, Penn 77%, NYU 70%. The floor is real and it is not folklore.
+    """
+    import re
+    f = []
+    rows = _plan_goal_rows(plan_goals)
+    if not rows:
+        return GateResult("academics", PASS, [], "no plan to check")
+
+    ACADEMIC = (r"\b(grade\w*|gpa|marks?|report card|transcript|tutor\w*|study|studies|"
+                r"course\w*|class(es)?|subject\w*|math\w*|science|english|honors|honours|"
+                r"\bap\b|advanced placement|exam\w*|test\w*|sat\b|act\b|psat|"
+                r"counsel\w*|schedule|rigou?r|homework|academic\w*)\b")
+
+    by_grade = {}
+    for grade, text, go in rows:
+        try:
+            g = int(re.search(r"\d+", str(grade)).group(0))
+        except (AttributeError, TypeError, ValueError):
+            continue
+        body = text + " " + _txt(go.get("tasks") or [])
+        by_grade.setdefault(g, []).append(bool(re.search(ACADEMIC, body, re.I)))
+
+    bare = sorted(g for g, hits in by_grade.items() if not any(hits))
+    if bare:
+        f.append(f"grade(s) {bare} carry no academic goal at all — grades are what gets a "
+                 f"student read, and a GPA is cumulative, so a skipped year cannot be "
+                 f"recovered later")
+
+    # The chain has to start at the beginning, not at the year the number is reported.
+    try:
+        cur = int(re.search(r"\d+", str(current_grade)).group(0))
+    except (AttributeError, TypeError, ValueError):
+        cur = min(by_grade) if by_grade else None
+    if cur is not None and cur in by_grade and not any(by_grade[cur]):
+        f.append(f"the current year (grade {cur}) has no academic goal — raising a GPA "
+                 f"takes a year or two, so this is the term the work starts in")
+
+    # Testing has to appear before the year it is sat in.
+    later = [g for g in by_grade if g >= 11]
+    if later:
+        test_rows = [t for g, t, go in rows
+                     if re.search(r"\b(sat|act|psat|college test\w*|admissions test\w*)\b",
+                                  t + " " + _txt(go.get("tasks") or []), re.I)]
+        if not test_rows:
+            f.append("no goal anywhere mentions the college tests, though the plan runs "
+                     "through the years they are taken in")
+
+    # If we have the band, the plan should be aiming at it rather than at a number we made up.
+    if admit_pattern:
+        band = _txt(admit_pattern)
+        m = re.search(r"\b([34]\.\d)\+?", band)
+        if m:
+            said = re.search(r"\b([34]\.\d)\b", _txt(plan_goals))
+            if said and said.group(1) != m.group(1):
+                f.append(f"the plan names GPA {said.group(1)} where the admit pattern for "
+                         f"these schools says {m.group(1)} — use the band, not a guess")
+
+    return GateResult("academics", RETRY if f else PASS, f,
+                      "a plan with no academic thread has left out what decides it"
+                      if f else "")
