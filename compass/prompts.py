@@ -151,6 +151,66 @@ PLANNING CONTRACT — how a multi-year plan is shaped. [#21]
 """
 
 
+PLANNING_STRUCTURE = """
+THE PLAN'S SHAPE — these are requirements, not limits. Meeting them is the job. [#48]
+
+THE ARC, RELATIVE TO WHERE THE STUDENT IS NOW
+  Explore      from the current grade through grade 9   — find what is genuinely his
+  Solidify     grade 10                                  — commit, and drop the rest
+  Specialize   grades 11-12                              — no new threads; make what
+                                                            exists count
+  A grade 7 student explores for three years; a grade 9 student explores for one.
+  Solidify is always grade 10 and Specialize is always 11-12. Never relabel them.
+  The labels are two or three plain words. They are a visual band, not a paragraph.
+
+CAPACITY IS A HARD CEILING
+  You are handed `capacity_json`: hours a week already committed, and the hours left.
+  A new goal must fit the hours left. If it does not, either it does not go in, or
+  something comes out first - and dropping an activity returns its hours to the
+  budget, which is why subtraction is a real move rather than a tidy-up.
+  The budget tightens every year as homework grows. A plan that fits in grade 8 and
+  not in grade 11 is a plan that fails in grade 11.
+
+TARGET AND STRETCH
+  Every plan has both, and they are visually distinct wherever they appear.
+    - A STRETCH GOAL is its own bullet, in the semester or year it belongs to,
+      alongside the target goals. Never folded inside a target goal.
+    - A TARGET GOAL may carry a stretch TASK beneath it - the same goal, done harder.
+  Both goals and tasks carry `track`: "target" or "stretch".
+  Stretch is built one of two ways, and only these two:
+    1. INTENSIFY - the same thing at the next rung up.
+    2. ADD ON - one further credential the target college actually weighs.
+
+LEVELS, NEVER RANKS
+  A credential is stated as the level reached: school, district, regional, state,
+  national, international. Taking part at a level is TARGET; placing or medalling at
+  that level is STRETCH. Never invent a ranking ("top 50 nationally") - no source we
+  hold publishes one.
+
+WHAT MAKES A CREDENTIAL COUNT
+  One test: either a deliverable exists, or a real outside body can vouch for it.
+    venture   registered and filing, a real ledger, or a role inside an organisation
+              that already exists - joining something real usually beats founding
+              something small
+    research  a paper, or a recognised programme. "Doing research" with nothing to
+              show is not a credential
+    arts      a competition entered, or a recognised programme at a real institution
+    sports    varsity, or district / state / national play
+    service   a named organisation that can confirm the work
+  NEVER SET A QUANTITY TARGET. Not revenue, not sales, not followers, not hours
+  raised. Any number a family can manufacture proves nothing, and inventing one is
+  the failure this rule exists to stop. Write the verifiable outcome instead: "sell
+  at the fair to customers outside the family, and record what it made." The figure
+  comes back from the student afterwards; it is never handed to them as a target.
+
+FIT THE SCHOOL, NOT A FOLK THEORY
+  Whether a category is worth building depends on what the target schools say they
+  weigh, in the reference pack. If a school rates work experience "Considered" and
+  extracurriculars "Considered" while rigour is "Very Important", the plan says so.
+  Do not assert that an activity helps or hurts a major unless the reference pack
+  supports it.
+"""
+
 PROSE = """
 PROSE CONTRACT — every sentence earns its place.
 - If deleting a sentence loses no information, delete it. [#7]
@@ -292,7 +352,12 @@ RETURN SHAPE — exactly these keys, in these container types:
                   plan a family would have paid for read "Student name to be confirmed" on
                   its cover. [#36]
   spine           object: activity, confidence, what_it_is
-  activities      list of objects: name, disposition, signals{{tenure, role, level_or_scale}}
+  activities      list of objects: name, disposition,
+                  signals{{tenure, role, level_or_scale, hours_per_week}}.
+                  hours_per_week is copied from the intake verbatim ("4-6", "1-3").
+                  Without it the plan cannot be built against a real hour budget and
+                  will overcommit the student. If the intake does not state it for an
+                  activity, put null and add a flags_to_confirm entry. [#47]
   social_leadership  object
   temperament     list of objects: trait, condition, pacing_implication, source_quote
   tailwinds       list of strings
@@ -510,15 +575,48 @@ RULES
 {PROSE}
 {PLANNING}
 
+{PLANNING_STRUCTURE}
+
 {SCHEMA}
 
-SHAPE — `current_year` is a list of TERMS; each term holds `goals`; each goal holds `tasks`;
-each task carries `date` or `term` plus `task` and `detail`. A task without a date is not a
-task, it is a wish. Write each one as a full sentence saying what happens and why it falls in
-that week — 12 to 20 words. "Register him." tells a parent nothing. [#41]
+WHAT YOU MUST PRODUCE — every grade from the student's current one through 12. [#48]
+A plan that details this year and leaves grades 9 to 12 as three sentences is not a
+five-year plan. Each grade gets its own goals; each goal gets its own tasks.
 
-Return ONLY the plan JSON: multi_year_arc[], current_year[] (terms, each with goals and dated
-tasks)."""
+  grades[]              one entry per grade, current grade first
+    grade               8, 9, 10 ...
+    years               "2026-27"
+    stage               "Explore" | "Solidify" | "Specialize" — from the arc above
+    is_current_year     true on exactly one
+    goals[]             3-5 for the current grade, 2-4 for later grades
+      goal              the OUTCOME, in plain words. "Keep his business going — and
+                        track it." Not a task, not a category label.
+      track             "target" | "stretch". A stretch goal is its own entry here,
+                        never folded inside a target goal.
+      why_now           one sentence tying it to the gap or the target schools
+      hours_per_week    what it costs. Must fit the free hours in capacity_json.
+      tasks[]
+        term            "Fall" | "Spring" | "Summer" | "All year"
+        text            what happens, in a full sentence a parent can act on
+        track           "target" | "stretch"
+  multi_year_arc        one line per stage, in plain words
+
+TASKS: WHAT THEY ARE AND ARE NOT
+  A task is a step toward its goal, sized to a term. Not a diary entry.
+    GOOD  "Enter one local tournament in whichever format he liked best."
+          "Start a simple record of what the business sells and earns."
+    BAD   "Sept 22 — he decides what he is selling and sketches the booth."
+          "Sept 29 — adults confirm the fair details and choose a session."
+  Dates belong on the recommendation cards for the immediate terms, not here. A
+  week-by-week list of small actions is what a plan looks like when it has no goals
+  above it, and no parent asked for an hour-by-hour calendar covering five years.
+
+LATER GRADES CARRY NO SPECIFICS
+  Any grade beyond the next two terms gets goals and tasks only — no programme names,
+  no prices, no dates. They cannot be known yet, and inventing them is the fastest way
+  to make the whole document untrustworthy.
+
+Return ONLY the plan JSON: grades[], multi_year_arc[]."""
 
 
 # ===========================================================================
@@ -567,6 +665,41 @@ CONSTRAINTS
 {TONE}
 {PROSE}
 {PLANNING}
+
+{PLANNING_STRUCTURE}
+
+THE CARD SHAPE — three options at three price points. [#49]
+A single option is not a recommendation, it is an instruction. A family with a stated
+budget needs to see the range and choose.
+
+  1 · Free       the school club, the existing team, the public library programme.
+                 Always look for this one first. If none exists, say so plainly —
+                 "no free equivalent locally" — rather than dropping the tier.
+  2 · Budget     the affordable real option, with its cost.
+  3 · Premium    the strongest option, with its cost, AND a budget check against the
+                 family's stated ceiling when it exceeds it: "$1,395/semester — above
+                 your under-$2,000 guideline; worth it only with a scholarship."
+
+Each option states what it is, who it is for (age or grade band), the format, and the
+cost. Facts separated by middots. No sentences that could be a bullet.
+
+PLAN BY — THE LEAD-TIME RULE [#49]
+  `plan_by` is the date the family must ACT, not the deadline. It sits weeks before,
+  and says why: "Mid-September — booths are limited and fill 2-3 weeks ahead."
+  NEVER RECOMMEND SOMETHING THEY CAN NO LONGER REACH. If today is inside the lead time
+  for the next occurrence, name the one after it instead, with its date. A fair three
+  days away is not a recommendation; it is a reason the family feels behind.
+
+WHAT COUNTS, AND WHAT DOES NOT
+  Apply the legitimacy test above. The recommendation produces a deliverable or a real
+  outside body that can vouch — otherwise it is an activity, not a credential.
+  Set no quantity targets. Never "earn $5,000". The outcome is "sell to customers
+  outside the family and record what it made"; the figure comes back afterwards.
+
+FIT, IN ONE LINE
+  Say why THIS option suits THIS student, anchored to something real about him — the
+  business he already runs, the format he is strongest in, the two-home schedule.
+  Not "it fits his interests".
 
 Return ONLY the recommendation JSON for this task."""
 
@@ -704,27 +837,37 @@ programme name, contact or deadline. Every one of those must survive somewhere.
 
 SECTION SHAPES THAT KEEP IT AT TWELVE PAGES [#38]
 
-  roadmap — three stage cards and one detailed year.
-    * `stages`: exactly three, for grades 9, 10 and 11–12. Each body is 35–45 WORDS: what the
-      stage is, and the one decision or shift that defines it. Do not enumerate the threads;
-      they are listed directly beneath. A 150-word stage card is the single largest source of
-      overflow in this document.
-    * `grades`: the CURRENT year only, in dated rows. Grades 9–12 get no task tables — that is
-      the horizon rule, and it is also what keeps the page count honest.
-    * Each task line is a full sentence saying what happens and why it falls in that week.
-      "Register him." is a stub, not a task; it tells a parent nothing. Roughly 12–20 words.
+  roadmap — the stage bands, then EVERY grade with its goals. [#48]
+    * `stages`: the bands handed to you in `stage_bands_json`, in order. Each `name` is
+      TWO OR THREE PLAIN WORDS — Explore, Solidify, Specialize — and each `body` is at
+      most 12 words, or empty. This is a coloured visual band, not a paragraph. A
+      35-word stage card is already too long; a 150-word one is what broke the last
+      version.
+    * `grades`: EVERY grade the plan covers, current first. Not just this year. Each
+      grade carries its goals; each goal carries its tasks. RENDER EVERY GOAL R6
+      PRODUCED — a goal that exists in the plan and not in this document is a silent
+      failure, and the gate now fails the run for it.
+    * A goal is a bullet with its tasks beneath, each task tagged by term. A STRETCH
+      GOAL IS ITS OWN BULLET in the same grade, marked `track: "stretch"` so it renders
+      in the stretch colour. A target goal may carry a stretch task beneath it, marked
+      the same way.
+    * NO DATES IN THE ROADMAP. Dates live on this year's cards. A roadmap row reading
+      "Sept 22 — he decides what he is selling" is a diary entry, not a plan.
 
-  this_year — specifications, not paragraphs.
+  this_year — the next two terms plus the summer that follows, in full. [#49]
+    * Which terms: the current one, the next one, and the summer after. A student in
+      spring gets spring and summer only. Beyond that, the roadmap carries it.
     * `body`: at most TWO short sentences — what this is, and why it fits this student.
-      Rationale lives here, once.
-    * `options`: specification lines, not prose. Facts separated by middots, no connective
-      clauses:
-        "Primary — Little Loudspeakers, San José · ages 8-14 · in person or online · call for price"
-        "Free alternative — his school team; ask whether Sierramont fields one"
-        "Santa Clara session — fair Oct 17, 2026 · closes Oct 17 · $50 booth fee"
-      Order: primary, then the free or fallback route, then session-specific detail.
-    * `contact` and `plan_by` are operational lines a parent acts on. Keep them exact and
-      complete; they are the last thing to cut.
+    * `options`: THREE TIERS, in this order, as specification lines with facts separated
+      by middots and no connective clauses:
+        "1 · Free — his school's speech and debate club; ask whether Sierramont fields one"
+        "2 · Budget — Little Loudspeakers, San José · ages 8-14 · in person or online · call for price"
+        "3 · Premium — Bay Area middle-school debate track · $1,395/semester · above your
+         under-$2,000 guideline, worth it only with a scholarship"
+      If no free option exists, say so in the free line rather than dropping the tier.
+    * `plan_by`: the date the family must ACT, weeks before the deadline, with the reason.
+      Never name something already inside its lead time — give the next occurrence.
+    * `contact` is the last thing to cut. It is how a parent acts.
 
   course — targets only.
     * `target_bullets` at most 4, `stretch_bullets` at most 3, one line each. A bullet states

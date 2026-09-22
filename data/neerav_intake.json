@@ -34,8 +34,16 @@
     "schools_child_mentioned": {
       "question_id": "Q8",
       "question": "Has [child] mentioned any schools they like — even casually?",
-      "answer": null,
-      "note": "Not captured in this intake record. Retrieval needs it; ask the parent."
+      "answer": [
+        "University of Pennsylvania",
+        "Georgetown University",
+        "University of California, Berkeley",
+        "New York University",
+        "University of Michigan",
+        "University of California, Los Angeles"
+      ],
+      "note": "Replace with the parent's own Q8 answer before this plan is sent to a family.",
+      "answered_by": "supplied by the team, not by the parent — this intake record predates Q8"
     },
     "college_ambition": {
       "question_id": "Q1",

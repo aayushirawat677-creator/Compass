@@ -947,3 +947,93 @@ no amount of reading the prompts would have surfaced.
 - **The three traps, now written into the prompt:** a parent's own alma mater (Q45) is a hook and
   never a target; an ambition band (Q1) says how high, not where; a field of study is a major.
   Each of these was a plausible wrong answer to "which colleges", and R1 fell for the first one.
+
+# Rules 47–51 — the positive structure
+
+Rules 1–46 were almost all prohibitions. Given a list of things not to do and a hard
+word budget, a model complies the cheapest way available: by deleting substance. That
+is how a five-year plan became a date ledger for one year. These five say what a plan
+must CONTAIN.
+
+## 47. Capacity is computed, and homework is in it
+- **Aayushi:** goals have to fit the hours the child actually has left. She worked the
+  arithmetic out loud: 24 hours, minus school, minus sleep, minus leisure, minus what
+  he already does — what remains is what a new goal may cost.
+- **`modules.capacity_budget()`** computes it per grade: sleep, school and commute,
+  homework, meals and downtime, then subtracts the hours already committed, read from
+  the profile's own activity hours. So dropping a low-value activity returns its hours
+  to the budget — subtraction is a real planning move, not a tidy-up.
+- **Homework was missing from her arithmetic**, and it is the line that grows: ten
+  minutes per grade per night, so an hour more per day by grade 11 than grade 8. Left
+  out, every plan overcommits, worst in the years that matter most. For Neerav: 16.8
+  free hours a week at grade 8, 13.5 by grade 12.
+- **Summer is a separate pool** — no school, no homework, roughly 45 hours a week. The
+  budget switches rather than scales, which is why the big commitments live there.
+- **A correction made on the way.** The first version tapered sleep with age. That
+  exactly cancelled the homework growth and made the budget look flat, so the claim
+  "it tightens every year" was false as coded. Teens need 8–10 hours at every one of
+  these ages, so sleep is now held constant and the budget genuinely tightens.
+- **R1 must carry `hours_per_week` per activity.** It was in the intake and dropped in
+  the profile, so the budget had nothing to subtract.
+
+## 48. The arc, the goals, and what a task is not
+- **Stages are relative to the student's grade.** Explore runs from now to grade 9,
+  Solidify is always grade 10, Specialize is always 11–12. A grade 7 child explores
+  for three years; a grade 9 child for one. Labels are two or three plain words and a
+  colour — a visual band, not a paragraph.
+- **Every grade gets its own goals, every goal its own tasks**, current grade through
+  12. Not just this year. 3–5 goals for the current grade, 2–4 for later ones.
+- **Target and stretch, at two levels.** A stretch GOAL is its own bullet in the
+  semester or year it belongs to, never folded inside a target goal. A target goal may
+  carry a stretch TASK beneath it. Both goals and tasks carry `track`, and the renderer
+  colours each.
+- **A task is a step sized to a term, not a diary entry.** "Enter one local tournament
+  in whichever format he liked best" is a task. "Sept 22 — he decides what he is
+  selling and sketches the booth" is a calendar, and it is what a plan looks like when
+  it has no goals above it. Dates belong on the recommendation cards.
+- **Levels, never ranks.** Taking part at a level is target; placing at it is stretch.
+  No source we hold publishes a national ranking, so none is ever stated.
+
+## 49. Three tiers, and the lead-time rule
+- **Every recommendation shows free, budget and premium**, each with what it is, who it
+  is for, format and cost, plus a budget check naming the family's ceiling when an
+  option exceeds it. Where no free option exists, the card says so rather than dropping
+  the tier. A single option is an instruction, not a recommendation.
+- **`plan_by` is when to ACT, not the deadline** — weeks earlier, with the reason.
+  **Never recommend something already inside its lead time.** If today is too close to
+  the next occurrence, name the one after it with its date. A fair three days away is
+  not a recommendation; it is a reason the family feels behind.
+- **No quantity targets, ever.** Not revenue, sales, followers or hours raised. Any
+  number a family can manufacture proves nothing, and inventing one is the failure the
+  rule exists to stop. The outcome is verifiable instead — sell to customers outside
+  the family and record what it made — and the figure comes back from the student
+  afterwards. That also turns it from a number we invent into one we learn.
+- **What counts, per category:** a deliverable, or a real outside body that can vouch.
+  Research needs a paper or a recognised programme; arts a competition or a real
+  institution; sports varsity or district/state/national; service a named organisation;
+  venture registration and a ledger, or a role inside something that already exists —
+  joining something real usually beats founding something small.
+
+## 50. Plan → document reconciliation
+- We already reconcile the Outcome Card against the plan in both directions (#17). The
+  equivalent check for the roadmap never existed. So when the writer was told to cut,
+  it cut R6's goals, and nothing noticed. **That is why the five-year plan could vanish
+  silently between two steps.**
+- **`gate_document`** fails the run when a goal in the plan never reaches the document,
+  or when a whole grade does. Failure message: "the writer cut the plan, not the prose."
+
+## 51. The budget ledger — sum the year, not the item
+- **Aayushi:** the total of everything we recommend has to sit under the ceiling the
+  parent gave. `constraint_guardrail` only ever checked one recommendation at a time,
+  so four options could each be affordable and total nearly twice the limit. Nobody was
+  adding them up.
+- **`modules.budget_ledger()`** totals the year and the summer separately against their
+  own ceilings, and enforces geography at the same time: an in-person option outside
+  the family's stated region is dropped, and reported separately because it is not a
+  money problem — dropping something else does not make it possible.
+- **Three bugs found while testing it**, all of which would have blocked legitimate
+  options: a stated range is a ceiling at its TOP ("$2,000–$5,000" means they can go to
+  $5,000); a per-hour ceiling only compares against a per-hour price, never against a
+  semester fee; and summer items must be detected to be charged to the summer ceiling.
+- **`gate_budget`** retries rather than escalates: the fix is ours — drop or substitute
+  the expensive item — not the parent's.

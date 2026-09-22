@@ -288,3 +288,71 @@ def gate_two_paths(tp, strategy=None):
     if re.search(r"moves? (up|from) .{0,20}(reach|target|likely)", _txt(tp), re.I):
         f.append("implies a SCHOOL changed band — fit moves, selectivity does not")
     return GateResult("two_paths", RETRY if f else PASS, f)
+
+
+def gate_document(draft, plan_goals):
+    """PLAN -> DOCUMENT RECONCILIATION. [#50]
+
+    We already reconcile the Outcome Card against the plan in both directions (#17).
+    The equivalent check for the roadmap never existed, so when the writer was told to
+    cut, it cut R6's goals and nothing noticed. A goal that exists in the plan and not
+    in the document is the plan quietly shrinking between two steps.
+    """
+    f = []
+    planned = []
+    for gr in (plan_goals.get("grades") or plan_goals.get("current_year") or []):
+        for go in (gr.get("goals") or []):
+            t = go.get("goal") or go.get("title")
+            if t:
+                planned.append((gr.get("grade"), t))
+    if not planned:
+        return GateResult("document", PASS, [], "no goals to reconcile")
+
+    rendered = _txt(draft.get("roadmap", {})).lower()
+    missing = [f"grade {g}: {t[:48]}" for g, t in planned
+               if not _overlap(t.lower(), rendered)]
+    if missing:
+        f.append(f"{len(missing)} plan goal(s) never reach the document: {missing[:3]}")
+
+    grades_planned = {g for g, _ in planned if g}
+    grades_rendered = {str(x.get("grade")) for x in (draft.get("roadmap", {}).get("grades") or [])}
+    gone = [g for g in grades_planned if str(g) not in grades_rendered]
+    if gone:
+        f.append(f"grade(s) in the plan but not in the roadmap: {sorted(gone)}")
+
+    return GateResult("document", RETRY if f else PASS, f,
+                      "the writer cut the plan, not the prose" if f else "")
+
+
+def _overlap(goal_text, haystack, need=0.5):
+    """Did this goal survive into the document, in any wording?"""
+    import re
+    words = {w for w in re.findall(r"[a-z]{4,}", goal_text)
+             if w not in {"with", "that", "this", "から", "keep", "from", "into", "year"}}
+    if not words:
+        return True
+    hit = sum(1 for w in words if w in haystack)
+    return hit / len(words) >= need
+
+
+def gate_budget(ledger):
+    """The year's recommendations must fit the family's stated ceiling. [#51]
+
+    A plan a family cannot afford is not a plan; it is a sales document. This is a
+    RETRY rather than an escalation because the fix is in our hands — drop or
+    substitute the expensive item — not the parent's.
+    """
+    f = []
+    if not ledger:
+        return GateResult("budget", PASS, [])
+    if not ledger.get("within_budget"):
+        over = (ledger.get("over_by") or 0) + (ledger.get("summer_over_by") or 0)
+        biggest = [i["name"] for i in (ledger.get("items") or [])[:2]]
+        f.append(f"over the family's stated budget by ${over:.0f} — largest: {biggest}")
+    if ledger.get("geographically_blocked"):
+        f.append(f"{len(ledger['geographically_blocked'])} recommendation(s) outside the "
+                 "family's stated region reached the plan")
+    if ledger.get("above_session_ceiling"):
+        f.append(f"{len(ledger['above_session_ceiling'])} above the per-session ceiling")
+    return GateResult("budget", RETRY if f else PASS, f,
+                      "a plan they cannot afford is not a plan" if f else "")

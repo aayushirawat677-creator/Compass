@@ -86,6 +86,11 @@ th{ color:#3a463a; letter-spacing:.06em; font-size:9px; text-transform:uppercase
 td.tg{ color:var(--green); } td.st{ color:var(--purple); }
 
 /* roadmap */
+.grow.stretchgoal{ border-left:3px solid var(--purple); padding-left:9px; background:rgba(91,74,134,.045); }
+.trackpill{ font-size:7.5px; letter-spacing:.1em; text-transform:uppercase; padding:1px 5px;
+  border-radius:8px; margin-left:6px; vertical-align:2px; }
+.trackpill.s{ background:var(--purplebg); color:var(--purple); }
+.why{ font-size:9.5px; color:var(--muted); font-style:italic; margin:1px 0 3px; }
 .stages{ display:flex; gap:12px; margin:10px 0; }
 .stage{ flex:1; border:1px solid var(--line); border-top:3px solid var(--gold); border-radius:5px; padding:10px 12px; }
 .stage.g{ border-top-color:var(--green); } .stage.p{ border-top-color:var(--purple); }
@@ -223,9 +228,11 @@ TEMPLATE = Template(r"""
   {% for g in c.roadmap.grades %}
     <div class="gradebar"><span><span class="g">{{ g.grade }}</span> <span class="yrs">{{ g.years }}</span></span><span class="tag">{{ g.tag }}</span></div>
     <div class="gwrap">
-      {% for row in g.rows %}
-        <div class="grow"><div class="t">{{ row.title }}</div>
-          {% for t in row.tasks %}<div class="task"><span class="termpill">{{ t.term }}</span><span>{{ t.text }}</span></div>{% endfor %}
+      {% for row in (g.goals or g.rows) %}
+        <div class="grow {{ 'stretchgoal' if row.track == 'stretch' else '' }}">
+          <div class="t">{{ row.goal or row.title }}{% if row.track == 'stretch' %}<span class="trackpill s">stretch</span>{% endif %}</div>
+          {% if row.why_now %}<div class="why">{{ row.why_now }}</div>{% endif %}
+          {% for t in row.tasks %}<div class="task"><span class="termpill">{{ t.term }}</span><span>{{ t.text }}{% if t.track == 'stretch' %}<span class="trackpill s">stretch</span>{% endif %}</span></div>{% endfor %}
         </div>
       {% endfor %}
     </div>

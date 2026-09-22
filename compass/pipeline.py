@@ -105,8 +105,21 @@ def run(intake: dict, log=print) -> dict:
         state, log)
 
     log("  7/9  Plan ............. goals, tasks, recommendations, tiers")
-    state["plan_goals"], _ = _gated("plan_goals", {"moves_json": state["strategy"].get("selected_moves", []),
-                                                "profile_json": profile, "grade": _grade(profile)}, lambda o: gates.gate_plan(o, state["strategy"]), state, log)
+    grade = _grade(profile)
+    state["capacity"] = modules.capacity_budget(profile, grade)
+    state["capacity_summer"] = modules.capacity_budget(profile, grade, "summer")
+    state["stage_bands"] = modules.stage_bands(grade)
+    log(f"       · capacity: {state['capacity']['free_hours_per_week']} h/week free "
+        f"of {state['capacity']['total_hours_per_week']} ({state['capacity']['committed_hours_per_week']} committed)")
+    state["plan_goals"], _ = _gated(
+        "plan_goals",
+        {"moves_json": state["strategy"].get("selected_moves", []),
+         "profile_json": profile, "grade": grade,
+         "capacity_json": state["capacity"],
+         "summer_capacity_json": state["capacity_summer"],
+         "stage_bands_json": state["stage_bands"],
+         "admit_pattern_json": state["admit_pattern"]},
+        lambda o: gates.gate_plan(o, state["strategy"]), state, log)
     # recommendations for near-term tasks (fan-out; mock returns one)
     constraints = profile.get("constraints", {})
     recs, blocked = [], []
@@ -157,7 +170,20 @@ def run(intake: dict, log=print) -> dict:
             else:
                 blocked.append({"task": task.get("task_title"), "violations": violations})
     state["recommendations"] = recs
+    # Sum the YEAR, not just each item. [#51]
+    state["budget"] = modules.budget_ledger(recs, constraints)
+    b = state["budget"]
+    log(f"       · budget: ${b['year_total']:.0f} of ${b['year_ceiling'] or 0:.0f} for the year"
+        + (f", ${b['summer_total']:.0f} of ${b['summer_ceiling'] or 0:.0f} for summer" if b['summer_total'] else ""))
+    if not b["within_budget"]:
+        log(f"       ! over budget by ${b['over_by'] + b['summer_over_by']:.0f} — "
+            f"largest items: {[i['name'] for i in b['items'][:2]]}")
+    for x in b["geographically_blocked"]:
+        log(f"       ! dropped, outside the family's region: {x['name']}")
     grc = gates.gate_recs(recs); state.setdefault("_gates", []).append(grc)
+    gb = gates.gate_budget(state["budget"]); state.setdefault("_gates", []).append(gb)
+    if gb.verdict != gates.PASS:
+        log(f"      gate: {gb.verdict} — {'; '.join(gb.failures)}")
     if grc.verdict == gates.ESCALATE:
         log(f"      gate: ESCALATE — {'; '.join(grc.failures)} ({grc.notes})")
     state["blocked_by_guardrail"] = blocked
@@ -173,6 +199,8 @@ def run(intake: dict, log=print) -> dict:
                                         "profile_json": profile,
                                         "worry": constraints.get("stated_worry", ""),
                                         "numbers_json": {"tiers": state["college_tiers"], "tally": mr["tally"]},
+                                        "stage_bands_json": state["stage_bands"],
+                                        "capacity_json": state["capacity"],
                                         "reference_json": context.for_writer(profile, _college_seed(intended))})
 
     # gate_draft was defined, documented and drawn on the diagram but never called —
@@ -190,6 +218,11 @@ def run(intake: dict, log=print) -> dict:
     state.setdefault("_gates", []).append(gd)
     if gd.verdict != gates.PASS:
         log(f"      gate: {gd.verdict} — {'; '.join(gd.failures)}")
+    # Did every goal the plan produced survive into the document? [#50]
+    gdoc = gates.gate_document(state["draft"], state["plan_goals"])
+    state.setdefault("_gates", []).append(gdoc)
+    if gdoc.verdict != gates.PASS:
+        log(f"      gate: {gdoc.verdict} — {'; '.join(gdoc.failures)}")
 
     log("  9/9  Critic ........... tone / honesty / plain English")
     verdict = _agent("critic", {"strategic_plan_json": state["draft"]})
