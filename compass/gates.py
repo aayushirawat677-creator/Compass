@@ -413,18 +413,23 @@ def gate_document(draft, plan_goals):
             f.append(f"{len(lost)} fact(s) the plan put in a task never reach the "
                      f"roadmap: {lost[:4]}")
 
-    # A goal in a later grade may carry at most one row per term. The term repeated
-    # down a single goal is the term stated four times, with the grouping left to the
-    # reader. The current year does not hit this: its container IS the term. [#57]
+    # The term repeated down a single goal is the term stated four times, with the
+    # grouping left to the reader. Every grade is now term-organised, so the defect
+    # takes two forms: a grade that kept the old goal-major shape, and a goal listed
+    # twice inside one term block. [#57]
     for gr in (draft.get("roadmap", {}).get("grades") or []):
-        for go in (gr.get("rows") or gr.get("goals") or []):
-            terms = [str((t or {}).get("term", "")).strip().lower()
-                     for t in (go.get("tasks") or []) if isinstance(t, dict)]
-            dupes = {t for t in terms if t and terms.count(t) > 1}
+        if not gr.get("terms"):
+            if gr.get("rows") or gr.get("goals"):
+                f.append(f"grade {gr.get('grade')} is not organised by term — every "
+                         f"grade uses the same semester shape")
+            continue
+        for tm in gr["terms"]:
+            names = [str((go or {}).get("goal") or (go or {}).get("title") or "").strip().lower()
+                     for go in (tm.get("goals") or [])]
+            dupes = {n for n in names if n and names.count(n) > 1}
             if dupes:
-                f.append(f"grade {gr.get('grade')}, goal "
-                         f"{str(go.get('goal') or go.get('title'))[:40]!r}: "
-                         f"{sorted(dupes)} appears more than once — one row per term")
+                f.append(f"grade {gr.get('grade')}, {tm.get('term')}: "
+                         f"{len(dupes)} goal(s) listed twice in one term — merge them")
 
     return GateResult("document", RETRY if f else PASS, f,
                       "the writer cut the plan, not the prose" if f else "")

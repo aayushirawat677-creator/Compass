@@ -889,23 +889,26 @@ Return ONLY the StrategicPlan JSON with EXACTLY these keys, each fully populated
   table:[{{track, target, stretch}}] (Math, spine subject, Science, English, World language,
   Total APs), note}}
 - roadmap: {{title, lead, stages:[{{grade,name,body,color:''|'g'|'p'}}], grades:[...]}}
-  `grades` has one entry per grade, current grade first. THE CURRENT GRADE AND THE LATER
-  GRADES TAKE DIFFERENT SHAPES. [#57]
+  `grades` has one entry per grade, current grade first. EVERY GRADE TAKES THE SAME SHAPE:
+  the SEMESTER is the container and the goals sit inside it. [#57]
 
-  CURRENT GRADE — the SEMESTER is the container and the goals sit inside it:
     {{grade, years, tag, terms:[{{term:'Fall 2026', span:'Aug-Dec', tag, goals:[
-      {{goal, track:'target'|'stretch', cat:'DEBATE'|'VENTURE'|'SERVICE'|'ACADEMICS'|'SUMMER',
-        cat_class:'debate'|'venture'|'service'|'academics'|'summer', why_now,
+      {{goal, goal_short, track:'target'|'stretch',
+        cat:'DEBATE'|'VENTURE'|'SERVICE'|'ACADEMICS'|'SUMMER'|'SCHEDULE',
+        cat_class:'debate'|'venture'|'service'|'academics'|'summer'|'schedule', why_now,
         tasks:[{{text, track}}]}}]}}]}}
-    A goal that runs across two terms APPEARS IN BOTH, each time carrying only the tasks
-    that belong to that term. Tasks here carry NO term field — the block above them
-    already says it.
 
-  LATER GRADES — the GOAL is the container, with at most ONE row per term:
-    {{grade, years, tag, rows:[{{goal, track, why_now,
-      tasks:[{{term, text, track}}]}}]}}
-    ONE ROW PER TERM PER GOAL. If the plan gives a goal two Fall tasks, they become ONE
-    Fall row. Two rows reading FALL / FALL under one goal is the defect this replaced. [#57]
+  * A goal that runs across two terms APPEARS IN BOTH, each time carrying only the tasks
+    that belong to that term. `goal_short` is the same goal in four or five words, used
+    on the second and later appearances.
+  * Tasks carry NO term field. The block above them already says it.
+  * A goal appears AT MOST ONCE inside a term. Two entries for one goal in one term is
+    the FALL / FALL defect this shape replaced. Merge them.
+  * `term` is the term with its year — "Fall 2026", "Spring 2031". `span` is the months.
+  * A grade whose plan gives everything an "All year" term still uses this shape: one
+    `terms` entry named for the year's start term, or an "All year" block.
+  * Later grades are less detailed than the current one, but they are not a different
+    format. A parent reading grade 11 should not have to learn a second layout. [#57]
 
   Every goal carries its one-line `why_now`, printed in italics beneath it. A goal without
   it loses the line that tells the parent why it is there at all. [#56]
@@ -964,16 +967,16 @@ SECTION SHAPES THAT KEEP IT AT TWELVE PAGES [#38]
     * `grades`: EVERY grade the plan covers, current first. Not just this year. RENDER
       EVERY GOAL R6 PRODUCED — a goal that exists in the plan and not in this document
       is a silent failure, and the gate now fails the run for it.
-    * THE CURRENT YEAR IS ORGANISED BY SEMESTER, NOT BY GOAL. [#57] Fall, then Spring,
-      then Summer, each naming its term ONCE as a heading, with the goals that have work
-      in that term beneath it. The old shape repeated the term on every task row — FALL,
+    * EVERY GRADE IS ORGANISED BY SEMESTER, NOT BY GOAL. [#57] Fall, then Spring, then
+      Summer, each naming its term ONCE as a heading, with the goals that have work in
+      that term beneath it. The old shape repeated the term on every task row — FALL,
       FALL, FALL down a single goal — which is the term stated four times and the reader
       left to group it themselves. A goal with work in two terms appears under both,
       carrying only that term's tasks each time.
-    * Later grades keep the goal as the container, and give a goal AT MOST ONE ROW PER
-      TERM. Two Fall tasks under one goal are one Fall row. [#57]
-    * `cat` on a current-year goal is the track chip — DEBATE, VENTURE, SERVICE,
-      ACADEMICS, SUMMER — so a parent can scan the year by strand.
+    * The later grades carry LESS DETAIL, not a different layout. Grade 12 has fewer
+      goals and shorter task lists than grade 8; it has the same shape.
+    * `cat` is the track chip — DEBATE, VENTURE, SERVICE, ACADEMICS, SUMMER, SCHEDULE —
+      so a parent can scan any year by strand.
     * A goal is a bullet with its tasks beneath, each task tagged by term. A STRETCH
       GOAL IS ITS OWN BULLET in the same grade, marked `track: "stretch"` so it renders
       in the stretch colour. A target goal may carry a stretch task beneath it, marked

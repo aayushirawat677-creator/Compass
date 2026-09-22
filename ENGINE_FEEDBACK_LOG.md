@@ -1158,3 +1158,12 @@ output that was right:
   Fair, run by Acton", and the gate called the name lost. It now matches on distinctive
   tokens rather than the literal phrase. Every gate bug so far has been this same mistake —
   comparing spelling where the rule is about substance. [#54]
+
+### 57a. One layout, all five grades
+I first applied the semester shape to the current year only, and left grades 9-12 goal-major
+on the reasoning that a year four away does not need term detail. That was wrong, and it was
+a judgement I made silently rather than surfacing. A parent reading grade 11 should not have
+to learn a second layout to read it; less detail is a legitimate difference between grades,
+a different format is not. All five grades now use `terms[]`, with the later years carrying
+fewer goals and shorter task lists inside the same shape. `gate_document` fails any grade
+that is not term-organised — which is how the previous document was caught.
