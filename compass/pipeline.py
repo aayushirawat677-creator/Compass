@@ -132,22 +132,7 @@ def run(intake: dict, log=print) -> dict:
         lambda o: gates.gate_strategy(o, state["gap"], profile.get("constraints", {})),
         state, log)
 
-    log("  6/10 Two Paths ........ target & stretch variants")
-    state["two_paths"], _ = _gated(
-        "two_paths",
-        {"moves_json": state["strategy"].get("selected_moves", []),
-         "profile_json": profile,
-         # Per-school admit pattern, not one corpus-wide tally. Without this, every
-         # school came back "not assessed" — correctly, since the step was never
-         # handed an n it could assert fit from. [#44]
-         "admit_pattern_json": state["admit_pattern"],
-         "corpus_tally_json": mr.get("tally", {}),
-         "published_rates_json": context.for_writer(profile, _college_seed(intended)).get("published_rates", {}),
-         "constraints_json": profile.get("constraints", {})},
-        lambda o: gates.gate_two_paths(o, state["strategy"]),
-        state, log)
-
-    log("  7/10 Plan ............. goals, tasks, recommendations, tiers")
+    log("  6/10 Plan ............. goals, tasks, recommendations, tiers")
     grade = _grade(profile)
     state["capacity"] = modules.capacity_budget(profile, grade)
     state["capacity_summer"] = modules.capacity_budget(profile, grade, "summer")
@@ -176,6 +161,32 @@ def run(intake: dict, log=print) -> dict:
         state.setdefault("_gates", []).append(g)
         if g.failures:
             log(f"      gate: {g.verdict} ({g.step}) — {'; '.join(g.failures[:2])}")
+    # THE OUTCOME CARD IS THE OUTPUT OF THE PLAN, SO IT RUNS AFTER THE PLAN. [#67]
+    # It used to run BEFORE, as a sibling of the plan off the same moves — which meant
+    # the card described a plan that had not been written yet, and nothing reconciled the
+    # two afterwards. The card's own rule (#17) had said "the output of the plan, not an
+    # input" since the beginning; the pipeline simply did not match it.
+    log("  7/10 Two Paths ....... the card the plan adds up to")
+    state["two_paths"], _ = _gated(
+        "two_paths",
+        {"moves_json": state["strategy"].get("selected_moves", []),
+         "plan_json": state["plan_goals"],
+         "profile_json": profile,
+         # Per-school admit pattern, not one corpus-wide tally. Without this, every
+         # school came back "not assessed" — correctly, since the step was never
+         # handed an n it could assert fit from. [#44]
+         "admit_pattern_json": state["admit_pattern"],
+         "corpus_tally_json": mr.get("tally", {}),
+         "published_rates_json": context.for_writer(profile, _college_seed(intended)).get("published_rates", {}),
+         "constraints_json": profile.get("constraints", {})},
+        lambda o: gates.gate_two_paths(o, state["strategy"]),
+        state, log)
+
+    gcp = gates.gate_card_plan(state["two_paths"], state["plan_goals"])
+    state.setdefault("_gates", []).append(gcp)
+    if gcp.failures:
+        log(f"      gate: {gcp.verdict} (card_plan) — {'; '.join(gcp.failures[:2])}")
+
     # recommendations for near-term tasks (fan-out; mock returns one)
     constraints = profile.get("constraints", {})
     recs, blocked = [], []

@@ -899,3 +899,148 @@ def gate_academics(plan_goals, admit_pattern=None, current_grade=None):
     return GateResult("academics", RETRY if f else PASS, f,
                       "a plan with no academic thread has left out what decides it"
                       if f else "")
+
+
+def gate_card_plan(two_paths, plan_goals):
+    """THE CARD AND THE PLAN MUST BE THE SAME STORY. [#67]
+
+    The Outcome Card says what the student's profile looks like in the fall he applies.
+    The plan says what he does to get there. They were siblings off the same moves, never
+    reconciled, so the card could describe one student and the plan build another — and
+    the family would read both on the same document.
+
+    `gate_two_paths` checks the card against STRATEGY. `gate_document` checks the document
+    against the PLAN. This was the missing edge: card against plan, both directions, which
+    is the shape that worked for #50 and #56.
+
+    Found by asking a plain question — does the card update when the goals do? It did not,
+    and the delivered PDF had a card listing six credentials with no academics entry while
+    every grade of the plan carried an academic goal.
+    """
+    import re
+    f = []
+    tgt = (two_paths or {}).get("target_variant") or {}
+    prof = tgt.get("achievement_profile") or []
+    rows = _plan_goal_rows(plan_goals)
+    if not prof or not rows:
+        return GateResult("card_plan", PASS, [], "nothing to reconcile")
+
+    plan_text = " ".join(t + " " + _txt(go.get("tasks") or []) for _, t, go in rows).lower()
+
+    # Domain vocabulary, so a credential named `service_nonprofit` can be recognised in a
+    # goal that says "volunteer with one local group". Matching the slug itself would be
+    # the spelling-not-substance mistake five earlier gates already made. [#54]
+    DOMAIN_WORDS = {
+        "venture": ["business", "sell", "selling", "trad", "shop", "market", "customer"],
+        "work_internship": ["job", "work", "shift", "intern", "employ", "paid"],
+        "debate": ["debate", "debating", "speech", "forum", "congress", "mock trial",
+                   "model un"],
+        "leadership_office": ["officer", "lead", "president", "captain", "role", "chair"],
+        "service_nonprofit": ["volunteer", "service", "charity", "community", "group"],
+        "athletics": ["sport", "tennis", "ping-pong", "team", "athletic", "racquet"],
+        "arts_music": ["theat", "music", "drama", "stage", "musical", "perform"],
+        "academics_floor": ["grade", "gpa", "course", "class", "subject", "test", "study",
+                            "academic", "rigor", "rigour"],
+        "olympiad_math": ["math", "olympiad", "competition math"],
+        "research": ["research", "lab", "paper", "study"],
+        "robotics_cs": ["robot", "coding", "program", "computer"],
+    }
+
+    def _in_plan(cred):
+        """Is this credential built by something in the plan?
+
+        `credential` arrives in two shapes: a domain slug ("service_nonprofit") from some
+        runs, and a full descriptive sentence from others. The first version of this only
+        handled the slug — it stripped spaces, turned a sentence into one giant token,
+        matched nothing, and reported that the plan did not build credentials it plainly
+        did. Both card_plan failures on the first real run were this. Thirteenth gate bug,
+        and the schema is genuinely loose here, so handle both. [#67]
+        """
+        raw = str(cred or "").lower()
+        slug = re.sub(r"[^a-z_]", "", raw)
+        if slug in DOMAIN_WORDS:                      # a clean slug
+            return any(w in plan_text for w in DOMAIN_WORDS[slug])
+        words = [w for w in re.findall(r"[a-z]{4,}", raw)]
+        if not words:
+            return False
+        # A sentence: match if it names a domain we know, or shares distinctive words with
+        # the plan. Two hits, so one incidental word does not carry it.
+        for dom, dw in DOMAIN_WORDS.items():
+            # The SAME word must appear in both. Matching on "any word of this domain"
+            # let a research-paper credential pass because the plan's academic tasks
+            # contain the word "study" — a control that failed to fire the moment it was
+            # written, which is exactly why every gate here gets a negative test. [#67]
+            shared = [w for w in dw if w in raw and w in plan_text]
+            if shared:
+                return True
+        STOP = {"with", "that", "this", "from", "into", "what", "when", "where", "which",
+                "already", "through", "about", "their", "these", "those", "runs", "year",
+                "school", "grade", "note", "short", "where", "does", "only", "just"}
+        distinctive = [w for w in words if w not in STOP]
+        return sum(w in plan_text for w in distinctive) >= 2
+
+    # 1. CARD -> PLAN. A credential the card promises that no goal produces is the card
+    #    describing a student this plan does not build.
+    orphans = [str(a.get("credential") or a) for a in prof
+               if isinstance(a, dict) and a.get("credential")
+               and "capacity" not in str(a.get("credential")).lower()
+               and not _in_plan(a.get("credential"))]
+    if orphans:
+        f.append(f"the card promises {orphans[:3]} and no goal in the plan produces "
+                 f"{'it' if len(orphans) == 1 else 'them'}")
+
+    # 2. PLAN -> CARD. A domain the plan works on for five years and the card never shows
+    #    is the reverse failure, and it is the one that actually happened: the plan carried
+    #    an academic goal in every grade and the card had no academics entry at all.
+    card_text = _txt(two_paths).lower()
+    worked_on = set()
+    for _, t, go in rows:
+        body = (t + " " + _txt(go.get("tasks") or [])).lower()
+        for dom, words in DOMAIN_WORDS.items():
+            if sum(w in body for w in words) >= 1:
+                worked_on.add(dom)
+    missing = sorted(d for d in worked_on
+                     if not any(w in card_text for w in DOMAIN_WORDS[d])
+                     and d not in card_text)
+    if missing:
+        f.append(f"the plan works on {missing[:3]} across the years and the card never "
+                 f"shows {'it' if len(missing) == 1 else 'them'}")
+
+    # 2b. THE CARD'S ACADEMIC BLOCK MUST BE THE PLAN'S ACADEMIC WORK. [#67]
+    #     Academics does not live in `achievement_profile` — the card carries it in its own
+    #     course-targets block — so the domain check above passes on a card whose academic
+    #     statement is stale. That is precisely the failure that prompted this gate: the
+    #     card said grade eight was for choosing courses well, while the plan had moved on
+    #     to finding the weak subjects and fixing them. Absence is easy to spot; a stale
+    #     sentence that still reads plausibly is not, and it is the more common defect.
+    acad_goals = [t for _, t, go in rows
+                  if re.search("|".join(DOMAIN_WORDS["academics_floor"]),
+                               t + " " + _txt(go.get("tasks") or []), re.I)]
+    card_acad = _txt(tgt.get("course_targets") or tgt.get("academics") or "").lower()
+    if acad_goals and card_acad:
+        # The card should echo what the plan's academic goals actually say. Compare on
+        # distinctive words, not phrasing.
+        STOP = {"grade", "school", "high", "year", "course", "courses", "class", "classes",
+                "taken", "this", "that", "with", "from", "they", "them", "their", "than"}
+        plan_words = {w for g in acad_goals
+                      for w in re.findall(r"[a-z]{5,}", g.lower()) if w not in STOP}
+        if plan_words and not (plan_words & set(re.findall(r"[a-z]{5,}", card_acad))):
+            f.append("the card's academic block shares no substance with the plan's "
+                     "academic goals — one of them has moved and the other has not")
+    elif acad_goals and not card_acad:
+        f.append("the plan carries academic goals and the card states no academic "
+                 "position at all")
+
+    # 3. A stretch card must still be the same student as the target card, measured
+    #    against the plan rather than against itself.
+    st = (two_paths or {}).get("stretch_variant") or {}
+    added = [a for a in (st.get("achievement_profile") or [])
+             if isinstance(a, dict) and a.get("via") == "added"]
+    unplanned = [str(a.get("credential")) for a in added if not _in_plan(a.get("credential"))]
+    if unplanned:
+        f.append(f"the stretch card adds {unplanned[:2]}, which the plan never schedules "
+                 f"— a stretch is a harder version of this plan, not a different one")
+
+    return GateResult("card_plan", RETRY if f else PASS, f,
+                      "the card and the plan are describing different students"
+                      if f else "")

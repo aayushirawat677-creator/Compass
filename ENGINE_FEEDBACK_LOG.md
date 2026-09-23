@@ -1549,3 +1549,58 @@ internal consistency and none can know what a PDF actually said. The rule writte
 file: **treat any C7 table that did not come from a legible checkbox as fabricated until
 proven otherwise**, and never accept a republisher — road2college, collegedata.fyi, gradgpt —
 as a source for it.
+
+## 67. The card is the output of the plan, so it now runs after the plan
+Asked a plain question — when the goals change, does the projected card change too? It did
+not, and the answer exposed an ordering error that had been in the pipeline since the start.
+
+The Outcome Card and the plan were SIBLINGS off the same moves: strategy → two_paths (step 6)
+and strategy → plan (step 7). The card's own rule (#17) had said since the beginning that it
+is "the output of the plan, not an input" — the pipeline simply never matched its own rule.
+`gate_two_paths` checked the card against STRATEGY; `gate_document` checked the document
+against the PLAN. Card-against-plan was the one edge nothing looked at, so the card could
+describe one student while the plan built another, on the same document.
+
+**What it actually did to the delivered PDF.** v8's card carried six credentials, all
+extracurricular, and its academic statement read "grade eight is for choosing courses well" —
+the old strategy's view — while every grade of the plan now carried an academic goal starting
+with finding and fixing the weak subjects. The GPA and test figures on the page were right
+only because the writer went and read `admit_pattern_json` itself. Diligence, not design.
+
+**Fix, two parts.** two_paths moves after the plan and receives `plan_json`; a new
+`gate_card_plan` reconciles the two in both directions — a credential with no goal behind it,
+a domain the plan works on that the card omits, an academic block that shares no substance
+with the plan's academic goals, and a stretch credential the plan never schedules.
+
+**The gate is a backstop; the reorder is the fix.** Stale-but-plausible text is genuinely hard
+to catch with a regex — the first tightening pass still passed a card whose distinctive words
+(weakest, subjects, preparation, practised) were entirely absent, on the strength of "grades"
+and "through". Rather than write a cleverer pattern and earn another bug, the structural
+change carries the weight: a card computed from the plan cannot be stale.
+
+### What the reordered card produced
+Credentials now trace to named goals: the chapter selling event and the paid shop role rather
+than "a five-year card business"; the academic transcript as a floor held in every grade; the
+officer post, the debate squad place, the sustained volunteering. Chess and cooking are shown
+as they stand, with their conversions recorded and unscheduled, because the family has not
+answered. The stretch path intensifies three threads and adds one — the regional card-show
+table — which the plan does schedule, as a grade-8 stretch task.
+
+### Two bugs and two real findings
+- **Thirteenth gate bug.** `gate_card_plan` matched `credential` as a domain slug only. The
+  card returns a full sentence in that field, which got stripped to one giant token and
+  matched nothing, so the gate reported that the plan did not build credentials it plainly
+  did — both of its first-run failures were this. It now handles either shape.
+- **A control that failed to fire.** After the loosening, a planted "published research paper
+  with a university laboratory mentor" PASSED, because the domain branch matched on ANY word
+  of a domain and the plan's academic tasks contain "study". The same word must now appear in
+  both. Every gate here gets a negative test for exactly this reason, and this one earned it
+  within a minute of being written.
+- **Real, still open:** `gate_two_paths` fails the new card because 7 stretch credentials
+  carry no `via` field, so they do not say whether they were intensified or added. A
+  production run retries here.
+- **Real, still open:** the card says theatre is "protected as an interest" and the plan does
+  not mention theatre at all. `gate_honours_appraisal` missed it, because its
+  `keep_as_interest` check only forbids attaching a performance target — it never required
+  the activity to appear. Protecting something the plan never names is not protection, and
+  the card should not claim it.

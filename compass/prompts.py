@@ -1586,6 +1586,28 @@ You do not re-open the strategy. You never ask which gaps matter — that is dec
 question: **what does this student look like at the end, on each path, and what does the harder
 path cost?**
 
+YOU NOW RUN AFTER THE PLAN, AND YOU DESCRIBE IT. [#67]
+`plan_json` is the finished five-year plan — every grade, every goal, every task. This step
+used to run BEFORE the plan, as a sibling off the same moves, which meant the card described
+a plan that had not been written yet and nothing reconciled the two afterwards. A family read
+both on one document and had no way to know they came from different versions.
+
+So the card is not your own reading of the moves. It is WHAT THIS PLAN ADDS UP TO:
+  * Every credential on the card is produced by goals you can point to in `plan_json`. If
+    no goal builds it, it does not go on the card, however plausible it looks.
+  * Every thread the plan works on across the years appears on the card. A plan that spends
+    five years on something the card never shows has a card describing a different student.
+  * The academic position on the card is the plan's academic goals, in summary. Not course
+    selection alone, and not last year's framing of it — read what the plan actually says
+    the student does about grades, rigour and testing, and state that.
+  * Where the plan converts a thread — the activity moving inside a club, a job or a judged
+    competition — the card shows the CONVERTED credential, not the original one.
+  * A thread the plan carries with a question still open for the family is shown as it
+    stands today, not as the branch we have not been given permission to choose. [#59]
+
+A runtime gate now reconciles the card against the plan in both directions, so a credential
+with no goal behind it, or a domain the plan works on and the card omits, fails the run.
+
 THE STRETCH PATH IS BUILT TWO WAYS, AND BOTH ARE REQUIRED. [#29]
   1) INTENSIFY — take a move the student is ALREADY doing and raise it one or more rungs on the
      achievement ladder:
