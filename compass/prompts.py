@@ -1048,6 +1048,41 @@ TASKS: WHAT THEY ARE AND ARE NOT
        GOOD  "Sit down after the fair with what it earned and what he enjoyed, and
               settle then whether a second one is worth it."
 
+HOW A TASK IS WRITTEN — the action, then what it is for. [#70]
+
+  BEFORE, and what is wrong with it:
+    "Ask the school for his most recent report card, note the two subjects he is weakest
+     in, and arrange regular help for the weaker one through his teacher's office hours
+     or a study group."
+  AFTER:
+    "Ask the school for the recent report card, identify the weakest or underperforming
+     subjects. Work towards improving the grades of the weak subjects to achieve the GPA
+     goal."
+
+  Three rules, drawn from that pair:
+
+  1. GIVE THE PURPOSE, NOT THE MECHANISM. End on what the work is FOR — "to achieve the
+     GPA goal", "so the business is something an outside body can confirm". Do NOT
+     prescribe how, when the how depends on a school, a timetable or an offering we
+     cannot see. "Through his teacher's office hours or a study group" names two options
+     that may not exist at his school; "arrange regular help" lets the family use
+     whatever is actually there. Where we HAVE verified the how — a named programme in
+     this year's section — naming it is right. Where we have not, do not invent it.
+
+  2. NEVER INVENT A COUNT. "The two subjects he is weakest in" puts a number on something
+     nobody has counted; the report card decides how many there are. Say "the weakest or
+     underperforming subjects". Same for sessions, hours, entries and placings: a quantity
+     that came from nowhere is a fabricated fact wearing a plan's clothes. [#51]
+
+  3. TWO SHORT SENTENCES BEAT ONE LONG CHAIN. A row of roughly 12 to 35 words may be one
+     sentence or two. Three clauses strung on commas and an "and" is what a writer
+     produces when the ceiling is too low for the work — split it: what to do, then what
+     it is for.
+
+  The register throughout: plain, direct, unfussy. "the recent report card", not "his
+  most recent report card". Short verbs. No hedging. A parent should be able to read the
+  row once and start.
+
 ONE TASK IS ONE SITTING. DO NOT WRITE THE BABY STEPS. [#63]
   A task is a thing a person sits down and does. The obvious sub-steps inside it are not
   separate tasks, and listing them insults the reader.
@@ -1415,7 +1450,9 @@ dates and fees went with them. R6 wrote "Register for the Children's Business Fa
 San Jose, run by Acton, registration closes Oct 17, $50 booth fee"; the page printed
 "Register for the Children's Business Fair." The plan was intact and the document was not.
 
-  * A task row is a FULL SENTENCE, 12 to 20 words. Under 12 words is a defect.
+  * A task row runs roughly 12 to 35 words, as ONE sentence or TWO. Under 12 words
+    is a defect; a single sentence carrying three comma-spliced clauses is also a
+    defect, and splitting it is the fix rather than cutting it. [#70]
   * Every proper noun, price, age limit and named organisation R6 put in a task text
     SURVIVES INTO THE ROW. You may re-word; you may not drop a fact.
   * You may shorten R6's trailing rationale ("...so the paperwork is done once") when the

@@ -1695,3 +1695,36 @@ is for the parent.
 
 The test to keep: would a parent read this page and think *they are asking me to choose*, or
 *they do not know very much about my son*? The first is the product working.
+
+## 70. The action, then what it is for
+A rewrite of one task row, side by side, showed three separate things wrong with how tasks
+were being written — and one of them was caused by a rule of mine.
+
+    OURS   "Ask the school for his most recent report card, note the two subjects he is
+            weakest in, and arrange regular help for the weaker one through his teacher's
+            office hours or a study group."
+    THEIRS "Ask the school for the recent report card, identify the weakest or
+            underperforming subjects. Work towards improving the grades of the weak
+            subjects to achieve the GPA goal."
+
+- **Give the purpose, not the mechanism.** "To achieve the GPA goal" is what the work is for.
+  "Through his teacher's office hours or a study group" prescribes a HOW that depends on a
+  school we have never seen — it names two options that may not exist there. "Arrange regular
+  help" lets the family use whatever is actually available. Where we have verified the how — a
+  named programme in this year's section — naming it is right; where we have not, we do not
+  invent it.
+- **Never invent a count.** "The two subjects he is weakest in" puts a number on something
+  nobody has counted. The report card decides how many there are. This is #51's no-quantity
+  rule showing up in a place I had not thought to apply it, and `gate_document` now catches
+  it — "one" stays legal, since "enter ONE tournament" is a scope cap rather than a claim
+  about how many exist.
+- **Two short sentences beat one long chain — and the chain was my fault.** I had set the row
+  ceiling at 12–20 words. Three steps into twenty words produces exactly that comma-splice,
+  every time. Widened to roughly 12–35 words, one sentence or two, with the instruction that
+  splitting is the fix rather than cutting. A rule that makes good writing impossible will be
+  obeyed, and the output will be worse for it — the same mechanism as #56, where a word budget
+  the roadmap could not satisfy made the model delete the plan.
+
+The gate checks the invented count on any row and the comma-chaining only as a proportion,
+because one long row is a writing miss and a document full of them is the ceiling being wrong
+again. The prompt is where the register is set; the gate is the backstop for drift.

@@ -379,6 +379,33 @@ def gate_document(draft, plan_goals):
     doc_tasks = _tasks_of(draft.get("roadmap", {}))
 
     if plan_tasks and doc_tasks:
+        # A quantity nobody counted. "the two subjects he is weakest in" — where did two
+        # come from? The report card decides. Same for sessions, entries and placings: a
+        # number from nowhere is a fabricated fact wearing a plan's clothes. [#70][#51]
+        import re as _r2
+        COUNTED = (r"\b(?:the |his |her )?(one|two|three|four|five|six|\d+)\s+"
+                   r"(subjects?|classes|courses|tournaments?|entries|events?|sessions?|"
+                   r"competitions?|placings?|clubs?|groups?|shifts?|slots?)\b")
+        invented = []
+        for t in doc_tasks:
+            m = _r2.search(COUNTED, t, _r2.I)
+            # "one" is a legitimate scope limit — "enter ONE tournament" is a cap, not a
+            # count of something that exists. Two or more asserts a quantity.
+            if m and m.group(1).lower() not in ("one", "1"):
+                invented.append(f"{m.group(0)!r} in {t[:44]!r}")
+        if invented:
+            f.append(f"{len(invented)} task(s) put a number on something nobody counted: "
+                     f"{invented[0]}")
+
+        # A row that is three clauses on commas is the ceiling being too low, not the
+        # writer being careless. Split it; do not cut it. [#70]
+        chains = [t for t in doc_tasks
+                  if t.count(",") >= 2 and " and " in t and t.count(".") <= 1
+                  and len(t.split()) > 24]
+        if len(chains) > len(doc_tasks) * 0.2:
+            f.append(f"{len(chains)} task rows are one sentence of comma-spliced clauses "
+                     f"— two short sentences beat one long chain: {chains[0][:56]!r}")
+
         stubs = [t for t in doc_tasks if len(t.split()) < 12]
         if len(stubs) > len(doc_tasks) * 0.15:
             f.append(f"{len(stubs)} of {len(doc_tasks)} task rows are under 12 words "
