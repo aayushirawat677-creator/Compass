@@ -1604,3 +1604,46 @@ table — which the plan does schedule, as a grade-8 stretch task.
   `keep_as_interest` check only forbids attaching a performance target — it never required
   the activity to appear. Protecting something the plan never names is not protection, and
   the card should not claim it.
+
+## 68. Auditing the prompts against the log, rather than assuming
+A pass over what the log says versus what the prompts actually carry. Four real gaps, none
+of them cosmetic — each was a rule we had decided and then failed to put where it acts.
+
+- **`two_paths` produced the Outcome Card and never carried `CARD_GRAMMAR`.** The contract
+  written specifically for the card was injected into the writer, the critic and the
+  comparisons step, and not into the step that builds it. It carried no `PROSE` either.
+  Both added.
+- **The appraiser's `family_question` is printed to a parent word for word** — it appears on
+  the profile page under a heading saying we would like their view — and the appraiser
+  carried neither `TONE` nor `PROSE`. So the one sentence in the document most likely to
+  hurt a family, about the thing their child loves most, was the only parent-facing text
+  written without the parent-facing contracts. Both added, with a note in the prompt saying
+  plainly that it is printed verbatim.
+- **#60 lived only in the gates.** The plan was being reconciled against the appraisal at
+  runtime and was never told so. A step that does not know it will be checked cannot aim at
+  passing; it just fails and retries. The four bindings are now stated in `PLAN_GOALS`:
+  convert produces a goal by its grade, retire carries none, keep_as_interest gets no
+  performance target, and an open family question means the thread STAYS and the deciding
+  step gets scheduled.
+- **#66 was built and never wired.** `data/college_weights.json` — the CDS C7 weightings —
+  existed with Michigan verified and nothing in the engine read it. Now loaded once in the
+  pipeline and handed to the two steps that size decisions, strategy and the plan, with the
+  three-sources rule stated: the corpus says what an admit looked like, admit rates say how
+  selective the school is, C7 says what the school weighs, and none of the three gives a
+  student's odds. A school marked `blocked` gets silence rather than a guess.
+
+Contract coverage now, for the record:
+    appraiser    EVIDENCE TONE PROSE SCHEMA
+    two_paths    EVIDENCE TONE PROSE PLANNING_STRUCTURE CARD_GRAMMAR SCHEMA
+    plan_goals   all seven
+    writer       all seven
+    strategy     EVIDENCE TONE PLANNING PLANNING_STRUCTURE SCHEMA
+    critic       EVIDENCE TONE PROSE PLANNING_STRUCTURE CARD_GRAMMAR
+Four rules stay out of the prompts on purpose: #54 and #65 are gate bugs and belong to the
+code; #58 is a meta-note; #61 was reverted by #62 within the hour.
+
+**The general lesson, third time this session.** A rule is not in force because it was
+decided. It is in force where it is written. Twice now the gap has been a gate encoding an
+older rule; this time it was a contract never reaching the step it was written for. Worth
+running this audit — cited rules against logged rules, contracts against steps — whenever a
+batch of changes lands.

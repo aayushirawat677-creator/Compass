@@ -121,6 +121,19 @@ def run(intake: dict, log=print) -> dict:
     if asked:
         log(f"        {len(asked)} thread(s) go back to the family as a question")
 
+    # What each school says it weighs — CDS C7. Absent or blocked schools simply do not
+    # appear; a step is told to say nothing about a school whose C7 we could not read. [#66]
+    try:
+        with open(os.path.join(os.path.dirname(os.path.dirname(__file__)),
+                               "data", "college_weights.json")) as fh:
+            weights = json.load(fh)
+        verified = [k for k, v in (weights.get("schools") or {}).items()
+                    if v.get("status") == "verified"]
+        if verified:
+            log(f"       · C7 weightings held for: {', '.join(verified)}")
+    except (OSError, ValueError):
+        weights = {}
+
     log("  5/10 Strategy .......... ranking gaps -> moves")
     state["strategy"], _ = _gated(
         "strategy",
@@ -128,6 +141,7 @@ def run(intake: dict, log=print) -> dict:
          "reference_json": context.for_strategy(profile),
          "admit_pattern_json": state["admit_pattern"],
          "appraisals_json": appraisals,
+         "college_weights_json": weights,
          "intended": profile.get("intended", {})},
         lambda o: gates.gate_strategy(o, state["gap"], profile.get("constraints", {})),
         state, log)
@@ -149,7 +163,8 @@ def run(intake: dict, log=print) -> dict:
          "admit_pattern_json": state["admit_pattern"],
          # The ladders the later grades name come from here, already source-checked.
          # Without them grade 11 reads "carry it one rung further" and names no rung. [#61]
-         "appraisals_json": appraisals},
+         "appraisals_json": appraisals,
+         "college_weights_json": weights},
         lambda o: gates.gate_plan(o, state["strategy"]), state, log)
 
     # Correct step order does not make the plan obey. The appraiser runs before strategy

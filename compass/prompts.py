@@ -577,6 +577,18 @@ TWO LAYERS, AND THEY ARE DIFFERENT IN KIND. [#59]
 
 {EVIDENCE}
 
+YOUR `family_question` IS PRINTED TO THE PARENT WORD FOR WORD. [#68]
+It is not a note to the team. It appears on the profile page exactly as you write it, under
+a heading saying we would like their view before deciding. So it obeys the tone and prose
+contracts below like any other parent-facing sentence: no jargon, no rung, no credential,
+no vouch, no "load-bearing"; their child named the way they name him; and never a sentence
+that implies the thing he loves is worthless. Ask a real question with two real answers,
+and make clear that both are fine.
+
+{TONE}
+
+{PROSE}
+
 WHAT YOU MAY NOT DO
 - Do not predict an outcome. "This will impress admissions officers" is not something you
   can know. "Admits to these schools who held a venture typically reached the regional rung"
@@ -706,6 +718,13 @@ Twelve selected moves is not a strategy, it is a list; the runtime gate rejects 
 "core" threads fails the same test one level down. If two candidates both look core, pick the
 one the student already has evidence in and make the other its support.
 
+SIZE A MOVE TO WHAT THE SCHOOL SAYS IT WEIGHS. [#66]
+`college_weights_json`, when present, carries each school's own Common Data Set C7 ratings —
+Very Important / Important / Considered / Not Considered, stated by the institution. A factor
+a school rates Very Important is a candidate for the plan's centre; one it rates Considered
+is not, however much effort it would take. Where a school is marked `status: blocked` we
+could not read its C7, and you say nothing about what it weighs.
+
 ACADEMICS CANNOT BE DROPPED. [#64]
 Whatever else you trade away, an `academics_floor` gap survives into the moves. The first
 run of this step was handed six of them — one per target school — and dropped all six, so
@@ -814,6 +833,19 @@ five-year plan. Each grade gets its own goals; each goal gets its own tasks.
                         compete in?". Never leave that question inside `text`. [#55]
   multi_year_arc        one line per stage, in plain words
 
+YOU ARE RECONCILED AGAINST THE APPRAISAL, NOT MERELY ASKED TO RESPECT IT. [#60]
+Being handed `appraisals_json` earlier in the run is not the same as the plan honouring it,
+and for a while nothing checked. Runtime gates now do, and they fail the run:
+  * A `convert` verdict must produce a goal, at or before the grade the appraisal named,
+    in which the activity moves INSIDE something — a club, a team, a job, a judged entry.
+  * Nothing marked `retire` may still carry goals.
+  * Nothing marked `keep_as_interest` may have a performance target attached to it — no
+    qualifying, placing, winning or ranking. The plan protects it and asks nothing.
+  * An activity with `needs_family_input` MUST STILL APPEAR. Pending is not the same as
+    gone. Carry it as it stands and schedule the step that produces the decision; never
+    enact the branch we said we would ask about, and never let the thread vanish while the
+    document prints a question about it.
+
 ACADEMICS ARE A THREAD IN EVERY GRADE. THEY ARE NOT OPTIONAL. [#64]
   The first five-year plan this engine produced carried nineteen goals and not one of them
   was academic. The gap step had measured an academics floor at all six schools; every one
@@ -879,6 +911,27 @@ EXPLORE MEANS TRY THE FORMATS, NOT JUST TRY THE THING. [#63]
   eighth-grader to one format has skipped the step that makes the later years work.
   Write this in plain words: "try a few kinds of debate and see which suits him", not
   "sample the format space".
+
+WHAT THE SCHOOL ITSELF SAYS IT WEIGHS. [#66]
+`college_weights_json`, when present, carries Section C7 of a school's own Common Data Set:
+the institution rating each admission factor Very Important / Important / Considered / Not
+Considered. It is the only place a school states its own weightings in a standard form.
+
+  Three sources, and each answers exactly ONE question. Do not mix them:
+      the corpus      what an admit to this school looked like
+      admit rates     how selective this school is
+      C7              what this school says it weighs
+  None of the three gives a student's odds, and none may be used to imply one.
+
+  Where C7 is present for a school, let it size the goals: a factor that school rates Very
+  Important deserves a goal, and a factor it rates Considered does not deserve the plan's
+  centre. Michigan, for instance, rates only two factors Very Important and both are
+  academic, with extracurricular activities merely Considered — which is the school's own
+  argument for the academic thread, and a stronger one than ours.
+
+  A school marked `status: blocked` has no C7 we could read. Say nothing about what it
+  weighs. An absent reading is never a neutral one, and a republisher site is never a
+  source for it.
 
 SIZE THE GOALS TO THE EVIDENCE [#52]
 `admit_pattern_json` says, per target school, what admits actually held and the rung
@@ -1585,6 +1638,10 @@ and produce TWO coherent versions of the same plan: a TARGET path and a STRETCH 
 You do not re-open the strategy. You never ask which gaps matter — that is decided. You ask one
 question: **what does this student look like at the end, on each path, and what does the harder
 path cost?**
+
+{CARD_GRAMMAR}
+
+{PROSE}
 
 YOU NOW RUN AFTER THE PLAN, AND YOU DESCRIBE IT. [#67]
 `plan_json` is the finished five-year plan — every grade, every goal, every task. This step
