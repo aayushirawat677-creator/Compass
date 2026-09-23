@@ -1048,6 +1048,14 @@ TASKS: WHAT THEY ARE AND ARE NOT
        GOOD  "Sit down after the fair with what it earned and what he enjoyed, and
               settle then whether a second one is worth it."
 
+NOTHING ON THIS PAGE IS ABOUT US. [#69]
+A gap in our record is not a fact about their child. Never write what we do not know, do
+not have, or could not find — no "on record", no "missing from what we have", no "we do
+not know whether", no "our read is", no "claimed by parent", no "unconfirmed". Those go to
+whoever runs the engine, through `operator_questions`, and never onto a page a parent
+reads. And none of our vocabulary anywhere a reader can see it: rung, credential,
+load-bearing, vouch, outside body, modal, cohort, corpus, appraisal, spike, thread.
+
 HOW A TASK IS WRITTEN — the action, then what it is for. [#70]
 
   BEFORE, and what is wrong with it:
@@ -1443,6 +1451,41 @@ Over budget is a defect of the same order as a wrong number. If the document wil
 the cut comes from the PROSE sections — repetition and connective tissue — never from a
 price, date, age range, programme name, contact, deadline, or from a roadmap row.
 
+HOW A TASK IS WRITTEN — the action, then what it is for. [#70]
+
+  BEFORE, and what is wrong with it:
+    "Ask the school for his most recent report card, note the two subjects he is weakest
+     in, and arrange regular help for the weaker one through his teacher's office hours
+     or a study group."
+  AFTER:
+    "Ask the school for the recent report card, identify the weakest or underperforming
+     subjects. Work towards improving the grades of the weak subjects to achieve the GPA
+     goal."
+
+  Three rules, drawn from that pair:
+
+  1. GIVE THE PURPOSE, NOT THE MECHANISM. End on what the work is FOR — "to achieve the
+     GPA goal", "so the business is something an outside body can confirm". Do NOT
+     prescribe how, when the how depends on a school, a timetable or an offering we
+     cannot see. "Through his teacher's office hours or a study group" names two options
+     that may not exist at his school; "arrange regular help" lets the family use
+     whatever is actually there. Where we HAVE verified the how — a named programme in
+     this year's section — naming it is right. Where we have not, do not invent it.
+
+  2. NEVER INVENT A COUNT. "The two subjects he is weakest in" puts a number on something
+     nobody has counted; the report card decides how many there are. Say "the weakest or
+     underperforming subjects". Same for sessions, hours, entries and placings: a quantity
+     that came from nowhere is a fabricated fact wearing a plan's clothes. [#51]
+
+  3. TWO SHORT SENTENCES BEAT ONE LONG CHAIN. A row of roughly 12 to 35 words may be one
+     sentence or two. Three clauses strung on commas and an "and" is what a writer
+     produces when the ceiling is too low for the work — split it: what to do, then what
+     it is for.
+
+  The register throughout: plain, direct, unfussy. "the recent report card", not "his
+  most recent report card". Short verbs. No hedging. A parent should be able to read the
+  row once and start.
+
 NEVER COMPRESS A TASK ROW. [#56]
 This is the failure that ruined the last document. Asked to hit a word budget, the writer
 met it by cutting every roadmap row to a fragment — 19 words down to 11 — and the names,
@@ -1697,6 +1740,34 @@ seen; the contracts are the standard.
      whether" and hands the research back to the family; one that describes a state
      holding rather than something to start; one that is a decision rather than the step
      that makes the decision possible. [#55]
+
+11. THE DOCUMENT TALKING ABOUT ITSELF. [#69] Read every parent-facing string — the whole
+   document EXCEPT the flags block, where provenance is allowed to live by design — and
+   fail any of these outright:
+   - WHAT WE DO NOT KNOW, HAVE OR COULD NOT FIND. "We only have one thing on record about
+     his cooking", "two things about chess are missing from what we have", "we do not know
+     whether he still does it", "our read is", "the intake does not say", "claimed by
+     parent", "unconfirmed". A gap in our record is not a fact about their child. It goes
+     to whoever runs the engine, never onto the page. This shipped to a family, under a
+     heading inviting a mother to make a decision, and it is the worst thing this system
+     has produced.
+   - A FAMILY QUESTION THAT IS AN ESSAY. It asks a choice only they can make, in one
+     sentence under about 25 words, ending in a question mark. It carries no reasoning,
+     no two-route explanation, and nothing about what we lack. A question is not a place
+     to show your working.
+   - OUR VOCABULARY ANYWHERE A READER CAN SEE IT: rung, credential, load-bearing, vouch,
+     outside body, modal, cohort, corpus, appraisal, differentiator, spike, thread.
+
+12. HOW A TASK IS WRITTEN. [#70]
+   - THE MECHANISM PRESCRIBED WHERE WE CANNOT KNOW IT. "Through his teacher's office hours
+     or a study group" names two options that may not exist at his school. A task gives
+     the action and what it is FOR — "to achieve the GPA goal" — and leaves the how to the
+     family, unless we have verified a specific programme in this year's section.
+   - A COUNT NOBODY COUNTED. "The two subjects he is weakest in" — the report card decides
+     how many there are, not us. Any number on subjects, entries, sessions or placings
+     that came from nowhere is a fabricated fact. ("One" is a scope cap and is fine.)
+   - THREE CLAUSES SPLICED ON COMMAS. Two short sentences beat one long chain: what to do,
+     then what it is for.
 
 Pass only if a real parent would find the whole document clear, warm, honest, specific and easy,
 and would recognise their own child in it without wincing once.
