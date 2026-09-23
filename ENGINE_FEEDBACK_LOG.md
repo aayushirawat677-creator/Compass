@@ -1456,3 +1456,56 @@ do it ourselves. If only they can know it, asking them IS the task.
 *Minor, found in passing:* the corpus GPA query matched 0 admits for UCLA, because the
 accepted-colleges strings spell it out rather than using the acronym. The other five
 matched. School-name aliasing needs the same treatment `admit_rates.json` already has.
+
+### 65. Four more gates encoding the previous version of the rules
+The academics run produced four gate failures on correct work — bugs nine through twelve —
+and every one was a gate still enforcing a rule a later rule had changed. That is now the
+dominant failure mode, well past the spelling-versus-substance class that produced the first
+five.
+
+- **`gate_honours_appraisal` matched a conversion by the words of `becomes`**, which names
+  DECA and FBLA — and #63 forbids the plan from printing those. So the gate failed the plan
+  for obeying the newer rule. It now matches the SUBSTANCE of a conversion: the activity
+  moving inside a club, team, job, shop or judged competition.
+- **`_NAMED_BODIES` listed Model UN, Public Forum and Lincoln-Douglas.** Those are FORMATS
+  of debate, not organisations with chapters — and #63 specifically requires the Explore
+  years to name them, because sampling the formats is the point of those years. Removed;
+  DECA, FBLA, FCCLA and the rest stay.
+- **`gate_honours_appraisal` vs `gate_open_questions`, again.** One demanded a conversion
+  appear; the other forbade enacting it before the family answers. Cooking sat in the
+  crossfire. The resolution is what the plan should do anyway: an open question suspends the
+  CONVERSION, not the ACTIVITY — carry it as it stands and schedule the step that produces
+  the decision. What the plan may never do is drop a thread while printing a question about
+  it, and that is what the gate now checks.
+- **`gate_academics` demanded the tests by acronym.** "Start test preparation, taught first
+  and practised after" is a testing goal. A test's NAME is durable and universal, unlike a
+  school chapter, so #63's ban never applied to it — either form is now accepted.
+
+**The habit this earns:** when a rule changes what belongs where, re-read every gate written
+under the old arrangement. Twelve gate bugs this session; the last four were all this.
+
+**And the retry mechanism earned its place.** Cooking was a genuine regression — the plan had
+dropped a thread the family is being asked about. The gate caught it, the retry went back with
+the failure as feedback, and the second attempt carried cooking as it stands with a Fall
+sitting that produces the decision, no body named and no conversion enacted. That is the loop
+working end to end on a real defect rather than on a gate bug.
+
+### 65a. The run with academics in it
+Strategy kept all six `academics_floor` gaps and folded them into one steady move, reasoning
+in `tensions` that the floor argues about timing rather than weight: a GPA is cumulative from
+the first graded high-school term, so the years spent growing the competitive threads are the
+same years that set it. Core intensity still went to the one thread taken furthest.
+
+  8   find the weakest subjects and get them up · card business to a local fair · try a few
+      kinds of debate · keep cooking as it is until he says · find a group to volunteer with
+  9   start high school with grades that hold · debate team and its main formats · business
+      club and a selling competition · [stretch] a placing result
+  10  the harder course only where grades hold · pick three or four and let the rest go ·
+      paid weekend job at a card shop · [stretch] a small officer job
+  11  start test preparation, taught first · a named officer job · the business into a
+      judged competition · draft the essays over the summer
+  12  hold grades through the application year · send applications in the fall · one last
+      competitive entry · [stretch] place at state
+
+All five plan gates pass, plus document and draft. 13 pages. UCLA now returns 241 admits
+after the aliasing fix, at 93.4% in the 3.8+ band and 81.7% at 1500+/34+.

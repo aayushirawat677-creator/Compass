@@ -286,6 +286,45 @@ LEVEL_PATTERNS = [
 ]
 
 
+# A family writes "UCLA"; the corpus writes "University of California, Los Angeles".
+# A plain substring match finds nothing and reports zero admits — which reads exactly
+# like "this school is not in our data" rather than "we spelled it differently". Found
+# while measuring the GPA band: five of six schools matched and UCLA returned 0. [#64]
+COLLEGE_ALIASES = {
+    "ucla":      ["ucla", "university of california, los angeles",
+                  "university of california los angeles", "uc los angeles"],
+    "berkeley":  ["berkeley", "uc berkeley", "university of california, berkeley",
+                  "university of california berkeley", "cal berkeley"],
+    "ucsd":      ["ucsd", "university of california, san diego", "uc san diego"],
+    "penn":      ["penn", "upenn", "university of pennsylvania", "wharton"],
+    "nyu":       ["nyu", "new york university"],
+    "mit":       ["mit", "massachusetts institute of technology"],
+    "usc":       ["usc", "university of southern california"],
+    "cmu":       ["cmu", "carnegie mellon"],
+    "michigan":  ["michigan", "umich", "university of michigan", "u-m ann arbor"],
+    "georgetown": ["georgetown", "gtown"],
+    "uiuc":      ["uiuc", "illinois urbana", "university of illinois"],
+    "utexas":    ["ut austin", "university of texas", "utexas"],
+    "unc":       ["unc", "university of north carolina", "chapel hill"],
+    "wustl":     ["wustl", "washington university in st"],
+    "jhu":       ["jhu", "johns hopkins"],
+}
+
+
+def college_variants(name):
+    """Every spelling of a school we might meet in the corpus, including the one given.
+
+    Matching stays a substring test — this only widens what we test against, so a school
+    with no alias entry behaves exactly as before.
+    """
+    import re as _re
+    key = _re.sub(r"[^a-z ]", "", str(name or "").lower()).strip()
+    for canon, variants in COLLEGE_ALIASES.items():
+        if key == canon or key in variants or any(v in key for v in variants if len(v) > 4):
+            return sorted(set(variants + [key]), key=len, reverse=True)
+    return [key] if key else []
+
+
 def admit_pattern_by_school(intended_colleges, major, min_admits=None):
     """Per-school credential and level distribution among admits.
 
@@ -315,8 +354,10 @@ def admit_pattern_by_school(intended_colleges, major, min_admits=None):
 
     out = []
     for college in (intended_colleges or []):
+        variants = college_variants(college) or [str(college)]
+        pattern = "|".join(_re.escape(v) for v in variants)
         hits = admits[admits["college"].astype(str).str.contains(
-            _re.escape(str(college)), case=False, na=False)]
+            pattern, case=False, na=False, regex=True)]
         ids = sorted(set(hits[sid]))
         n = len(ids)
         texts = [text_by_id.get(i, "") for i in ids]

@@ -612,11 +612,32 @@ def gate_honours_appraisal(plan_goals, appraisals):
         if verdict == "convert":
             conv = ap.get("conversion") or {}
             by = _gnum(conv.get("grade"))
-            becomes = str(conv.get("becomes") or "")
-            key = [w for w in re.findall(r"[a-z]{5,}", becomes.lower())][:6]
-            landed = [g for g, t, _ in hits
-                      if any(k in t.lower() for k in key)] if key else []
-            if not landed:
+            # A conversion means the activity moves INSIDE something that vouches — a club,
+            # a job, a team, a judged competition. Match on that substance, not on the
+            # words of `becomes`: that field names DECA and FBLA, and #63 forbids the plan
+            # from printing those, so keyword-matching it failed the plan for obeying the
+            # newer rule. Ninth gate bug, and the third time a new rule has invalidated an
+            # older gate's assumption. [#65]
+            INSIDE = (r"\b(club|team|chapter|organisation|organization|society|league|"
+                      r"job|work|shift|role|officer|intern\w*|employ\w*|shop|store|"
+                      r"compet\w*|contest|tournament|fair|judged|judges|entry|enter)\b")
+            landed = [g for g, t, go in hits
+                      if re.search(INSIDE, t + " " + _txt(go.get("tasks") or []), re.I)]
+
+            # An open family question suspends the CONVERSION, not the activity. This gate
+            # and gate_open_questions were pulling opposite ways: one demanded the
+            # conversion appear, the other forbade enacting it before the family answers.
+            # Eleventh gate bug of the session and the fourth of this class. The resolution
+            # is what the plan should do anyway — carry the activity as it stands, and
+            # schedule the step that PRODUCES the decision. What it may never do is drop
+            # the thread on the floor while a question about it is printed to the family.
+            # [#65]
+            if a.get("needs_family_input"):
+                if not hits:
+                    f.append(f"{name[:30]}: a question about this is going to the family, "
+                             f"and the plan carries no goal for it at all — pending is not "
+                             f"the same as gone")
+            elif not landed:
                 f.append(f"{name[:30]}: appraised CONVERT but no goal in any grade carries "
                          f"the conversion — the verdict reached the document and not the plan")
             elif by is not None:
@@ -713,10 +734,14 @@ def _asks_in_document(draft, activity_name):
 
 # Bodies that run youth competition ladders. Naming one in a grade the student has not
 # reached assumes a chapter at a school they have not started. [#62]
+# NOT in this list: the FORMATS of an activity. Model UN, Public Forum, Lincoln-Douglas,
+# Congress and mock trial are kinds of debate, not organisations with chapters — and #63
+# requires the Explore years to name them, because sampling the formats is the point of
+# those years. The first version treated "Model UN" as a programme and failed a plan for
+# obeying the newer rule. Tenth gate bug, same class as the eighth. [#65]
 _NAMED_BODIES = (r"\b(DECA|FBLA|FCCLA|ProStart|NSDA|CHSSA|NFTE|Diamond Challenge|"
-                 r"Conrad Challenge|Blue Ocean|Model UN|MUN|USACO|USAMO|Science Olympiad|"
-                 r"Congressional Debate|Public Forum|Lincoln[- ]Douglas|Acton|"
-                 r"National Leadership Conference|Invitational)\b")
+                 r"Conrad Challenge|Blue Ocean|USACO|USAMO|Science Olympiad|Acton|"
+                 r"National Leadership Conference|Invitational|Thespian)\b")
 
 
 def gate_horizon(plan_goals, current_grade, appraisals=None):
@@ -846,9 +871,17 @@ def gate_academics(plan_goals, admit_pattern=None, current_grade=None):
     # Testing has to appear before the year it is sat in.
     later = [g for g in by_grade if g >= 11]
     if later:
+        # Accept the test by name OR by an unambiguous phrase. "Start test preparation,
+        # taught first and practised after" is a testing goal; demanding the acronym
+        # failed it. A test's NAME is durable and universal, unlike a school chapter, so
+        # #63's ban on named programmes never applied to it — either form is correct here.
+        # Twelfth gate bug this session. [#65]
+        TESTING = (r"\b(sat|act|psat|nmsqt)\b|"
+                   r"\b(college|admission\w*|standardi[sz]ed|entrance)\s+test\w*|"
+                   r"\btest\s+(prep\w*|practice|preparation|sitting)|"
+                   r"\b(sit|take|retake)\s+the\s+tests?\b")
         test_rows = [t for g, t, go in rows
-                     if re.search(r"\b(sat|act|psat|college test\w*|admissions test\w*)\b",
-                                  t + " " + _txt(go.get("tasks") or []), re.I)]
+                     if re.search(TESTING, t + " " + _txt(go.get("tasks") or []), re.I)]
         if not test_rows:
             f.append("no goal anywhere mentions the college tests, though the plan runs "
                      "through the years they are taken in")
