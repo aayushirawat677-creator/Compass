@@ -1509,3 +1509,43 @@ same years that set it. Core intensity still went to the one thread taken furthe
 
 All five plan gates pass, plus document and draft. 13 pages. UCLA now returns 241 admits
 after the aliasing fix, at 93.4% in the 3.8+ band and 81.7% at 1500+/34+.
+
+## 66. What the schools say they weigh — CDS C7
+`data/college_weights.json`. Section C7 of a school's own Common Data Set is the institution
+rating every admission factor Very Important / Important / Considered / Not Considered. It is
+the only standard form in which a school states its own weightings, which makes it the
+defensible answer to "what does this school care about" — as against a consultancy's activity
+tiers or our own inference from the corpus.
+
+Three sources now, and each answers exactly one question:
+    corpus       what an admit to this school looked like
+    admit_rates  how selective this school is
+    C7           what this school says it weighs
+None of the three gives a student's odds.
+
+**One of six verified.** Michigan 2025-26, read twice, and the result speaks directly to #64:
+only TWO factors are Very Important and both are academic — rigor of secondary school record
+and academic GPA. Extracurriculars are merely *Considered*, below character, below first
+generation, level with volunteer work and work experience. Legacy: Not Considered. Class rank:
+Not Considered. The school that publishes its weightings puts grades and course rigour at the
+top and activities three rungs down, which is the argument for the academic thread stated by
+the institution rather than by us.
+
+The other five are blocked by hosting rather than by anything about the data: Penn and
+Georgetown publish only through Box, Berkeley through Google Sheets, all three refused by the
+fetcher; NYU's host returns 405 to this environment on every path; UCLA's PDF uses a
+shifted-character font in which every C7 checkbox extracts as the same glyph. Each is recorded
+with its URL and its blocker, never a guess.
+
+**The near miss, which is the important part.** The first read of UCLA's PDF returned a
+complete, confident C7 table including "Standardized test scores: Very Important". UCLA is in
+the test-free University of California system, so that was not a misreading — it was a
+fabrication, from a file in which no checkbox is machine-readable at all. A second read of the
+same file correctly reported nothing. Everything from the first read was discarded.
+
+That is the most dangerous failure this system can have: not a gap, but a plausible table with
+a school's name on it. It would have passed every gate we own, because every gate checks
+internal consistency and none can know what a PDF actually said. The rule written into the
+file: **treat any C7 table that did not come from a legible checkbox as fabricated until
+proven otherwise**, and never accept a republisher — road2college, collegedata.fyi, gradgpt —
+as a source for it.

@@ -1,0 +1,102 @@
+{
+  "_about": [
+    "WHAT EACH SCHOOL SAYS IT WEIGHS, from Section C7 of its own Common Data Set.",
+    "",
+    "C7 is the school rating each admission factor as Very Important / Important /",
+    "Considered / Not Considered. It is the only place an institution states its own",
+    "weightings in a standard form, which makes it the defensible answer to 'what does",
+    "this school actually care about' - as opposed to a consultancy's tier framework or",
+    "our own inference from the corpus.",
+    "",
+    "THE THREE SOURCES, AND WHAT EACH ONE CAN ANSWER:",
+    "  corpus  ......... what an admit to this school looked like      (our CSV)",
+    "  admit_rates ..... how selective this school is                  (published rates)",
+    "  THIS FILE ....... what this school says it weighs               (CDS C7)",
+    "None of the three gives a student's odds, and none may be used to imply one.",
+    "",
+    "ONLY THE INSTITUTION'S OWN DOCUMENT COUNTS. road2college, collegedata.fyi, gradgpt",
+    "and similar sites republish CDS data and are NOT acceptable sources here - they are",
+    "unverifiable and sometimes wrong. A school we cannot read gets `status: blocked`",
+    "with the reason, never a filled-in guess.",
+    "",
+    "A NEAR MISS WORTH REMEMBERING: on the first attempt, a PDF-reading step returned a",
+    "complete, confident C7 table for UCLA including 'Standardized test scores: Very",
+    "Important'. UCLA is part of the test-free University of California system, so that",
+    "was not a misreading but a fabrication - the checkboxes in that PDF are not machine",
+    "readable at all, and every box extracts as the same glyph. A second read of the same",
+    "file correctly reported nothing. All of it was discarded. Treat any C7 table that",
+    "arrives without a legible checkbox as fabricated until proven otherwise."
+  ],
+  "_retrieved": "2026-09-23",
+  "_refresh": "Schools publish a new CDS each autumn. Re-verify anything older than 18 months.",
+  "_ratings": ["Very Important", "Important", "Considered", "Not Considered"],
+  "schools": {
+    "Michigan": {
+      "status": "verified",
+      "cds_year": "2025-2026",
+      "source_url": "https://obp.umich.edu/wp-content/uploads/pubdata/cds/cds_2025-26_umaa.pdf",
+      "read_twice": true,
+      "c1": {"applicants": 109112, "admitted": 17915, "enrolled": 8178, "admit_rate_pct": 16.4},
+      "test_policy": "Recommended — C8A marks SAT or ACT under 'Recommended'. The document also answers Yes to whether SAT/ACT scores are used in admission decisions. This is the document's own wording, not 'test-optional'.",
+      "academic": {
+        "Rigor of secondary school record": "Very Important",
+        "Academic GPA": "Very Important",
+        "Standardized test scores": "Important",
+        "Application Essay": "Important",
+        "Recommendation(s)": "Important",
+        "Class rank": "Not Considered"
+      },
+      "nonacademic": {
+        "Character/personal qualities": "Important",
+        "First generation": "Important",
+        "Extracurricular activities": "Considered",
+        "Talent/ability": "Considered",
+        "Geographical residence": "Considered",
+        "State residency": "Considered",
+        "Volunteer work": "Considered",
+        "Work experience": "Considered",
+        "Level of applicant's interest": "Considered",
+        "Interview": "Not Considered",
+        "Alumni/ae relation": "Not Considered",
+        "Religious affiliation/commitment": "Not Considered"
+      },
+      "notes": "The Racial/ethnic status row is absent from C7 entirely — dropped from the form — so it is recorded as not present rather than given a rating. C7 was read identically on two independent passes."
+    },
+    "Penn": {
+      "status": "blocked",
+      "cds_year_available": "2025-2026",
+      "index_url": "https://ira.upenn.edu/penn-numbers/common-data-set",
+      "document_url": "https://upenn.box.com/s/woo7d85yxpol6j9e2o121aucjc6dc1k5",
+      "blocker": "Published only as a Box-hosted file. The fetcher refuses it (PROVENANCE_REQUIRED) and the Box app domains disallow crawling."
+    },
+    "Georgetown": {
+      "status": "blocked",
+      "cds_year_available": "2025-2026",
+      "index_url": "https://oads.georgetown.edu/commondataset/",
+      "document_url": "https://georgetown.box.com/s/0r8akn4cbm52zjkll6i7uttlb9k36px2",
+      "blocker": "Box-hosted, same refusal as Penn."
+    },
+    "Berkeley": {
+      "status": "blocked",
+      "cds_year_available": "2025-2026",
+      "index_url": "https://opa.berkeley.edu/campus-data/common-data-set",
+      "document_url": "https://docs.google.com/spreadsheets/d/1INsGFH6MhaO-MFMBZ1Dngcn84FeN-hc0BLS0-v8TL_k",
+      "blocker": "Published as a Google Sheet; the fetcher refuses it. An older 2021-22 file was reachable but is not the copy Berkeley links, and its extraction contradicted UC's test-free policy that cycle — discarded as unverified."
+    },
+    "NYU": {
+      "status": "blocked",
+      "cds_year_available": "2025-2026",
+      "index_url": "https://www.nyu.edu/about/news-publications/nyu-factbook.html",
+      "document_url": "https://www.nyu.edu/content/dam/nyu/institutionalResearch/documents/cds-2025-2026/CDS%202025-2026%20FINAL%20(no%20G).pdf",
+      "blocker": "www.nyu.edu returns HTTP 405 to this environment on every path, including the landing page. The URL is correct; the host refuses us."
+    },
+    "UCLA": {
+      "status": "blocked",
+      "cds_year_available": "2025-2026",
+      "index_url": "https://apb.ucla.edu/campus-statistics/common-data-set-undergraduate-profile",
+      "document_url": "https://apb.ucla.edu/file/22f7b216-5bcd-4401-bf95-6b9fc3652a67",
+      "blocker": "The PDF reaches us but uses a shifted-character font: headers extract as gibberish, the year digits do not extract, and EVERY C7 checkbox extracts as the identical glyph, so checked and unchecked cannot be told apart. Only the factor labels survive. Readable from page images if the file can be rendered.",
+      "warning": "This is the file that produced the fabricated table described in _about. Do not accept a C7 reading of it that does not come from an image."
+    }
+  }
+}
