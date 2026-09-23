@@ -1647,3 +1647,51 @@ decided. It is in force where it is written. Twice now the gap has been a gate e
 older rule; this time it was a contract never reaching the step it was written for. Worth
 running this audit — cited rules against logged rules, contracts against steps — whenever a
 batch of changes lands.
+
+## 69. A gap in our record is not a fact about their child
+The worst thing shipped this session, and it went out under a heading inviting a mother to
+make a decision:
+
+    "Two things about chess are missing from what we have, and they change the answer,
+     so we would rather ask than guess."
+    "We only have one thing on record about his cooking... We do not know how long he has
+     been cooking, how many hours a week it takes, or who ran that competition — and we do
+     not know whether he still does it."
+    "Our read is that the buying and selling on its own, however well it goes, stays
+     private."
+
+Three paragraphs of the engine's own uncertainty, printed to a parent. Rules #33 and #43 have
+forbidden exactly this since early on — never narrate our own inputs, write about the child
+and not about our file on him. Two reasons it happened anyway:
+
+1. **The rule was enforced nowhere.** It lived in the `PROSE` contract and no gate checked it.
+2. **My own spec invited it.** I wrote that `family_question` should be "one plain question
+   that gives the family the reasoning and the two routes", and told the writer to carry it
+   verbatim. Asked for the reasoning, got the reasoning.
+
+**The fix is a split, not a rewrite.** Two kinds of unknown, and only one is ever printed:
+  * `family_question` — a choice only they can make. One sentence, under ~25 words, ends in
+    a question mark, carries no reasoning and never says what we lack.
+  * `operator_questions` — facts we are missing and could obtain: his chess hours, who ran
+    the cooking competition, whether he still does it. These reach whoever is RUNNING the
+    engine, are never rendered, and the pipeline now prints them to the console at the end
+    of a run.
+
+Of the three questions that shipped, exactly one was a genuine family choice ("is the card
+business the thing he would keep if he could only keep one?"). One was a pure data gap
+(chess hours and whether the play was rated). One was both, and the data half crowded out
+the choice.
+
+**`gate_parent_voice`** now scans everything a reader can see — the flags block excepted,
+since provenance is allowed to live there by design — for our-record language ("on record",
+"we do not know", "missing from what we have", "our read is", "claimed by parent",
+"unconfirmed") and for internal vocabulary. Run against the shipped document it catches all
+five offending passages, plus four jargon terms I had not noticed on a parent-facing page:
+rung, credential, modal, appraisal.
+
+**And the operational rule, from the person who caught it:** if the engine needs something it
+does not have, ask in the chat while the code is running. Do not put it in the PDF. The PDF
+is for the parent.
+
+The test to keep: would a parent read this page and think *they are asking me to choose*, or
+*they do not know very much about my son*? The first is the product working.

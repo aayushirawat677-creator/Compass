@@ -301,6 +301,20 @@ def run(intake: dict, log=print) -> dict:
     if gd.verdict != gates.PASS:
         log(f"      gate: {gd.verdict} — {'; '.join(gd.failures)}")
     # Did every goal the plan produced survive into the document? [#50]
+    # Nothing in this document is about us. [#69]
+    gpv = gates.gate_parent_voice(state["draft"])
+    state.setdefault("_gates", []).append(gpv)
+    if gpv.failures:
+        log(f"      gate: {gpv.verdict} (parent_voice) — {gpv.failures[0][:90]}")
+
+    # Facts we are missing go to the operator, never into the document.
+    ops = [(a.get("activity"), q) for a in appraisals
+           for q in (a.get("operator_questions") or [])]
+    if ops:
+        log(f"       ? {len(ops)} fact(s) we could not resolve — ask before this ships:")
+        for act, q in ops[:6]:
+            log(f"           {act}: {q}")
+
     gdoc = gates.gate_document(state["draft"], state["plan_goals"])
     state.setdefault("_gates", []).append(gdoc)
     if gdoc.verdict != gates.PASS:

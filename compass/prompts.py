@@ -606,13 +606,38 @@ WHAT YOU MAY NOT DO
 - Do not judge an activity by whether it fits the intended major. A student aiming at
   business is not required to make everything business.
 
-THE FAMILY DECIDES THE HARD ONES. [#59]
-If your verdict is `convert` or `retire` AND the activity is the student's longest-running or
-highest-hours thread, you do not get to decide it alone. Set `needs_family_input: true` and
-write `family_question` — one plain question, no jargon, that gives the family the reasoning
-and the two routes. The plan will ask rather than assume. A judgment the family never saw is
-a judgment they cannot correct, and this is the step most likely to be wrong about a child we
-have never met.
+THE FAMILY DECIDES THE HARD ONES — AND THERE ARE TWO KINDS OF UNKNOWN. [#69]
+Keep them apart. Only one of them is ever printed.
+
+  `family_question` — A CHOICE ONLY THEY CAN MAKE. A preference, a priority, what the child
+  actually wants. This IS printed, to a parent, word for word, so:
+      * ONE sentence. Under about 25 words. A question mark at the end.
+      * NO reasoning, no two-route explanation, no "our read is", no "we are suggesting".
+        The plan already shows what we would do. The question asks what they want.
+      * NEVER say what we do not know, do not have, or could not find. That is our problem,
+        not something to hand a parent as though it were theirs. [#33][#43]
+      GOOD  "Would he rather keep cooking as something he enjoys, or start entering it?"
+      GOOD  "If he could keep only one of these, is the card business the one?"
+      BAD   "We only have one thing on record about his cooking... we do not know whether
+             he still does it. That matters, because a district contest with no organisation
+             behind it has nowhere further to go, while..."
+      That last one is three sentences of our own uncertainty, and it is what reached a
+      family. A question is not a place to show your working.
+
+  `operator_questions` — FACTS WE ARE MISSING AND COULD GET. How many hours a week he plays
+  chess; which body ran the competition; whether he still does it. These are gaps in OUR
+  record. They go to whoever is running the engine, are NEVER rendered in the document, and
+  are written as a plain list of what to ask. If a fact is missing, say so here and plan
+  around it — do not print the hole to the family.
+
+  The test: would a parent read this and think "they are asking me to choose", or "they do
+  not know very much about my son"? The first is the product working. The second is what we
+  shipped.
+
+Set `needs_family_input: true` only when a `convert` or `retire` verdict lands on the
+student's longest-running or highest-hours thread. A judgment the family never saw is one
+they cannot correct, and this is the step most likely to be wrong about a child we have
+never met — but that is a reason to ask one clean question, not to narrate our doubts.
 
 {SCHEMA}
 
@@ -633,7 +658,10 @@ RETURN
                         could not place it at all, and the plan will ask. [#59]
   hours_returned        hours per week freed if this is retired or converted; 0 otherwise
   needs_family_input    true | false
-  family_question       "" unless needs_family_input
+  family_question       "" unless needs_family_input. One sentence, under ~25 words,
+                        printed to a parent verbatim. A choice, never our uncertainty.
+  operator_questions    [] or a list of facts we are missing and could obtain. NEVER
+                        rendered — these reach the person running the engine. [#69]
   confidence            high | medium | low — low when you had neither cache nor useful
                         search results, which is honest and lets the plan carry it gently
 
@@ -1246,10 +1274,22 @@ Return ONLY the StrategicPlan JSON with EXACTLY these keys, each fully populated
       route say everything that needs saying, and the family can disagree with a reason
       in a way they cannot disagree with a verdict.
 
-  `family_questions` — every appraisal with `needs_family_input: true`, verbatim from its
-  `family_question`. These are the calls we did not make alone. They are not flags and not
-  caveats: they are questions with two real routes behind them, and the plan is built as
-  the activity stands until the family answers. Say that plainly. [#59]
+  `family_questions` — every appraisal with `needs_family_input: true`, carrying its
+  `family_question` and nothing else from that appraisal. These are choices we did not make
+  alone. One sentence each. [#69]
+    * NEVER carry the appraisal's reasoning, its `why`, or anything from
+      `operator_questions`. Those are ours. A parent reading this page should think "they
+      are asking me to choose", not "they do not know very much about my son".
+    * NEVER print what we lack: no "we only have one thing on record", no "two things are
+      missing from what we have", no "we do not know whether he still does it", no "our
+      read is". A gap in our record is not a fact about their child. [#33][#43]
+    * `threads_lead` says in ONE line that the plan is built as things stand until they
+      answer. It does not apologise, explain, or preview the questions.
+
+  The `threads` rows obey the same rule. `note` is one line about the ACTIVITY — "nobody
+  outside the family sees the result" is about the activity. "The organising body behind
+  the medals is what decides which of those two it is" is us thinking out loud about our
+  own classification, and it does not belong on a page a mother reads. [#69]
 - target / stretch: THE OUTCOME CARD. THE OUTPUT OF THE PLAN, NOT AN INPUT. [#17]
   This is NOT the step-2 Match Key (backend, never rendered, used only to retrieve similar
   admitted profiles). Never label a parent-facing card "projected" — that word names the backend

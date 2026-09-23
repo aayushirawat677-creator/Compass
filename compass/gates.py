@@ -1044,3 +1044,67 @@ def gate_card_plan(two_paths, plan_goals):
     return GateResult("card_plan", RETRY if f else PASS, f,
                       "the card and the plan are describing different students"
                       if f else "")
+
+
+def gate_parent_voice(draft):
+    """NOTHING IN THIS DOCUMENT IS ABOUT US. [#69]
+
+    Rules #33 and #43 have said since early on that the engine never narrates its own inputs
+    to a family. They were enforced nowhere. A page reached a parent reading "two things
+    about chess are missing from what we have", "we only have one thing on record about his
+    cooking", "we do not know whether he still does it" — three sentences of our own
+    uncertainty, printed under a heading inviting her to decide something.
+
+    A gap in our record is not a fact about her child. It goes to whoever runs the engine.
+    """
+    import re
+    f = []
+
+    # What the engine knows, has, or lacks — never the reader's concern.
+    OUR_RECORD = [
+        (r"\b(on|in) (our |the )?record\b", "our record"),
+        (r"\bwe (do not|don't|didn't|did not) (know|have|hold|find)\b", "what we don't know"),
+        (r"\b(missing|absent) from (what we|our)\b", "gaps in our data"),
+        (r"\bthe intake (does not|doesn't|never)\b", "the intake as a source"),
+        (r"\bnot (stated|given|supplied|provided) (in|by) the\b", "a field not supplied"),
+        (r"\bwe (would |)rather ask than guess\b", "our uncertainty"),
+        (r"\bour read is\b", "our reading"),
+        (r"\b(we|our) (data|dataset|corpus|file|records?)\b", "our data"),
+        (r"\bnothing (on|in) record\b", "our record"),
+        (r"\bunconfirmed\b|\bcurrency unconfirmed\b", "our confidence"),
+        (r"\bclaimed by (the )?parent\b", "our provenance tagging"),
+        (r"\bnot verified\b|\bverified_or_claimed\b", "our provenance tagging"),
+    ]
+    # Internal vocabulary, anywhere a reader can see it.
+    JARGON = (r"\b(rung|credential|load[- ]bearing|at_or_above|lower_level|keep_as_interest|"
+              r"needs_family_input|appraisal|differentiator|modal|cohort|corpus|"
+              r"admit pattern|type_knowledge|ceiling_rung)\b")
+
+    # Everything a reader sees. The flags block is where provenance is ALLOWED to live.
+    visible = {k: v for k, v in (draft or {}).items() if k != "cover"}
+    prof = dict(visible.get("profile") or {})
+    prof.pop("flags", None)                     # flags are ours, by design [#33]
+    visible["profile"] = prof
+    text = _txt(visible)
+
+    for pattern, what in OUR_RECORD:
+        m = re.search(pattern, text, re.I)
+        if m:
+            i = max(0, m.start() - 45)
+            f.append(f"the document talks about {what}: ...{text[i:m.end() + 45].strip()}...")
+
+    j = sorted(set(m.group(0).lower() for m in re.finditer(JARGON, text, re.I)))
+    if j:
+        f.append(f"internal vocabulary on a parent-facing page: {j[:4]}")
+
+    # A family question is a choice, not an essay. Long ones are always exposition.
+    for q in ((draft.get("profile") or {}).get("family_questions") or []):
+        body = str((q or {}).get("question") or q)
+        if len(body.split()) > 30:
+            f.append(f"family question is {len(body.split())} words — a question, not our "
+                     f"working: {body[:60]!r}")
+        if "?" not in body:
+            f.append(f"family question with no question in it: {body[:60]!r}")
+
+    return GateResult("parent_voice", RETRY if f else PASS, f[:6],
+                      "a gap in our record is not a fact about their child" if f else "")
