@@ -1082,7 +1082,8 @@ HOW A TASK IS WRITTEN — the action, then what it is for. [#70]
      underperforming subjects". Same for sessions, hours, entries and placings: a quantity
      that came from nowhere is a fabricated fact wearing a plan's clothes. [#51]
 
-  3. TWO SHORT SENTENCES BEAT ONE LONG CHAIN. A row of roughly 12 to 35 words may be one
+  3. TWO SHORT SENTENCES BEAT ONE LONG CHAIN. A stub is still a defect — "Register
+     him." and "Check the next fair window." are not tasks, they are reminders. [#41] A row of roughly 12 to 35 words may be one
      sentence or two. Three clauses strung on commas and an "and" is what a writer
      produces when the ceiling is too low for the work — split it: what to do, then what
      it is for.
@@ -1477,7 +1478,8 @@ HOW A TASK IS WRITTEN — the action, then what it is for. [#70]
      underperforming subjects". Same for sessions, hours, entries and placings: a quantity
      that came from nowhere is a fabricated fact wearing a plan's clothes. [#51]
 
-  3. TWO SHORT SENTENCES BEAT ONE LONG CHAIN. A row of roughly 12 to 35 words may be one
+  3. TWO SHORT SENTENCES BEAT ONE LONG CHAIN. A stub is still a defect — "Register
+     him." and "Check the next fair window." are not tasks, they are reminders. [#41] A row of roughly 12 to 35 words may be one
      sentence or two. Three clauses strung on commas and an "and" is what a writer
      produces when the ceiling is too low for the work — split it: what to do, then what
      it is for.

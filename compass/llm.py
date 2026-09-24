@@ -86,7 +86,7 @@ Return ONLY JSON:
 "escalate":false,"notes":""}"""
 
 
-def research_json(task_description, constraints, tier="mid", max_searches=5):
+def research_json(task_description, constraints, tier="mid", max_searches=5):   # [#25][#45]
     """Live web research with mandatory verification. Falls back to an honest
     escalation when the session has no web access (e.g. mock mode)."""
     user = (f"TASK: {task_description}\n"
@@ -135,7 +135,7 @@ Return ONLY JSON:
  "source_url":"","source_name":"","confidence":"high|medium|low","notes":""}"""
 
 
-def research_fact(question, tier="mid", max_searches=4):
+def research_fact(question, tier="mid", max_searches=4):   # [#25]
     """Look up any single missing datum on the web, verified. Used when the corpus
     or a reference table has no entry — see feedback log #24/#25."""
     if settings.LLM_MODE != "real":

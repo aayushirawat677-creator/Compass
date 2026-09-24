@@ -1728,3 +1728,52 @@ were being written — and one of them was caused by a rule of mine.
 The gate checks the invented count on any row and the comma-chaining only as a proportion,
 because one long row is a writing miss and a document full of them is the ceiling being wrong
 again. The prompt is where the register is set; the gate is the backstop for drift.
+
+## 71. Is any of this actually running? — `evals/audit.py`
+The question was whether every agent, prompt, guardrail and rule is wired and working, or
+whether something had been written and quietly left out. Answering it by reading would have
+produced a reassuring summary, so it is a script instead. `python evals/audit.py`, 61 checks,
+non-zero exit on any failure.
+
+Seven groups, and two of them exist because of specific past failures:
+
+  1. Every prompt in `BY_STEP` is called by the pipeline, and nothing is called that has no
+     prompt.
+  2. **Every gate defined is called.** #42 was exactly this: `gate_draft` was defined in
+     gates.py, documented in GATES.md and drawn on the orchestration diagram, and
+     pipeline.py never called it. A gate nobody runs is worse than none, because the
+     diagram says it is there.
+  3. **Every gate is fed input it MUST reject, and must not PASS it.** #67 was this: minutes
+     after being written, `gate_card_plan` passed a planted credential — "a published
+     research paper with a university laboratory mentor" — that the plan never builds. A
+     gate that cannot fail is decoration. All 18 now demonstrably fire.
+  4. Every rule cited in code has a log entry, and every logged rule is enforced somewhere —
+     with an explicit list of log entries that are findings or mechanisms rather than rules.
+  5. Every step carries the contracts it enforces.
+  6. Every agent step has a rubric.
+  7. Every prompt builds, with no contract placeholder left unsubstituted.
+
+### The audit's own two bugs, which are the point
+Both were the audit committing the mistake it exists to catch, and both were caught by
+running it rather than by reading it.
+
+- **The placeholder check flagged six prompts.** It looked for any `{` left in the output —
+  but prompts legitimately carry single braces, because the JSON shape specs are written
+  `{{like this}}` in source precisely so they survive as `{like this}`. Matching spelling
+  where the rule is about substance, for the seventh time in this project. It now looks only
+  for an unsubstituted CONTRACT name.
+- **"Nine rules enforced nowhere" was the audit looking in two of six places.** It scanned
+  prompts.py and gates.py only. #23 lives in the column map, #25 in `llm.research_fact` and
+  `research_json`, #44 in `modules.admit_pattern_by_school`, #45 in the pipeline's
+  recommendation loop — all working, none tagged where the audit could see them. Widened to
+  every source file; the three that survived were tagging gaps, not wiring gaps, and the
+  tags are now at the implementation sites.
+
+### What the audit found about the engine itself
+Nothing unwired. 11 prompts, 18 gates, 9 rubrics, every contract landing where it is
+enforced, every gate demonstrably able to fail. The engine is complete against its own log.
+
+That is a weaker claim than it sounds, and worth stating plainly: this proves the machinery
+runs and the rules are reachable. It does not prove the output is good — that is what the
+rubrics and a graded run measure, and the last full graded run predates the appraiser, the
+academic thread and the reordered card.

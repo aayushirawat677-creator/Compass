@@ -67,6 +67,9 @@ PROGRAMS_CSV = os.environ.get("COMPASS_PROGRAMS", os.path.join(DATA_DIR, "progra
 # --- COLUMN MAP -------------------------------------------------------------
 # Rename these to match the real headers in your corpus CSV. The code only ever
 # refers to the logical names on the left, so this is the one place to adjust.
+# The corpus is STUDENT-level, not application-level, and this map must match the file
+# exactly — it once expected column names the CSV did not have, and every query
+# silently returned nothing. [#23]
 CORPUS_COLUMNS = {
     # VERIFIED against the real file (2,723 rows). The corpus is STUDENT-level:
     # one row per Reddit post, with outcomes stored as "; "-separated college LISTS.
