@@ -1204,3 +1204,57 @@ def gate_category_sweep(strategy, activities=None, researched=None):
 
     return GateResult("category_sweep", RETRY if f else PASS, f,
                       "a category set aside in silence is a category forgotten" if f else "")
+
+
+def gate_expert_use(output, step=None):
+    """ADVISORY MEANS ADVISORY, AND A CITATION MEANS A REAL RULE. [#73]
+
+    The expert corpus is the first source in this system that is asserted rather than
+    measured — 137 practitioner rules, 71 of them resting on a single speaker. That makes
+    two new failure modes possible, and both wear the authority of expertise:
+
+      * a citation to a rule that does not exist, which is a fabrication like any other;
+      * advice quietly overriding a measurement, so a plan aims at a rung the corpus says
+        admits did not actually hold.
+
+    It also guards the tier trap the corpus warns about itself: intensity advice is
+    calibrated to Ivy+ and applying it to a less selective list is exactly the over-goaling
+    this engine exists to filter — arriving, this time, with a citation attached.
+    """
+    import re
+    from compass import expert
+    f = []
+    blob = _txt(output)
+    cited = set(re.findall(r"\b([A-Z]{2,8}-\d{2})\b", blob))
+
+    # The citation check only applies when something was cited. The red lines and the
+    # vendor-statistic check apply ALWAYS — the first version returned early when no rule
+    # ID appeared, which skipped them in exactly the case that matters most: bad advice
+    # arriving with no attribution at all. Fifteenth gate bug, caught by its own control.
+    # [#73]
+    real = expert.valid_ids()
+    if cited and real:
+        ghosts = sorted(cited - real)
+        if ghosts:
+            f.append(f"cites rule(s) that do not exist in the corpus: {ghosts[:4]} — a "
+                     f"citation to nothing is a fabrication wearing a reference")
+
+    # A vendor statistic reaching a family as fact. The corpus flags these itself (§16).
+    VENDOR = r"\b(59|60|7\.4|50-60)\s*%|\b7\.4\s*(x|times)\b|HYPS\b"
+    if re.search(VENDOR, blob, re.I):
+        f.append("a vendor marketing statistic appears in the output — the corpus's own "
+                 "§16 says these show correlation, not causation, and must never reach a "
+                 "family as fact")
+
+    # Red lines the corpus draws itself (§14.1).
+    RED = [(r"pay[- ]to[- ]play|pre[- ]packaged (research|internship)", "pay-to-play research"),
+           (r"\bbought\b.{0,24}(passion project|research)", "a bought passion project"),
+           (r"\bfound(ing)? a nonprofit\b(?![^.]{0,80}(join|existing|instead))",
+            "founding a nonprofit without the join-instead caveat")]
+    for pat, what in RED:
+        if re.search(pat, blob, re.I):
+            f.append(f"recommends {what}, which the corpus itself red-lines in §14.1")
+
+    return GateResult("expert_use", RETRY if f else PASS, f,
+                      f"{len(cited)} expert rule(s) cited" if not f and cited else
+                      "advice may inform a plan; it may not invent or override one")

@@ -5,7 +5,7 @@ Agent steps -> compass.llm ; deterministic steps -> compass.modules.
 import json, os, sys
 import settings
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
-from compass import llm, modules, context, gates, appraise
+from compass import llm, modules, context, gates, appraise, expert
 from compass.prompts import BY_STEP
 
 
@@ -80,12 +80,22 @@ def run(intake: dict, log=print) -> dict:
     if thin:
         log(f"       ! too few admits held to assess fit at: {', '.join(thin)}")
 
+    # The expert corpus is advisory and tier-gated: it is calibrated to Ivy+ and says so,
+    # so the band is computed from this student's actual list before any step sees it. [#73]
+    _rates = context.for_writer(profile, _college_seed(intended)).get("published_rates", {})
+    _tier = expert.tier(_rates)
+    log(f"       · expert corpus: {_tier['band']} band "
+        f"({_tier.get('most_selective_pct')}%-{_tier.get('least_selective_pct')}%), "
+        f"intensity advice = {_tier['apply_intensity']}")
+
     log("  4/10 Gap Analyst ....... current profile vs cards")
     state["gap"], _ = _gated("gap", {"profile_json": profile, "cards_json": mr["cards"],
                                   "reference_json": context.for_gap(profile),
                                    "tally_json": mr["tally"],
                                    "admit_pattern_json": state["admit_pattern"],
-                                   "grade": _grade(profile)}, gates.gate_gap, state, log)
+                                   "grade": _grade(profile),
+                                   "expert_json": expert.for_step("gap", _rates)},
+                                  gates.gate_gap, state, log)
 
     # 4b. APPRAISER — one call per activity. Sits AFTER gap so it can judge each thread
     # against what admits to THIS student's schools actually held, and BEFORE strategy,
@@ -103,6 +113,7 @@ def run(intake: dict, log=print) -> dict:
             "admit_pattern_json": state["admit_pattern"],
             "intended_json": profile.get("intended", {}),
             "cached_json": cached or {},
+            "expert_json": expert.for_step("appraiser", _rates),
             "candidates_json": [] if cached else appraise.candidates(
                 f"{act.get('name','')} {act.get('detail','')}"),
         })
@@ -159,6 +170,7 @@ def run(intake: dict, log=print) -> dict:
          "appraisals_json": appraisals,
          "college_weights_json": weights,
          "categories_json": list(modules.CATEGORIES),
+         "expert_json": expert.for_step("strategy", _rates),
          "researched_json": researched,
          "intended": profile.get("intended", {})},
         lambda o: gates.gate_strategy(o, state["gap"], profile.get("constraints", {})),
@@ -187,7 +199,8 @@ def run(intake: dict, log=print) -> dict:
          # The ladders the later grades name come from here, already source-checked.
          # Without them grade 11 reads "carry it one rung further" and names no rung. [#61]
          "appraisals_json": appraisals,
-         "college_weights_json": weights},
+         "college_weights_json": weights,
+         "expert_json": expert.for_step("plan_goals", _rates)},
         lambda o: gates.gate_plan(o, state["strategy"]), state, log)
 
     # Correct step order does not make the plan obey. The appraiser runs before strategy
@@ -216,7 +229,8 @@ def run(intake: dict, log=print) -> dict:
          "admit_pattern_json": state["admit_pattern"],
          "corpus_tally_json": mr.get("tally", {}),
          "published_rates_json": context.for_writer(profile, _college_seed(intended)).get("published_rates", {}),
-         "constraints_json": profile.get("constraints", {})},
+         "constraints_json": profile.get("constraints", {}),
+         "expert_json": expert.for_step("two_paths", _rates)},
         lambda o: gates.gate_two_paths(o, state["strategy"]),
         state, log)
 
@@ -337,6 +351,14 @@ def run(intake: dict, log=print) -> dict:
         log(f"       ? {len(ops)} fact(s) we could not resolve — ask before this ships:")
         for act, q in ops[:6]:
             log(f"           {act}: {q}")
+
+    # Advice may inform a plan; it may not invent or override one. [#73]
+    for _k in ("gap", "strategy", "plan_goals", "two_paths"):
+        if state.get(_k):
+            ge = gates.gate_expert_use(state[_k], _k)
+            state.setdefault("_gates", []).append(ge)
+            if ge.failures:
+                log(f"      gate: {ge.verdict} (expert_use/{_k}) — {ge.failures[0][:88]}")
 
     gdoc = gates.gate_document(state["draft"], state["plan_goals"])
     state.setdefault("_gates", []).append(gdoc)

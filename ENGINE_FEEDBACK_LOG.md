@@ -1822,3 +1822,67 @@ KEYS — so a lookup filed under the activity's own name, `{"falconry": "NAFA st
 read as never having happened. The negative control caught it within a minute of the gate
 being written. Every gate in this system now has one, and this is the third time that has
 paid for itself.
+
+## 73. The expert corpus — a fourth source, and the first one that is not measured
+Peggy's practitioner playbook: 137 rules across 17 sections, distilled from 15 documents
+(10 Instagram transcripts, 5 webinar docs). Committed as `data/expert_corpus.md`, read
+through `compass/expert.py`.
+
+**Advisory, never binding — Aayushi's call, and the right one.** The four sources now:
+
+    corpus            what an admit to this school looked like      30,414 rows
+    admit_rates       how selective this school is                  published
+    college_weights   what this school says it weighs               the school's own CDS
+    expert_corpus     what experienced practitioners advise         ADVISORY
+
+Where the playbook disagrees with a measurement, the measurement wins and the disagreement
+is noted rather than split. That is not a judgment on the practitioners. It is that 137
+rules from four sources — **71 of them resting on a single speaker, 34 on one Instagram
+account the document itself flags as promoting its own programmes** — is a different kind
+of evidence from thirty thousand rows. Only 32 rules are `[CONSENSUS]`.
+
+### It independently corroborates the appraiser
+§3.2's closest analogue to Neerav's card business:
+
+    Peer tutoring business — a few kids from school: 3/10
+                           — multi-school, recruiting tutors, primary focus: 8-9/10
+                           — what separates them: scale and organization
+
+Structurally the same verdict the appraiser reached from the corpus and reasoning: the
+activity as it stands has a low ceiling, and what raises it is scale and an organisation
+around it. And EC-20 calls a sustained job "possibly one of the most important ECs… it
+can't be faked", which is a stronger endorsement of the grade-10 shop conversion than
+anything we had. Two sections were written for steps we already have: **§14.3 is headed
+"Profile diagnostic checklist (for a GapAnalyst agent)"** and §14.2's if-then heuristics
+are strategy's decision logic in another notation.
+
+### The tier gate, which matters more than any single rule
+§0.4 says of itself that the advice targets Ivy+ (<=10% admit) and that intensity rules
+should be relaxed below that. Ignoring that turns this corpus into a machine for telling a
+student aiming at a 30%-admit school he needs national awards — the exact over-goaling this
+engine exists to filter, arriving this time with an expert's authority attached.
+
+`expert.tier()` computes the band from the student's real list. Neerav's runs **4.87%
+(Penn) to 15.64% (Michigan)**, so the verdict is: *some targets are in band and most are
+not — size the plan to the school, not to the hardest one on the list.* What holds at every
+tier is authenticity, depth over breadth, narrative coherence and time as the scarce
+resource; what scales with selectivity is award level, course intensity and competition
+rung.
+
+### Retrieval, not injection
+The document is ~12.9k tokens and `plan_goals` is already ~40k. Each step gets only the
+sections bearing on its job — gap 156 words, appraiser 1,007, strategy 1,809, plan_goals
+3,466 — and cites the rule IDs it applied so a human can audit which advice drove which
+goal.
+
+### `gate_expert_use`
+Two new failure modes are possible once a source is asserted rather than measured, and both
+wear the authority of expertise: a citation to a rule that does not exist, and advice
+quietly overriding a measurement. The gate checks cited IDs against the 137 real ones,
+catches vendor marketing statistics reaching a family as fact (the corpus's own §16 flags
+these as correlation, not causation), and enforces the playbook's own red lines from §14.1.
+
+**Fifteenth gate bug, caught by its own controls.** The gate returned early when no rule ID
+appeared — which skipped the red-line and vendor checks in precisely the case that matters
+most: bad advice arriving with no attribution at all. Seven negative controls now, all
+firing.

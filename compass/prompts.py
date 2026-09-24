@@ -269,6 +269,50 @@ PROSE CONTRACT — every sentence earns its place.
 """
 
 
+EXPERT = """
+THE EXPERT CORPUS — ADVISORY, NEVER BINDING. [#73]
+`expert_json` carries the sections of Peggy's practitioner playbook that bear on your job,
+the tier verdict for this student's target list, and the rules for using them. It is a
+FOURTH source and the only one that is not measured:
+
+    corpus           what an admit to this school looked like     30,414 rows
+    admit_rates      how selective this school is                 published
+    college_weights  what this school says it weighs              the school's own CDS
+    expert_json      what experienced practitioners advise        ADVISORY
+
+IT INFORMS. IT NEVER OVERRIDES. Where the playbook disagrees with the corpus, the admit
+pattern, or a school's own C7 ratings, THE MEASUREMENT WINS — and you say that the two
+disagree rather than splitting the difference. This is not a judgment on the
+practitioners. It is that 137 rules from four sources, 71 resting on a single speaker and
+34 on one account that promotes its own programmes, is a different kind of evidence from
+thirty thousand rows.
+
+WEIGH BY TAG, and the tags are on every rule:
+  [CONSENSUS]  two or more independent sources. Lean on it.
+  [SINGLE]     one speaker. Use it, hedge it, never build the plan's centre on it alone.
+  [CONTESTED]  the sources disagree. §15 gives both views; decide from THIS student's
+               situation and say which way you went.
+  [DATA]       a number, often from a sales webinar. Never reaches a family as fact.
+
+CITE WHAT YOU USED. When a rule shapes a decision, name its ID — EC-20, ACAD-14, HON-03 —
+in the field your spec provides. A human should be able to audit which advice drove which
+goal, and a citation to a rule that does not exist is a fabrication like any other.
+
+THE TIER GATE, WHICH MATTERS MORE THAN ANY SINGLE RULE. [#73]
+The playbook says of itself that it is calibrated to Ivy+ (<=10% admit) and that intensity
+advice should be RELAXED below that. `expert_json.tier` computes the band for this
+student's actual list. Honour it. Applying rigour-maxing and national-award advice to a
+student aiming at a 30%-admit school is precisely the over-goaling this system exists to
+filter out, and it would arrive wearing the authority of an expert. What holds at EVERY
+tier: authenticity, depth over breadth, narrative coherence, and time as the scarce
+resource. What scales with selectivity: award level, course-load intensity, competition
+rung.
+
+NEVER RECOMMEND anything in the playbook's own red lines (§14.1) — pay-to-play research,
+bought passion projects, AI-written essays, fabricated or exaggerated claims.
+"""
+
+
 SCHEMA = """
 OUTPUT SHAPE CONTRACT — the shape is part of the answer. [#35]
 The step after you is CODE, not a reader. It looks for exact keys and exact container
@@ -500,6 +544,8 @@ THREE RULES THAT KEEP THIS STEP IN ITS LANE [#40]
 - Stamp every gap with the school and major it was measured against. A gap with no school
   attached cannot be reconciled with anything downstream.
 
+{EXPERT}
+
 Return ONLY the gap-map JSON: gaps[] (each: domain, category, kid_state, admit_reference,
 level_gap, magnitude, within_range, frequency, grade_context), strengths[], cross_school_notes,
 meta."""
@@ -588,6 +634,8 @@ and make clear that both are fine.
 {TONE}
 
 {PROSE}
+
+{EXPERT}
 
 WHAT YOU MAY NOT DO
 - Do not predict an outcome. "This will impress admissions officers" is not something you
@@ -753,6 +801,8 @@ a school rates Very Important is a candidate for the plan's centre; one it rates
 is not, however much effort it would take. Where a school is marked `status: blocked` we
 could not read its C7, and you say nothing about what it weighs.
 
+{EXPERT}
+
 SWEEP EVERY CATEGORY. SILENCE IS NOT A DECISION. [#72]
 `categories_json` lists the canonical set this system plans in:
 
@@ -909,6 +959,8 @@ and for a while nothing checked. Runtime gates now do, and they fail the run:
     gone. Carry it as it stands and schedule the step that produces the decision; never
     enact the branch we said we would ask about, and never let the thread vanish while the
     document prints a question about it.
+
+{EXPERT}
 
 ACADEMICS ARE A THREAD IN EVERY GRADE. THEY ARE NOT OPTIONAL. [#64]
   The first five-year plan this engine produced carried nineteen goals and not one of them
@@ -1828,6 +1880,8 @@ path cost?**
 {CARD_GRAMMAR}
 
 {PROSE}
+
+{EXPERT}
 
 YOU NOW RUN AFTER THE PLAN, AND YOU DESCRIBE IT. [#67]
 `plan_json` is the finished five-year plan — every grade, every goal, every task. This step
