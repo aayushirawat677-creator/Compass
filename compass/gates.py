@@ -634,7 +634,13 @@ def gate_honours_appraisal(plan_goals, appraisals):
         name = str(a.get("activity", ""))
         ap = a.get("appraisal") or {}
         verdict = str(ap.get("verdict", "")).lower()
-        hits = [(g, t, go) for g, t, go in rows if _mentions(t, name)]
+        # Search the goal's TASKS as well as its title. A goal headed "keep the things he
+        # already enjoys running exactly as they are" covers cooking in its tasks, and
+        # matching the title alone read that as the thread having vanished. The generic
+        # title is often the correct one for a protective goal, so the gate must look
+        # where the activity is actually named. Sixteenth gate bug. [#74]
+        hits = [(g, t, go) for g, t, go in rows
+                if _mentions(t + " " + _txt(go.get("tasks") or []), name)]
 
         if verdict == "convert":
             conv = ap.get("conversion") or {}

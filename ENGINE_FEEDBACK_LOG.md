@@ -1886,3 +1886,50 @@ these as correlation, not causation), and enforces the playbook's own red lines 
 appeared — which skipped the red-line and vendor checks in precisely the case that matters
 most: bad advice arriving with no attribution at all. Seven negative controls now, all
 firing.
+
+## 74. The full run with everything in it
+Strategy → plan → card → writer, regenerated together, with the appraiser verdicts, the
+academic thread, the 13-category sweep, the CDS C7 weightings and the expert corpus all
+live for the first time. **All twelve gates pass.** 15 pages.
+
+### The tier gate did exactly what it was built for
+Strategy's own account of it: *"olympiad_math set aside partly BECAUSE its modal rung is
+national everywhere, which full-strength intensity advice would have pushed me to build
+toward from a standing start."* That is the over-goaling this engine exists to filter,
+caught at the moment it would have entered — and caught by a rule the expert corpus wrote
+about itself. Strategy also followed the tier NOTE over the tier LABEL: the band computes
+as `ivy_plus` because Penn is 4.87%, but the note says the list spans in-band and
+out-of-band schools, so it sized to the school rather than the hardest one on the list.
+
+### The middle-school rule changed grade 8
+§11 says nothing from middle school appears on the application. So grade 8 now reads as
+capability, not credentials: the venture goal stops at "take the card business to a local
+fair with real customers" — a first outside audience, no judging entry, no placing target,
+no revenue figure. Debate is sampling only. The two stretch tasks are a monthly record and
+a beginners' round, both skill-building.
+
+### Three honest conflicts the agents surfaced rather than papered over
+- **A measurement beating advice, correctly.** The strategy move claimed debate's modal rung
+  is national at Penn; the admit pattern shows Penn at the school rung (23 school vs 17
+  national of 58). The card used the measurement and noted the disagreement. That is the
+  advisory rule working on a real case rather than in principle.
+- **`college_weights_json` was absent from the strategy payload** — my error assembling it.
+  The step said so and made no claim about what any school weighs, rather than inventing
+  one. It was present for the plan step, and Michigan's C7 reaches the reader in a grade-10
+  task.
+- **`debate_circuits` is still absent** from the reference pack despite 132 Tabroom rows
+  being reported in coverage. Flagged for the third run running. This is a real wiring gap,
+  not a prompt problem.
+
+### Sixteenth gate bug
+`gate_honours_appraisal` matched only a goal's TITLE. Grade 8 carries "Keep the things he
+already enjoys running exactly as they are", whose tasks name cooking, chess and the rest —
+and a generic title is the RIGHT title for a protective goal. Matching the title alone read
+that as the thread having vanished. It now searches the tasks too.
+
+### Open: 15 pages, up from 13
+The roadmap is 4,272 words across 56 task rows and 19 term blocks — grade 8 alone has 17
+goal entries because five goals span four terms. Every row is legitimate and the gates
+correctly refuse to compress the roadmap. If twelve pages is the target, the lever is the
+PLAN (fewer goal-term spans), not the writer, and that is a product decision rather than a
+defect.
