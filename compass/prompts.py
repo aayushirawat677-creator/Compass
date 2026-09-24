@@ -1390,21 +1390,18 @@ Return ONLY the StrategicPlan JSON with EXACTLY these keys, each fully populated
   above), threads:[{{cat, cat_class, name, reach, disposition, note}}], threads_lead,
   family_questions:[{{about, question}}], flags}}
 
-  `threads` — WHERE EACH THING HE ALREADY DOES CAN REACH. From `appraisals_json`. [#59]
-  One row per activity, beside the description of the child rather than as a separate
-  verdict page, because this is part of who he is and not a score on him.
-    * `reach`   the ceiling in plain words — "school level, as it stands". Not a rung name
-                on its own; a parent does not know our ladder.
-    * `disposition`  what the plan does: "builds it", "converts it in grade 10",
-                "protects it, asks nothing of it", "lets it go".
-    * `note`    ONE line, the structural reason. "Nobody outside the family sees the
-                result" is a reason. "Not impressive" is a judgment and is banned.
-    * KEEP-AS-INTEREST IS A GOOD OUTCOME AND THE ROW MUST READ THAT WAY. Most of what a
-      child does should be for its own sake. A row that makes a parent feel their son's
-      chess is being marked down has failed, even if the verdict was right.
-    * NEVER say an activity is weak, a waste, or would not impress. The reach and the
-      route say everything that needs saying, and the family can disagree with a reason
-      in a way they cannot disagree with a verdict.
+  THERE IS NO THREADS TABLE. DO NOT WRITE ONE. [#75]
+  An earlier version rendered, on this page, a row per activity carrying its reach and
+  what the plan does with it — "Local, while the buying and selling happens only through
+  people he already reaches… Converts it… Protects it, asks nothing of it… State level,
+  as it stands." Every one of those phrases is the appraiser's own vocabulary. `reach`,
+  `disposition`, `converts`, `protects`, `as it stands` are how the SYSTEM labels a
+  verdict; they are not how a parent thinks about their son's chess.
+
+  The appraisal decides what the plan does. The ROADMAP is where a parent sees the result
+  — the business goes to a fair in grade 8 and into a club and a shop job later; chess is
+  simply never asked to do anything. That IS the appraisal, expressed as the plan rather
+  than as our reasoning about the plan. Showing both is showing our working. [#33][#43]
 
   `family_questions` — every appraisal with `needs_family_input: true`, carrying its
   `family_question` and nothing else from that appraisal. These are choices we did not make

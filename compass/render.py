@@ -11,14 +11,14 @@ from jinja2 import Template
 
 CSS = r"""
 @page { size: letter; margin: 0; }
-@page content { margin: 44px 58px 44px; }
+@page content { margin: 40px 56px 40px; }
 * { box-sizing: border-box; }
 :root{
   --ink:#1c2a21; --cream:#f4f1e8; --card:#fbfaf4; --gold:#a5852f; --gold2:#9c7b2e;
   --muted:#6f7469; --line:#e0dccb; --green:#5c6b3d; --greenbg:#e7ecd7;
   --purple:#5b4a86; --purplebg:#e8e4f1; --tan:#efe8d6;
 }
-body{ margin:0; color:#20281f; font-family:'Inter','Helvetica Neue',Arial,sans-serif; font-size:10.5px; line-height:1.42; }
+body{ margin:0; color:#20281f; font-family:'Inter','Helvetica Neue',Arial,sans-serif; font-size:10.45px; line-height:1.4; }
 .serif{ font-family:'Playfair Display','Georgia',serif; }
 h1,h2,h3,.serif{ font-family:'Playfair Display','Georgia',serif; color:#182117; font-weight:700; }
 
@@ -35,8 +35,8 @@ h1,h2,h3,.serif{ font-family:'Playfair Display','Georgia',serif; color:#182117; 
 .page{ page: content; padding:0; page-break-before:always; }
 .rhead{ color:#9aa08f; letter-spacing:.18em; font-size:9px; text-transform:uppercase; margin-bottom:12px; }
 .slabel{ color:var(--gold2); letter-spacing:.16em; font-size:10px; font-weight:700; text-transform:uppercase; margin-bottom:6px; }
-h2.sec{ font-size:32px; margin:0 0 8px; }
-.lead{ color:var(--muted); font-style:italic; font-size:13px; line-height:1.42; max-width:82%; margin-bottom:14px; }
+h2.sec{ font-size:30px; margin:0 0 6px; }
+.lead{ color:var(--muted); font-style:italic; font-size:12.5px; line-height:1.38; max-width:82%; margin-bottom:10px; }
 .subhead{ font-size:15px; margin:16px 0 2px; }
 .thesis{ color:var(--gold2); font-style:italic; font-size:12px; margin-bottom:5px; }
 p{ margin:4px 0; }
@@ -133,18 +133,21 @@ td.tg{ color:var(--green); } td.st{ color:var(--purple); }
 .box.ask{ background:#efeaf4; border-left-color:var(--purple); }
 .box.ask .lab{ color:var(--purple); }
 .grow.again .t{ font-weight:600; color:#41493d; }
+.growbare{ margin:3px 0 3px 14px; padding-left:11px; position:relative; }
+.growbare:before{ content:'\00b7'; position:absolute; left:0; color:var(--gold2); font-weight:700; }
+.growbare.stretchgoal{ border-left:3px solid var(--purple); padding-left:9px; margin-left:11px; background:rgba(91,74,134,.045); }
 .contpill{ font-size:7.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--muted);
   border:1px solid var(--line); border-radius:8px; padding:1px 6px; margin-left:7px; vertical-align:2px; }
 .subtask{ margin:2px 0 2px 16px; padding-left:11px; position:relative; }
 .subtask:before{ content:'·'; position:absolute; left:0; color:var(--gold2); font-weight:700; }
 
 /* recommendation cards */
-.reccard{ border:1px solid var(--line); border-left:4px solid var(--gold); border-radius:5px; background:var(--card); padding:12px 14px; margin:10px 0; }
+.reccard{ border:1px solid var(--line); border-left:4px solid var(--gold); border-radius:5px; background:var(--card); padding:9px 12px; margin:7px 0; }
 .catpill{ background:var(--ink); color:#efeadc; border-radius:3px; padding:2px 7px; font-size:8.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
 .catpill.debate{ background:var(--purple); } .catpill.venture{ background:var(--gold); color:#241d07; }
 .catpill.service{ background:var(--green); } .catpill.academics{ background:#3a463a; }
 .actpill{ background:#e7e0cb; color:#6a5a2a; border-radius:3px; padding:2px 7px; font-size:8px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
-.reccard h4{ display:inline; font-size:14px; margin:0 6px; }
+.reccard h4{ display:inline; font-size:13.5px; margin:0 5px; }
 .planby{ color:var(--gold2); font-weight:700; font-size:10px; margin-top:6px; }
 
 /* parent actions */
@@ -207,21 +210,6 @@ TEMPLATE = Template(r"""
     <div class="thesis">{{ blk.thesis }}</div>
     <p>{{ blk.body }}</p>
   {% endfor %}
-  {% if c.profile.threads %}
-  <div class="threads">
-    <div class="thlab">His threads, and where they reach</div>
-    {% if c.profile.threads_lead %}<p class="small mut" style="margin:0 0 6px">{{ c.profile.threads_lead }}</p>{% endif %}
-    {% for t in c.profile.threads %}
-      <div class="throw">
-        <span class="catchip {{ t.cat_class }}">{{ t.cat }}</span>
-        <span class="thname">{{ t.name }}</span>
-        <span class="threach">{{ t.reach }}</span>
-        <span class="thdisp">{{ t.disposition }}</span>
-      </div>
-      {% if t.note %}<div class="thnote">{{ t.note }}</div>{% endif %}
-    {% endfor %}
-  </div>
-  {% endif %}
   {% if c.profile.family_questions %}
   <div class="box ask"><div class="lab">We'd like your view before we decide</div>
     {% for q in c.profile.family_questions %}<p class="small" style="margin:4px 0"><strong>{{ q.about }}</strong> — {{ q.question }}</p>{% endfor %}
@@ -294,10 +282,23 @@ TEMPLATE = Template(r"""
               {% set gk = (row.goal or row.title) %}
               {% set again = gk in seen.g %}
               {% if not again %}{% set _ = seen.g.append(gk) %}{% endif %}
+              {# A REPEAT CARRYING ONE TASK NEEDS NO HEADER. [#75] Every goal entry in the
+                 last run held exactly one task, so the roadmap was 56 bold titles each
+                 wrapping a single bullet, 35 of them stamped "continued" — a header as
+                 tall as its content, and two pages of it. The goal was already stated in
+                 the term it began; on a later term the task row plus its category chip
+                 says everything. Nothing the plan says is lost. #}
+              {% set bare = again and (row.tasks|length) == 1 %}
+              {% if bare %}
+                <div class="growbare {{ 'stretchgoal' if row.track == 'stretch' else '' }}">
+                  {% if row.cat %}<span class="catchip {{ row.cat_class }}">{{ row.cat }}</span>{% endif %}<span>{{ (row.tasks[0].text or row.tasks[0]) }}</span>{% if row.tasks[0].track == 'stretch' and row.track != 'stretch' %}<span class="trackpill s">stretch</span>{% endif %}
+                </div>
+              {% else %}
               <div class="grow {{ 'stretchgoal' if row.track == 'stretch' else '' }}{{ ' again' if again else '' }}">
                 <div class="t">{% if row.cat %}<span class="catchip {{ row.cat_class }}">{{ row.cat }}</span>{% endif %}{{ (row.goal_short or gk.split(',')[0].split(' - ')[0]) if again else gk }}{% if again %}<span class="contpill">continued</span>{% elif row.track == 'stretch' %}<span class="trackpill s">stretch</span>{% endif %}</div>
                 {% for t in row.tasks %}<div class="subtask">{{ t.text or t }}{% if t.track == 'stretch' and row.track != 'stretch' %}<span class="trackpill s">stretch</span>{% endif %}</div>{% endfor %}
               </div>
+              {% endif %}
             {% endfor %}
           </div>
         {% endfor %}

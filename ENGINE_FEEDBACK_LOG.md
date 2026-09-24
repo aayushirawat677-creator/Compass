@@ -1933,3 +1933,40 @@ goal entries because five goals span four terms. Every row is legitimate and the
 correctly refuse to compress the roadmap. If twelve pages is the target, the lever is the
 PLAN (fewer goal-term spans), not the writer, and that is a product decision rather than a
 defect.
+
+## 75. The threads table was our reasoning, printed
+Flagged twice before it landed. The profile page carried a row per activity with its reach
+and what the plan does with it:
+
+    "Local, while the buying and selling happens only through people he already reaches."
+    "Converts it: the trading carries on exactly as it is…"
+    "Protects it, asks nothing of it."   "State level, as it stands."
+
+Every one of those is the appraiser's own vocabulary. `reach`, `disposition`, `converts`,
+`protects`, `as it stands` are how the SYSTEM labels a verdict; they are not how a parent
+thinks about their son's chess. It was my design — when asked where the appraisal should
+surface, I offered "folded into the profile page" and built it — and it was wrong in situ
+in a way it was not wrong in the abstract.
+
+**The appraisal already reaches the reader, as the plan.** The business goes to a fair in
+grade 8 and into a club and a shop job later; chess is simply never asked to do anything.
+That IS the verdict, expressed as what happens rather than as our reasoning about what
+happens. Printing both is showing our working. [#33][#43]
+
+Removed from the writer spec and the template. The three family questions stay — those are
+genuinely addressed TO the parent, one sentence each, a choice with no reasoning attached.
+
+### And the real reason it was 15 pages
+Not the plan being too big. **All 56 goal entries carried exactly one task**, so the roadmap
+was 56 bold goal titles each wrapping a single bullet, 35 of them stamped "continued" — a
+header as tall as its content. A repeat appearance with one task now renders as the task row
+and its category chip alone. The goal was already stated in the term it began; nothing the
+plan says is lost, and it reads better.
+
+    15 pages -> 14 (threads table out) -> 13 (bare repeats) -> 13
+
+**Stopped at 13 on purpose.** The last page carries 22 words — one orphan line from the
+final summer card — and getting it back would have meant body text at 10.3px. That is the
+word-budget mistake again (#56): a constraint that makes the output worse in order to
+satisfy a number. The honest lever for 12 is one fewer card in the summer term, which is
+content and therefore Aayushi's call, not a rendering trick.
