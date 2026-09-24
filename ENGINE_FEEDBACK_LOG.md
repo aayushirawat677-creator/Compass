@@ -1777,3 +1777,48 @@ That is a weaker claim than it sounds, and worth stating plainly: this proves th
 runs and the rules are reachable. It does not prove the output is good — that is what the
 rubrics and a graded run measure, and the last full graded run predates the appraiser, the
 academic thread and the reordered card.
+
+## 72. The category sweep — thirteen, fixed, and a way out of the list
+Proposed as a taxonomy for the planning agent to think in. Most of it already existed —
+ten credential categories swept per school against the corpus, plus GPA and test bands —
+so the work was the two that were missing and, more importantly, the mechanism that makes
+a list mean anything.
+
+### The two new categories, measured before adding
+Among admits to a six-school target set (n=987):
+
+    honors_awards   75% mention one     larger than venture (45%) or debate (19%)
+    ap_rigor        76% mention one     58% state a count: median 10, quartiles 7-13
+
+Both comfortably support a category. The caveat that governs their use: these are shares of
+admits who WROTE about it, and mention rates are confounded by post length — the same
+confound that killed the traction hypothesis (#59). They compare within the corpus; they
+never become "75% of admits held an award".
+
+### Three decisions, and the reasoning
+- **The AP number** (my call): name the band ONLY where course selection actually happens,
+  phrased as what admits carried, never as a count to hit. An AP taken shakily lowers the
+  GPA it was meant to raise, so rigour is "the most demanding load he carries well". The
+  number exists so the plan is not vague, not so a student aims at ten.
+- **Honours are not a thread.** You cannot plan to win an award; it is what a strong year in
+  another category produces. It sits on the STRETCH path as a possible result and may never
+  be a target move. The gate enforces it.
+- **Fixed list, mandatory sweep** — because a derived list cannot be checked for absence,
+  and absence is the failure that keeps happening. `gate_category_sweep` fails a strategy
+  that never mentions a category in a move, a drop or a tension. Run against the last real
+  strategy it correctly flags the two new categories as unaccounted for.
+
+### The way out of the list, which was the sharpest part of the ask
+A fixed list makes the sweep enforceable and would otherwise make the engine deaf to any
+child whose thread we did not anticipate — falconry, esports, ceramics, competitive cooking.
+So `modules.category_of()` returns None for those, and None means GO AND LOOK IT UP: the
+pipeline runs a live lookup for the ladder and its organising bodies, hands it to strategy
+as `researched_json`, and the gate fails a run where an unlisted activity was never
+researched. A child's activity does not stop mattering because our schema is tidy.
+
+### Fourteenth gate bug, caught by its own control
+The researched-check read `_txt(researched)`, which walks a dict's VALUES and drops its
+KEYS — so a lookup filed under the activity's own name, `{"falconry": "NAFA state meets"}`,
+read as never having happened. The negative control caught it within a minute of the gate
+being written. Every gate in this system now has one, and this is the third time that has
+paid for itself.

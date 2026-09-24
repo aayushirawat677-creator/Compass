@@ -134,6 +134,22 @@ def run(intake: dict, log=print) -> dict:
     except (OSError, ValueError):
         weights = {}
 
+    # A thread our category list cannot name is looked up, not ignored. The list is fixed
+    # so the sweep can be enforced; that is not a claim nothing else exists. [#72]
+    uncovered = [a for a in acts
+                 if modules.category_of(f"{a.get('name','')} {json.dumps(a.get('signals') or {})}")
+                 is None]
+    researched = {}
+    for a in uncovered:
+        name = str(a.get("name") or "")
+        log(f"       · {name!r} is in none of the {len(modules.CATEGORIES)} categories "
+            f"— looking up what it can reach")
+        researched[name] = llm.research_json(
+            f"What competitive or recognition ladder exists for a school-age student in "
+            f"{name}? Name the organising bodies and the levels, weakest first.",
+            profile.get("constraints", {}),
+            max_searches=getattr(settings, "RESEARCH_MAX_SEARCHES", 4))
+
     log("  5/10 Strategy .......... ranking gaps -> moves")
     state["strategy"], _ = _gated(
         "strategy",
@@ -142,9 +158,16 @@ def run(intake: dict, log=print) -> dict:
          "admit_pattern_json": state["admit_pattern"],
          "appraisals_json": appraisals,
          "college_weights_json": weights,
+         "categories_json": list(modules.CATEGORIES),
+         "researched_json": researched,
          "intended": profile.get("intended", {})},
         lambda o: gates.gate_strategy(o, state["gap"], profile.get("constraints", {})),
         state, log)
+
+    gcs = gates.gate_category_sweep(state["strategy"], acts, researched)
+    state.setdefault("_gates", []).append(gcs)
+    if gcs.failures:
+        log(f"      gate: {gcs.verdict} (category_sweep) — {gcs.failures[0][:100]}")
 
     log("  6/10 Plan ............. goals, tasks, recommendations, tiers")
     grade = _grade(profile)

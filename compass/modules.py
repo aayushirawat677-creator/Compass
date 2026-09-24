@@ -273,7 +273,51 @@ CREDENTIAL_PATTERNS = {
     "athletics":         r"\bvarsity|captain|recruit|state champion|athlet",
     "leadership_office": r"\bpresident|captain|editor.in.chief|founder|led\b",
     "work_internship":   r"\binternship|intern\b|job\b|employed",
+    # Added after measuring: among admits to a six-school target set, 75% mention an
+    # honour or award and 76% mention AP/IB/dual-enrolment rigour — both larger than
+    # venture (45%) or debate (19%). Mention rates are confounded by post length, so
+    # these compare within the corpus and never become "75% of admits held an award".
+    # [#72]
+    "honors_awards":     r"\bnational merit|semifinalist|finalist|award|honou?r roll|"
+                         r"\bNHS\b|national honor society|\bmedal|prize|valedictorian|"
+                         r"salutatorian|dean.s list",
+    "ap_rigor":          r"\b\d{1,2}\s*APs?\b|\bAP [A-Z][a-z]|advanced placement|"
+                         r"\bIB diploma|dual enroll|honors class|most rigorous",
 }
+
+# THE CANONICAL CATEGORY SET. [#72]
+#
+# Fixed, not derived. The strategy step must give EVERY one of these a verdict — pursue,
+# maintain, or not-for-this-student-because — so a whole domain cannot go missing the way
+# academics did (#64: nineteen goals across five years, not one of them academic, because
+# every gate checked the quality of what was present and none looked for what was absent).
+#
+# `academics_floor` is measured differently from the rest: GPA and test bands come from
+# their own corpus columns per school, not from a text pattern, so it is listed here for
+# the sweep but does not appear in CREDENTIAL_PATTERNS.
+CATEGORIES = tuple(CREDENTIAL_PATTERNS) + ("academics_floor",)
+
+# Categories a plan may set a GOAL in. An award is not one of them: you cannot plan to win
+# one — an award comes out of doing another category well, and a goal that says "win an
+# award" is a wish with a deadline. Honours belong on the STRETCH path, as what a strong
+# year in another thread may produce. [#72, Aayushi's call]
+NOT_DIRECTLY_PLANNABLE = ("honors_awards",)
+
+
+def category_of(activity_text):
+    """Which of the canonical categories does this activity fall in, if any?
+
+    Returns None when nothing matches — which is the signal to go and look it up rather
+    than to ignore the activity. A student who does something our twelve do not cover
+    (falconry, esports, ceramics, competitive cooking) still has a thread with a ladder;
+    the corpus just cannot measure it, and silence is the wrong answer. [#72]
+    """
+    import re as _re
+    text = str(activity_text or "")
+    for name, pat in CREDENTIAL_PATTERNS.items():
+        if _re.search(pat, text, _re.I):
+            return name
+    return None
 
 # The rungs a credential can reach, weakest first. Same vocabulary as the
 # program registry's ladder, so a plan can say "aim one rung above where he is".

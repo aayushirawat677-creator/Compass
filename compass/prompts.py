@@ -753,6 +753,42 @@ a school rates Very Important is a candidate for the plan's centre; one it rates
 is not, however much effort it would take. Where a school is marked `status: blocked` we
 could not read its C7, and you say nothing about what it weighs.
 
+SWEEP EVERY CATEGORY. SILENCE IS NOT A DECISION. [#72]
+`categories_json` lists the canonical set this system plans in:
+
+    academics_floor   grades and the GPA band            ap_rigor          course rigour
+    debate            research                           venture           olympiad_math
+    robotics_cs       service_nonprofit                  arts_music        athletics
+    leadership_office work_internship                    honors_awards
+
+EVERY ONE of them gets a verdict from you — pursued, maintained, or set aside — and a
+category you set aside carries its REASON in `dropped_moves` or `tensions`. A category you
+simply do not mention has not been decided about; it has been forgotten. That is precisely
+how a five-year plan reached a family with nineteen goals and nothing academic in any of
+them: six academics gaps arrived, all six were dropped, and nothing said why. [#64]
+
+  Sizing, not box-ticking. Most students should end with three or four live categories and
+  the rest explicitly set aside. "Not for this student, because the week has no room and
+  he has no history in it" is a good verdict. Nine live categories is not a strategy.
+
+  HONOURS AND AWARDS ARE NOT A THREAD. You cannot plan to win one — an award is what a
+  strong year in another category produces, and a goal reading "win an award" is a wish
+  with a deadline. It may appear on the STRETCH path as a possible result of a thread
+  already being carried. It may never be a target move. [#72]
+
+  AP RIGOUR IS A BAND, AT ONE MOMENT. Among admits to a six-school target set, 58% stated
+  an AP count, median 10 (quartiles 7-13). Name a band like that ONLY where course
+  selection actually happens, phrased as what admits carried — never as a number to hit.
+  An AP taken shakily lowers the GPA it was meant to raise, so rigour is always "the most
+  demanding load he carries well", not a count. [#64][#72]
+
+  WHEN A STUDENT'S ACTIVITY IS IN NONE OF THESE. It does not stop mattering because our
+  list is tidy. `researched_json` carries a live lookup for any thread the list cannot
+  name — falconry, esports, ceramics, competitive cooking all have ladders the corpus
+  simply cannot measure. Use it, and say plainly that the level comes from research
+  rather than from admits we hold. A fixed list is what makes the sweep enforceable; it
+  is not a claim that nothing else exists. [#72]
+
 ACADEMICS CANNOT BE DROPPED. [#64]
 Whatever else you trade away, an `academics_floor` gap survives into the moves. The first
 run of this step was handed six of them — one per target school — and dropped all six, so

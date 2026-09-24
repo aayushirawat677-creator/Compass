@@ -1135,3 +1135,72 @@ def gate_parent_voice(draft):
 
     return GateResult("parent_voice", RETRY if f else PASS, f[:6],
                       "a gap in our record is not a fact about their child" if f else "")
+
+
+def gate_category_sweep(strategy, activities=None, researched=None):
+    """EVERY CATEGORY GETS A VERDICT, AND NOTHING FALLS OUTSIDE THE LIST UNEXAMINED. [#72]
+
+    Two failures, and the first one has already happened.
+
+    1. A DOMAIN GOING MISSING. Strategy was handed six `academics_floor` gaps and dropped
+       all six without a word, so a five-year plan reached a family with nineteen goals and
+       nothing about grades, rigour or testing in any of them (#64). Every gate we had
+       looked at the quality of what was present; absence was invisible to all of them.
+       So the canonical categories are now swept: each one is pursued, maintained, or
+       explicitly set aside WITH A REASON. Silence is not a decision.
+
+    2. A STUDENT WHOSE THREAD IS NOT IN OUR LIST. Falconry, esports, ceramics, competitive
+       cooking — the corpus cannot measure them, and the list being fixed is what makes the
+       sweep enforceable. But "not in our twelve" must mean GO AND LOOK IT UP, never
+       "ignore it". A child's real activity does not stop mattering because our schema is
+       tidy.
+    """
+    import json
+    import re
+    from compass import modules
+    f = []
+    moves = (strategy or {}).get("selected_moves") or []
+    dropped = (strategy or {}).get("dropped_moves") or []
+    tensions = (strategy or {}).get("tensions") or []
+
+    accounted = _txt(moves).lower() + " " + _txt(dropped).lower() + " " + _txt(tensions).lower()
+    unaccounted = [c for c in modules.CATEGORIES
+                   if c not in accounted and c.replace("_", " ") not in accounted]
+    if unaccounted:
+        f.append(f"{len(unaccounted)} categor(ies) never mentioned in a move, a drop or a "
+                 f"tension — a category set aside without a reason is the academics hole "
+                 f"again: {unaccounted[:4]}")
+
+    # An award cannot be a target goal. It comes out of doing something else well, and a
+    # goal that says "win an award" is a wish with a deadline. Stretch only. [#72]
+    for m in moves:
+        name = _txt(m).lower()
+        if "honors_awards" in name or "honours_awards" in name:
+            if str(m.get("intensity", "")).lower() in ("core", "steady"):
+                f.append("honors_awards selected as a target move — an award is a RESULT of "
+                         "another thread going well, not a thread. It belongs on the stretch "
+                         "path only.")
+
+    # Anything the student already does that our list cannot name must have been looked up.
+    uncovered = []
+    for a in (activities or []):
+        name = str(a.get("name") or a.get("activity") or a)
+        blob = f"{name} {_txt(a.get('signals') or {})}"
+        if modules.category_of(blob) is None:
+            uncovered.append(name)
+    if uncovered:
+        # json.dumps, not _txt: _txt walks a dict's VALUES and drops its keys, so a lookup
+        # filed under the activity's own name — {"falconry": "NAFA state meets"} — read as
+        # never having happened. Caught by this gate's own negative control, which is the
+        # argument for writing one for every gate. Fourteenth of the session. [#72]
+        looked_up = json.dumps(researched or {}).lower()
+        missed = [u for u in uncovered
+                  if not any(w in looked_up for w in re.findall(r"[a-z]{4,}", u.lower()))]
+        if missed:
+            f.append(f"{len(missed)} activity(ies) fall outside the category list and were "
+                     f"never researched — the list being fixed is what makes the sweep "
+                     f"enforceable, and it is also why an unlisted thread must be looked "
+                     f"up rather than dropped: {missed[:3]}")
+
+    return GateResult("category_sweep", RETRY if f else PASS, f,
+                      "a category set aside in silence is a category forgotten" if f else "")
