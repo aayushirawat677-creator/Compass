@@ -365,6 +365,11 @@ def run(intake: dict, log=print) -> dict:
     if gdoc.verdict != gates.PASS:
         log(f"      gate: {gdoc.verdict} — {'; '.join(gdoc.failures)}")
 
+    gbs = gates.gate_bandstrip(state["draft"], intended)
+    state.setdefault("_gates", []).append(gbs)
+    if gbs.verdict != gates.PASS:
+        log(f"      gate: {gbs.verdict} (bandstrip) — {'; '.join(gbs.failures)[:100]}")
+
     log("  9/10 Critic ........... tone / honesty / plain English")
     verdict = _agent("critic", {"strategic_plan_json": state["draft"]})
     state["critic"] = verdict

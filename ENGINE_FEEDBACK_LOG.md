@@ -1970,3 +1970,100 @@ final summer card — and getting it back would have meant body text at 10.3px. 
 word-budget mistake again (#56): a constraint that makes the output worse in order to
 satisfy a number. The honest lever for 12 is one fewer card in the summer term, which is
 content and therefore Aayushi's call, not a rendering trick.
+
+## 76. The course targets belong on the card, not in a section of their own
+> *"in the cards the grade cards text is repetitive. we have briefly mention about the grade
+> required in target and stretch baseball cards. Also i want to organise the courses target
+> and stretch. can we summarise it in the baseball card?"*
+
+Section 04 was a two-column table, Target against Stretch, over six tracks. Five of its six
+Stretch cells said **"Same."** — because the stretch on this plan is bought with activity
+hours, not with a heavier course load, which is exactly what the plan intends. So a whole
+page was spent saying, six times, that nothing changes, next to an Outcome Card whose
+academic stat already said the GPA.
+
+Three things were wrong at once and only the third is interesting:
+
+  * the table repeated the card's academic line;
+  * the card's academic line was thin where the table was long — GPA present, **SAT
+    missing, AP count missing, rigour missing**, which is what she noticed;
+  * and the two were in different places, so a reader comparing them had to hold one page
+    in their head while looking at another. **A card is where a reader looks for what this
+    plan produces.** Splitting "what he'll have" from "what he'll take" put half the answer
+    on a different page from the other half.
+
+Now: `card.academics {summary, tracks[]}` inside the card, and the stat row carries the
+four measured academic figures — GPA 3.8+, entrance tests 1500+/34+, rigour, advanced
+courses 7 to 13. All four are measured, not asserted:
+
+    GPA      80.6% of admits at the six schools held 3.8+        (n=899)
+    Tests    1500+/34+ at 65-91% depending on the school
+    APs      median 10, IQR 7-13                                 (58% state one)
+    Rigour   ap_rigor present for 76% of admits
+
+Each carries what it is rather than a bare number: 3.8+ is *"entering target, not a result"*,
+7 to 13 is *"what admits carried; not a count to hit"*. A number on a card with no frame
+around it becomes a threshold in a parent's head. [#22]
+
+**The Stretch card carries only the tracks that genuinely differ** — one of six here — with
+a single line saying the academic targets do not move on this path and why. "Same." six
+times is not information; the sentence explaining why it is the same is.
+
+**THERE IS NO SEPARATE COURSE SECTION.** Rule written into the writer spec, template block
+deleted, sections renumbered 01-06. Writer budgets rebalanced (profile 520 / target 420 /
+stretch 360) since the cards absorbed the section's 280 words.
+
+### And the selectivity bands went the same way
+Not asked for, found while fixing the above: the bands block was spilling ~55 words onto a
+page of its own **on both card pages**, and it duplicated the card's own within-reach /
+toughest-reaches row. Folded into the card as a one-line-per-band strip.
+
+    13 pages -> 12.
+
+Which is the target, reached by deleting repetition rather than by shrinking type — the
+opposite of the 10.3px chase in #75, and the reason that chase was right to stop.
+
+## 77. A school's name is not joinable by a comma
+The band strip printed:
+
+    REACH   8.98% to 15.64% admitted   University of California, University of California,
+                                       Georgetown University, University of Michigan
+
+The family's list holds **University of California, Berkeley** and **University of
+California, Los Angeles**. The writer, asked for a comma-joined list, dropped each campus
+so its own separator stayed unambiguous — and the strip then named the same school twice
+and no campus at all. A parent reads that as an error in the plan. They are right.
+
+**A name that contains the separator cannot be joined by it.** The schema had said
+`colleges:[{name,...}]` — a list — all along; the writer flattened it and nothing checked.
+That is the recurring shape: a contract stated once in a schema line, with no gate behind
+it, is a suggestion.
+
+Three fixes, at three levels:
+
+  * **schema** — the writer spec now says in words why it is a list, with the failure
+    quoted, because a model that flattens a list is not going to be stopped by the bracket
+    notation it already ignored;
+  * **renderer** — `_bands()` joins with a middot and dedupes, and passes a string through
+    **rather than re-splitting it**; splitting on the comma is the bug that caused this;
+  * **gate** — `gate_bandstrip` catches a band naming the same school twice, and catches a
+    name that is a strict prefix of one on the family's real list, which is what a
+    truncation looks like from the outside.
+
+### The strip prints once
+Same fix, second defect: it was on both cards, **byte for byte identical**. The bands
+describe the family's college list, and the list does not change between Target and
+Stretch, so the second printing carried nothing. Target only. [#76]
+
+### The full names cost a line, and that was the right price
+With the campuses restored the strip wrapped and pushed the takeaway to page 13. The
+tempting fix — shorten the names — is the original bug with better manners. Tightened the
+strip's own gutters and type instead (9.4->8.9px, fixed columns 62/96 -> 52/84), which fits
+both rows on one line each with every name whole.
+
+    12 -> 13 (names restored) -> 12 (strip tightened)
+
+### And section 04 left a hole in the numbering
+The labels still read 01, 02, 03, **05**, 06, 07. Nothing in the document referred to a
+section by number so nothing broke — it just looked like a page had gone missing, which is
+the one thing a plan should never look like. Renumbered.

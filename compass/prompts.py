@@ -1419,6 +1419,32 @@ Return ONLY the StrategicPlan JSON with EXACTLY these keys, each fully populated
   outside the family sees the result" is about the activity. "The organising body behind
   the medals is what decides which of those two it is" is us thinking out loud about our
   own classification, and it does not belong on a page a mother reads. [#69]
+- THERE IS NO SEPARATE COURSE SECTION. Courses and grades live ON THE CARD. [#76]
+  They used to have a page of their own, which repeated the card's academic stat and then
+  said "Same." down a whole column, because the stretch path does not change the academic
+  targets. One fact, one place (#32) — and the card is where a reader looks for what this
+  plan produces.
+
+  Each card carries `academics: {{summary, tracks:[{{track, target}}]}}`:
+    * `summary` — ONE or TWO sentences. What the grades and testing come to, in plain
+      words. On the STRETCH card this is usually a single line saying the academic targets
+      do not change and the stretch is bought with activity hours — do not repeat the
+      target card's academics in full.
+    * `tracks` — one short line per subject area (Math, English, Science, World language,
+      the intended field, overall load). What this path aims at, in a handful of words.
+      On the stretch card, include only the tracks that genuinely DIFFER; an empty list
+      is right when none do.
+
+  THE CARD'S FOUR ACADEMIC NUMBERS. [#76] The stat row must carry all four, because these
+  are what a family came for and the card was showing only one:
+      GPA band          what admits to these schools held        from admit_pattern_json
+      TEST band         same, for the entrance tests             from admit_pattern_json
+      RIGOUR            the most demanding load he carries well  never a count to hit
+      AP / advanced     what admits typically carried            a band, and only stated
+                        at the grade where course selection happens
+  State them as what ADMITS HELD, never as a requirement, and mark a GPA for a student with
+  no transcript as an ENTERING target rather than a result. [#64]
+
 - target / stretch: THE OUTCOME CARD. THE OUTPUT OF THE PLAN, NOT AN INPUT. [#17]
   This is NOT the step-2 Match Key (backend, never rendered, used only to retrieve similar
   admitted profiles). Never label a parent-facing card "projected" — that word names the backend
@@ -1478,11 +1504,22 @@ Return ONLY the StrategicPlan JSON with EXACTLY these keys, each fully populated
       never your own estimate.
     * Bands and any percentage come from the module, with its cohort label and n. See the
       NUMBERS & ODDS clause.
-  Shape: {{lead, card:{{label, title, subtitle, stats:[{{k,v,sub}}] (GPA, Testing floor, Rigor,
-  Math ceiling), credentials:[{{h,t}}] (4, load-bearing, each tied to plan work), within_reach,
-  toughest, takeaway}}, bands:{{intro, bands:[{{name,range,colleges:[{{name,up?,likely?}}]}}]}}}}
-  Stretch carries the same shape; colleges carry up:true where the stronger profile moves them.
-- course: {{lead, target_gpa, stretch_gpa, target_bullets:[], stretch_bullets:[],
+  Shape: {{lead, card:{{label, title, subtitle, stats:[{{k,v,sub}}], academics:{{summary,
+  tracks:[{{track,target}}]}}, credentials:[{{h,t}}] (4-7, load-bearing, each tied to plan
+  work), within_reach, toughest, bands:[{{name, range, colleges:[...]}}], takeaway}}}}
+  Stretch carries the same shape.
+
+  THE BAND STRIP. [#77] `bands` lives ON THE CARD and is written for the TARGET card only —
+  omit it from Stretch. The bands describe the family's college list, which is the same list
+  on both paths, so printing it twice puts two byte-identical strips on facing pages.
+
+  `colleges` IS A LIST OF STRINGS, one full school name per entry — never one joined
+  string. Several of these names contain a comma of their own ("University of California,
+  Berkeley"), and a writer joining them with commas drops the campus to keep its separator
+  unambiguous, which printed "University of California, University of California" and named
+  the same school twice. Emit the list; the renderer joins it. Write each name in full,
+  exactly as the family's list gives it, including the campus.
+- course: REMOVED — see above. Do not emit it. {{lead, target_gpa, stretch_gpa, target_bullets:[], stretch_bullets:[],
   table:[{{track, target, stretch}}] (Math, spine subject, Science, English, World language,
   Total APs), note}}
 - roadmap: {{title, lead, stages:[{{grade,name,body,color:''|'g'|'p'}}], grades:[...]}}
@@ -1524,7 +1561,8 @@ Each section starts on a fresh page in the PDF. A section that runs four lines l
 cost four lines — it costs a whole page, and the page it spills onto carries fifty words and
 looks broken. The finished document is TWELVE TO THIRTEEN PAGES. Write to this budget:
 
-    profile 520    target 320    stretch 320    course 280
+    profile 520    target 420    stretch 360
+    (the cards absorb the old course section's 280, so they carry more now) [#76]
     roadmap — NOT A FIXED NUMBER. It is whatever the plan needs; see below.
     this_year 700  parent_actions 220    final_note 200
 

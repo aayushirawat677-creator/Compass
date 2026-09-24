@@ -1264,3 +1264,64 @@ def gate_expert_use(output, step=None):
     return GateResult("expert_use", RETRY if f else PASS, f,
                       f"{len(cited)} expert rule(s) cited" if not f and cited else
                       "advice may inform a plan; it may not invent or override one")
+
+
+def gate_bandstrip(draft, college_list=None):
+    """A SCHOOL'S NAME IS NOT JOINABLE BY A COMMA. [#77]
+
+    The band strip names the family's college list under each selectivity band. Two of the
+    names on a typical list carry a comma of their own — "University of California,
+    Berkeley" — and a writer asked to comma-join such a list drops the campus so its own
+    separator stays unambiguous. The strip then printed:
+
+        Reach   University of California, University of California, Georgetown, Michigan
+
+    which names the same school twice and no campus at all. A parent reads that as an
+    error in the plan, and they are right. The schema now asks for a list and the renderer
+    joins it, so this gate exists to catch the string coming back.
+
+    It also checks the strip is printed once. It was on both cards, byte for byte
+    identical, because the bands describe the college list and the list does not differ
+    between the two paths.
+    """
+    f = []
+    strips = []
+    for key in ("target", "stretch"):
+        bands = ((draft.get(key) or {}).get("card") or {}).get("bands")
+        if bands:
+            strips.append((key, bands))
+
+    if not strips:
+        return GateResult("bandstrip", PASS, [], "no band strip to check")
+
+    if len(strips) > 1:
+        a = _txt(strips[0][1]).strip().lower()
+        b = _txt(strips[1][1]).strip().lower()
+        if a == b:
+            f.append("the same band strip is printed on both cards — write it on Target only")
+
+    wanted = {str(c).strip().lower() for c in (college_list or []) if str(c).strip()}
+    for key, bands in strips:
+        for b in bands:
+            cols = (b or {}).get("colleges")
+            names = ([str(c.get("name") if isinstance(c, dict) else c).strip() for c in cols]
+                     if isinstance(cols, (list, tuple))
+                     else [p.strip() for p in str(cols or "").split(",")])
+            names = [n for n in names if n]
+            low = [n.lower() for n in names]
+            dupes = {n for n in low if low.count(n) > 1}
+            if dupes:
+                f.append(f"{key} band '{b.get('name')}' names the same school twice: "
+                         f"{sorted(dupes)[:2]} — a campus name was cut at its own comma")
+            # A name that is a strict prefix of one on the real list lost its tail.
+            for n in names:
+                if n.lower() in wanted:
+                    continue
+                truncated = [w for w in wanted
+                             if w.startswith(n.lower() + ",") or w.startswith(n.lower() + " ")]
+                if truncated:
+                    f.append(f"{key} band prints '{n}', which is the front of "
+                             f"'{truncated[0]}' — write the full name including the campus")
+
+    return GateResult("bandstrip", RETRY if f else PASS, f,
+                      "a name that contains the separator cannot be joined by it" if f else "")
