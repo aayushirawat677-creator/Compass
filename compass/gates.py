@@ -1577,3 +1577,73 @@ def gate_requirements(draft, colleges=None):
                       "a requirement row is a citation or it is a fabrication" if f else "")
 
 
+
+
+# A score that cannot exist on the scale it names. [#83]
+#   SAT  400-1600 since the 2016 redesign. 1650 is a 2400-scale score and reads, to any
+#        parent who has looked at the test once, as a document that has not been checked.
+#   ACT  1-36 composite.
+#   GPA  unweighted tops out at 4.0. Weighted scales run past it, so a figure above 4.0 is
+#        only allowed where the card SAYS weighted.
+_SCALE_MAX = {"sat": 1600, "act": 36, "gpa_unweighted": 4.0}
+
+
+def gate_score_sanity(draft):
+    """NO FIGURE ABOVE THE TOP OF ITS OWN SCALE. [#83]
+
+    This exists because a plausible-sounding number was very nearly printed: 1650+ for the
+    stretch SAT. 1650 was a real score on the 2400-scale SAT retired in 2016, which is
+    exactly why it sounds right — and why it would be so costly. Every other number in
+    this document is measured and defensible; one impossible score tells a parent the
+    whole thing was generated without being checked, and they would be right.
+
+    Cheap to check, permanent, and it guards a class of error that no amount of care in
+    the writer prevents, because the error looks like a number rather than like a claim.
+    """
+    import re
+    f = []
+    seen = set()
+
+    def check(where, text):
+        t = str(text or "")
+        if not t or (where, t) in seen:
+            return
+        seen.add((where, t))
+        # SAT: a 3-4 digit number next to an SAT/score context, or in a "1500+ / 34+" pair.
+        for m in re.finditer(r"\b(\d{3,4})\s*\+?\s*(?:/\s*(\d{1,2})\s*\+?)?", t):
+            sat, act = m.group(1), m.group(2)
+            ctx = t[max(0, m.start() - 40):m.end() + 40].lower()
+            if not re.search(r"sat|act|test|score|entrance", ctx) and not act:
+                continue
+            if 400 <= int(sat) <= 2400 and int(sat) > _SCALE_MAX["sat"]:
+                f.append(f"{where}: '{m.group(0).strip()}' — the SAT is scored out of "
+                         f"{_SCALE_MAX['sat']}. {sat} is a pre-2016 2400-scale score")
+            if act and int(act) > _SCALE_MAX["act"]:
+                f.append(f"{where}: ACT {act} — the composite tops out at "
+                         f"{_SCALE_MAX['act']}")
+        for m in re.finditer(r"\b([0-5]\.\d{1,2})\s*\+?", t):
+            val = float(m.group(1))
+            ctx = t[max(0, m.start() - 46):m.end() + 46].lower()
+            if not re.search(r"gpa|grade point|unweighted|\buw\b", ctx):
+                continue
+            # "unweighted" CONTAINS "weighted", so a plain search for the exception
+            # fires on the very word that should trigger the check. The scale is only
+            # weighted when nothing negates it.
+            weighted = re.search(r"(?<!un)(?<!un-)weighted|\bwgpa\b", ctx)
+            if val > _SCALE_MAX["gpa_unweighted"] and not weighted:
+                f.append(f"{where}: GPA {val} — an unweighted GPA tops out at "
+                         f"{_SCALE_MAX['gpa_unweighted']}; say 'weighted' or lower it")
+    for key in ("target", "stretch"):
+        card = (draft.get(key) or {}).get("card") or {}
+        for st in [s if isinstance(s, dict) else {} for s in (card.get("stats") or [])]:
+            check(f"{key} stat '{st.get('k')}'", f"{st.get('k')} {st.get('v')} {st.get('sub')}")
+    c = draft.get("course") or {}
+    for r in [x if isinstance(x, dict) else {} for x in (c.get("requirements") or [])]:
+        check(f"requirement '{r.get('subject')}'", f"{r.get('asked')} {r.get('who')} {r.get('aim')}")
+    for pl in [x if isinstance(x, dict) else {} for x in (c.get("plans") or [])]:
+        for g in [y if isinstance(y, dict) else {} for y in (pl.get("figures") or [])]:
+            check(f"{pl.get('name')} figure", f"{g.get('k')} {g.get('v')}")
+
+    return GateResult("score_sanity", RETRY if f else PASS, f,
+                      "a number above its own scale reads as a document nobody checked"
+                      if f else "")

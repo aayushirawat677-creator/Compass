@@ -383,6 +383,11 @@ def run(intake: dict, log=print) -> dict:
     if gcp.verdict != gates.PASS:
         log(f"      gate: {gcp.verdict} (course_page) — {'; '.join(gcp.failures)[:100]}")
 
+    gss = gates.gate_score_sanity(state["draft"])
+    state.setdefault("_gates", []).append(gss)
+    if gss.verdict != gates.PASS:
+        log(f"      gate: {gss.verdict} (score_sanity) — {'; '.join(gss.failures)[:100]}")
+
     greq = gates.gate_requirements(state["draft"], intended)
     state.setdefault("_gates", []).append(greq)
     if greq.verdict != gates.PASS:

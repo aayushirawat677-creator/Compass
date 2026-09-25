@@ -1521,6 +1521,21 @@ Return ONLY the StrategicPlan JSON with EXACTLY these keys, each fully populated
       Values stay short — "1500+ / 34+", "Calculus by grade 12" — never a sentence. The
       sub-line carries the caveat; the value carries the fact.
 
+      THE STRETCH AIMS AT THE TOP OF THE MEASURED BAND, NEVER ABOVE IT. [#83]
+      Our bands are the corpus's own and the highest ones are open-ended — 3.8+ is the top
+      GPA band and 1500+/34+ the top test band, with NOTHING recorded above either. So a
+      Stretch card does not invent a higher band; it says where inside the top band to aim.
+          TARGET   GPA 3.8+          ENTRANCE TESTS 1500+ / 34+   enter the band
+          STRETCH  GPA 3.9 to 4.0    ENTRANCE TESTS 1550+ / 35+   the top of that band
+      The sub-line says so in as many words ("the top of the same band"), because the
+      difference between aiming high inside a measurement and claiming one above it is
+      exactly the difference between a plan and a sales document.
+
+      NEVER PRINT A FIGURE ABOVE THE TOP OF ITS SCALE. The SAT is scored out of 1600 and
+      the ACT composite out of 36; an unweighted GPA cannot exceed 4.0. 1650 was a real
+      score on the 2400-scale SAT retired in 2016, which is precisely why it sounds right
+      — and one impossible number tells a parent the document was never checked. [#83]
+
       GRADES IN THE STAT ROW ARE NUMERALS: "by grade 12", "in grade 11", "from grade 9".
       Not "by twelfth", not "eleventh grade". [#79] The stat row is SCANNED — a parent's
       eye crosses it in a second looking for figures — and a spelled-out ordinal sits in

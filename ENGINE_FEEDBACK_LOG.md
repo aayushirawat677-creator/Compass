@@ -2372,3 +2372,52 @@ invalidated an older gate's assumption (#7, #8, #11, #16, this). The standing ha
 written down and I did not follow it: **when a rule moves content, re-read every gate
 written under the old arrangement.** The columns are optional on this page now; what is
 required is that the page answer "where do the plans differ on courses" somewhere.
+
+## 83. A number above the top of its own scale
+> *"i think stretch should have gpa as 4.0"* … *"more number in sat too like 1650+"*
+
+**1650 is not a possible SAT score.** The test has been scored out of 1600 since the 2016
+redesign; 1650 belongs to the 2400-scale SAT, which is exactly why it sounds right to
+anyone who took the test before then. It would have gone onto a card where every other
+figure is measured and defensible — and a single impossible number does not read as one
+mistake. It reads as a document nobody checked, and the parent would be right.
+
+`gate_score_sanity` now rejects any SAT over 1600, any ACT composite over 36, and any
+unweighted GPA over 4.0. Cheap, permanent, and it guards a class of error no amount of
+care in the writer prevents, because **the error looks like a number rather than like a
+claim** — nothing in the sentence around it is wrong.
+
+    Its own bug, and a good one: the weighted-scale exception was `re.search("weighted")`,
+    and "unweighted" CONTAINS "weighted". The exception fired on the exact word that
+    should have triggered the check, so a 4.3 marked unweighted passed. Fixed with a
+    negative lookbehind. The substring-vs-substance family again (#9, #10, #13).
+
+### And the request underneath the numbers was right
+The Stretch card's academic row read "the stretch is not bought here" four times over. She
+was correct that this makes the Stretch look academically empty, and a reader is entitled
+to ask why it is called a stretch.
+
+But **3.8+ and 1500+/34+ are the TOP bands in our corpus.** The full ladders:
+
+    GPA    3.8+ (78.1%)  3.6+ (10.3%)  3.4+ (4.3%)  3.2+  3.0+  2.8+
+    TESTS  1500+/34+ (65.0%)  1400+/31+ (16.0%)  1300+/28+  1200+/25+  1100+/22+
+
+There is nothing above either. A 3.8 and a 4.0 sit in the same band and our data cannot
+tell them apart, so printing "4.0" as a measured figure would be an assertion wearing a
+measurement's clothes — on the one card where all four numbers are measured.
+
+**The resolution is that the top band is OPEN-ENDED.** "3.8+" is the FLOOR of the highest
+band, not its ceiling. A Stretch plan that says "aim at the top of that band" is not
+contradicting the measurement; it is choosing where inside it to aim, which is what a
+stretch plan means. So:
+
+    TARGET   GPA 3.8+        TESTS 1500+ / 34+   RIGOUR 7 to 13    enter the band
+    STRETCH  GPA 3.9 to 4.0  TESTS 1550+ / 35+   RIGOUR 11 to 13   the top of that band
+
+Every figure still traceable, the Stretch visibly different, and the sub-line says "the
+top of the same band" in as many words. The rigour row uses the IQR we already measured
+(7–13, median 10), so its upper end is measured too.
+
+**The distinction to keep: aiming high inside a measurement is a plan; claiming a
+measurement above the data is a sales document.** They print almost identically and only
+one of them is honest.
