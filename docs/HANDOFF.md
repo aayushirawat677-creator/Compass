@@ -1,93 +1,91 @@
 # Handoff — what to do first
 
-*For the engineer picking this up. Ordered by value, not by effort.*
+*For whoever picks this up. Ordered by value, not by effort.*
 
 ---
 
-## Day one: prove it actually works
+## Day one: run the writer for real. Nothing else on this list matters yet.
 
-Everything so far has run in **mock mode**, which returns canned fixtures and never calls a model.
-So the prompts are written, wired and **entirely unmeasured**. Nothing else on this list matters
-until that changes.
+**Every page of the current document was hand-built.** From v12 onward I edited
+`out_writer.json` directly to show Aayushi the shape, and the prompt was updated to match
+afterwards. The prompt now describes all of it and 26 gates enforce it — but **the writer
+has never once been run against the new spec.** There is no API key in the dev container.
+
+So the honest status is: the repo makes a claim about what it produces, and nobody has
+tested the claim.
 
 ```bash
-export LLM_MODE=real ANTHROPIC_API_KEY=...
+export LLM_MODE=real ANTHROPIC_API_KEY=...        # never paste a key into a chat
 python run.py --intake data/neerav_intake.json --out out/neerav.pdf --dump-state
+python evals/audit.py          # 64 structural checks
+python evals/golden.py         # did the render change?
 python evals/grade_agents.py out/neerav.state.json
 python evals/grade.py        out/neerav.plan.json
 ```
 
-You need `data/acceptance_rejected_college_data_verified.csv` in place first
-(`DATA_REQUIREMENTS.md`), or the retrieval gate will correctly block the run.
-
-**Expect it to be worse than it looks.** A hand-written plan for the same student scores 79% on
-`grade.py`, but that plan was written by a human, not produced by the engine. The first real run
-is the first honest measurement. Read the quality trail and the per-agent Fitness grades before
-changing anything.
+**Expect the first run to be worse than the current PDF looks**, and read the quality trail
+before changing anything. The gates will tell you exactly which shapes the writer missed —
+that is what they are for. `audit_render_contract` (#89) already caught the four fields
+that would have rendered blank; there may be more it cannot see.
 
 ---
 
 ## Then, in order
 
-**1. Refresh `compass/mockdata.py`.** The fixtures predate several schema additions, so mock runs
-fail gates that the prompts would pass. Once you have a good real run, use its `--dump-state`
-output as the new fixtures. This makes mock mode a genuine regression test instead of a
-misleading one.
+**1. Grade run11 against the nine rubrics.** Offered many times, never done. The audit
+proves the machinery runs; it says nothing about whether the output is good. The last
+graded run (Profile B, Gap C, Strategy B, Two Paths B, Plan Goals B, Recs C, Writer B)
+predates the appraiser, the academics, the reordered card, the requirements source and
+every rule from #76 on.
 
-**2. Wire the graders into the run.** `grade.py` and `grade_agents.py` are manual today. Run them
-after each plan and persist the Fitness grades. Without this, "are the prompts still working?" is
-answered by someone reading a PDF.
+**2. Refresh `compass/mockdata.py`.** The fixtures predate a dozen schema additions, so
+mock runs fail gates the prompts would pass. Use a good real run's `--dump-state` as the
+new fixtures, and mock mode becomes a regression test instead of a misleading one.
 
-**3. Give escalations somewhere to go.** When a gate escalates, the run stops and produces no PDF
-— correct behaviour, but silent. Unattended operation needs a queue, an email, a Slack message.
-Anything that reaches a human.
+**3. Replace Q8.** `data/neerav_intake.json` carries a note: the six colleges were
+**supplied by the team, not by the parent**. That must be the parent's own answer before
+any plan reaches a family. Everything downstream — the tiers, the requirements table, the
+odds — is built on that list.
 
-**4. Grow the catalog.** `data/catalog.csv` has five verified rows covering one metro area.
-Everything else escalates to live research, which works but costs a call and re-verifies the same
-programs for every family. Catalog coverage is the main lever on both cost and quality.
+**4. Wire `debate_circuits`.** Flagged by three consecutive runs. The registry reports 132
+Tabroom rows in coverage but the reference pack exposes no circuit list, so every debate
+goal names a level and never a league.
 
-**5. Build the seeded-defect test set.** The Critic's rubric cannot be scored without it: take a
-known-good plan, inject one defect at a time (a pejorative word, a fabricated rate, a founder
-credential, an itinerary on a card), and record what it catches and what it wrongly flags. See
-`evals/R8_critic_rubric.md`.
-
----
-
-## Two decisions that need a product owner, not an engineer
-
-**The band grid.** Under published rates a school's band is fixed — Harvard is 3.59% whether or
-not the student improves. So Target and Stretch currently show identical bands, and the "moves up
-a band" arrows in the original design can't mean what they appear to. Either show fixed
-selectivity plus a *fit* indicator that changes between paths, or redefine a band as fit.
-Unresolved. `evals/R5_twopaths_rubric.md` has both options.
-
-**"First-gen".** The findings report cites a 1.5× first-gen effect but never says whether that
-means first-generation *college* or first-generation *immigrant*. The guard is deliberately
-conservative (never applies the hook to a student with college-graduate parents) until someone
-checks the source data.
+**5. The other five CDS C7 schools.** Only Michigan is verified; Penn, Georgetown,
+Berkeley, NYU and UCLA are `blocked` by hosting. Aayushi said leave it. Note that
+`course_requirements.json` covers all six anyway, from plain HTML — the CDS is not the
+only door.
 
 ---
 
-## How to change behaviour safely
+## Things that will bite you
 
-Almost every rule in `prompts.py` carries a `[#n]` tag pointing into `ENGINE_FEEDBACK_LOG.md`,
-where the finding that produced it is written up — usually with the exact sentence that shipped
-before the rule existed.
+**A stale `.pyc` can serve code that is not on disk.** Python compares source mtime at
+one-second granularity, so an edit saved inside the same second as the last import is
+ignored. Cost a confusing debugging session. `golden.py` clears `__pycache__`; your own
+scripts do not. [#91]
 
-**Read the log entry before deleting a line.** Most of what looks like over-specification is there
-because the engine did the opposite once, in front of a real family's plan. Examples: the profile
-telling a family which activities to drop; a card crediting the student with founding a nonprofit,
-directly against the strategy; percentages beside university names that nobody computed.
+**Rendering must not mutate the draft.** `_safe()` used to shallow-copy and then write into
+the nested card dicts, so a gate run after rendering saw different data than one run
+before, and a correct document failed a correct gate on ordering alone. [#86]
 
-If a rule applies to more than one agent, it belongs in a **contract** (`EVIDENCE`, `TONE`,
-`PROSE`, `PLANNING`, `CARD_GRAMMAR`), not copied into each prompt. Edit the contract.
+**Every gate needs a negative control.** A test that feeds it the exact input it must
+reject. Six gate bugs in one session were caught this way and none by reading.
+
+**When a rule moves content, re-read every gate written under the old arrangement.** Five
+gates so far have gone on demanding something a newer rule relocated.
 
 ---
 
-## The one-line architecture
+## The standing constraints
 
-`R1 describes → Gap diagnoses → R4 decides → R5 forks → R6 schedules → R7 sources → R9 writes → R8 checks.`
-
-Every rubric has a "What it is NOT graded on" section naming which step owns each excluded
-question. If two rubrics both claim a question, there is an ownership bug in the pipeline — and
-that section is where you find out.
+* **Nothing system-internal in the PDF.** Our vocabulary (`reach`, `disposition`,
+  `converts`), our uncertainty, our operator checklists. Said twice, violated twice more
+  after that. [#75][#84]
+* **No named programme, body or competition four years out** — not in the roadmap, not on
+  the card, not in the flags box. [#62][#63]
+* **No probability for a child.** Percentages attach to schools. [#88]
+* **The corpus carries Reddit usernames, post links and full post bodies.** Keep the repo
+  private, do not redistribute `data/`, never surface `author` or post text in a plan.
+* **Never paste an API key into a chat.** The engine reads `ANTHROPIC_API_KEY` from the
+  environment. `.env`, `*.key` and `**/secrets*` are gitignored.

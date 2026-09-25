@@ -1,0 +1,1494 @@
+{
+ "cover": {
+  "student": "Neerav U.",
+  "grade": "8th grade",
+  "prepared": "Prepared for Priyanka U.",
+  "family": "Sierramont Middle School, San Jose, CA",
+  "date": "September 24, 2026"
+ },
+ "profile": {
+  "title": "Neerav at a Glance",
+  "lead": "Neerav U., eighth grade at Sierramont Middle School, San Jose. What he does, and how he works.",
+  "blocks": [
+   {
+    "subhead": "The business he built himself",
+    "thesis": "He runs a Pokemon-card business with customers, and it has a goal attached.",
+    "body": "He buys and sells Pokemon cards outside school, about four to six hours a week, and it makes a few thousand dollars a year. The goal his mother describes is to find cards that can be kept and become valuable enough to pay for a semester of college tuition, $5,000 to $10,000. Before this he ran an in-game Roblox business selling to other kids. Asked what he loves, he answers running my business and debating ideas."
+   },
+   {
+    "subhead": "What else he does",
+    "thesis": "He competes across several areas, and tends to place when he does.",
+    "body": "He has won medals in chess tournaments. He was a top-five finalist with a medal at a district-level cooking competition. He has played ping-pong for one to two years, one to three hours a week, and would like to try tennis instead. He performed in two elementary-school musicals. His interests run wider: writing and journalism, music, debate, business, languages and culture, history and politics, philosophy. He travelled to India, including the Ladakh mountains, river rafting and zip-lining, and wrote about that trip, and to France and on an African safari."
+   },
+   {
+    "subhead": "How he works best",
+    "thesis": "He makes friends easily and people seek him out, which is where being able to lead a group starts.",
+    "body": "He gets along with people and works well in a group. His mother names Leader among the words that describe him. He learns by listening and discussion. He thinks by debating: he takes apart something in politics or business, asks what if we did this versus that, and compares the outcomes. He works best when the concept is taught before it is tested, when instructions are clear, when there are milestones, and when a mistake has a route back, such as a retake."
+   },
+   {
+    "subhead": "What is in his favour, and what shapes the choices",
+    "thesis": "A university-educated household, a first-generation American background, and money he already earns himself.",
+    "body": "His mother holds a Columbia University degree and his stepfather is a scientist at Stanford — an academic household, though neither is a tie to any of the six schools on his list. He is a first-generation American from an immigrant family; because his mother holds a college degree, that is background rather than a first-in-family-to-college advantage. He lives in San Jose, inside the University of California's home state, and in his own words he is open to all cultures and foods. Two things shape the choices: a focused set of commitments he can sustain well, and in-person activity close to home, with autumn dates preferred because spring brings a long allergy season his mother describes as debilitating."
+   }
+  ],
+  "flags": "A few things to confirm with Neerav: the six colleges listed here, and roughly how many hours a week chess, cooking and theatre take. It would also help to know which organisation ran the chess tournaments and the district cooking competition, since that decides what those results can be entered into later."
+ },
+ "target": {
+  "lead": "His application in senior year, if this plan is carried out.",
+  "card": {
+   "label": "TARGET PLAN · BUSINESS AND PUBLIC AFFAIRS · NEERAV U., GRADE 8",
+   "title": "The card trader who took his business in front of judges.",
+   "subtitle": "Business and public affairs.",
+   "stats": [
+    {
+     "k": "GPA",
+     "v": "3.8+",
+     "sub": "entering target, not a result"
+    },
+    {
+     "k": "Entrance tests",
+     "v": "1500+ / 34+",
+     "sub": "one sitting, grade 11"
+    },
+    {
+     "k": "Rigour",
+     "v": "7 to 13",
+     "sub": "advanced courses admits carried"
+    },
+    {
+     "k": "Math ceiling",
+     "v": "Calculus by grade 12",
+     "sub": "sequence kept open from grade 9"
+    }
+   ],
+   "credentials": [
+    {
+     "h": "A card and collectibles business he has run for five years.",
+     "t": "Sold at public events and judged at his school's business club, with a paid weekend job at a card shop behind it from tenth grade and records going back to eighth."
+    },
+    {
+     "h": "Four years on his school's debate team, competing past his own school by eleventh grade.",
+     "t": "Joined in ninth in the formats his squad runs, and aims at a placing result in his last year."
+    },
+    {
+     "h": "Five unbroken years with one service organisation, holding a standing role in the last two.",
+     "t": "Begun as a family in eighth grade, so by senior year someone there can describe what he does."
+    },
+    {
+     "h": "Chess, cooking, a racquet sport and theatre, carried the whole way through.",
+     "t": "Kept because he enjoys them. Nothing in this plan asks them to become something else."
+    }
+   ],
+   "takeaway": "By senior year he applies as a student who built a real business, argued four years on a debate team, and stayed five years with one cause.",
+   "odds": [
+    {
+     "head": "Within reach",
+     "tiers": [
+      {
+       "name": "Reach",
+       "range": "9-16% admitted",
+       "colleges": [
+        "University of California, Berkeley",
+        "University of California, Los Angeles",
+        "Georgetown University",
+        "University of Michigan"
+       ]
+      }
+     ]
+    },
+    {
+     "head": "Toughest reaches",
+     "tiers": [
+      {
+       "name": "Far reach",
+       "range": "under 8% admitted",
+       "colleges": [
+        "University of Pennsylvania",
+        "New York University"
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "stretch": {
+  "lead": "The same three, one level higher. Nothing new is added.",
+  "card": {
+   "label": "STRETCH PLAN · BUSINESS AND PUBLIC AFFAIRS · NEERAV U., GRADE 8",
+   "title": "The same trader, advanced past his own school.",
+   "subtitle": "Business and public affairs.",
+   "stats": [
+    {
+     "k": "GPA",
+     "v": "3.9 to 4.0",
+     "sub": "the top of the same band"
+    },
+    {
+     "k": "Entrance tests",
+     "v": "1550+ / 35+",
+     "sub": "the top of the same band"
+    },
+    {
+     "k": "Rigour",
+     "v": "11 to 13",
+     "sub": "the upper end of what admits carried"
+    },
+    {
+     "k": "Math ceiling",
+     "v": "Calculus by grade 12",
+     "sub": "unchanged from Target"
+    }
+   ],
+   "credentials": [
+    {
+     "h": "The same business, advanced past the school round toward the state conference.",
+     "t": "He does not only enter the selling event; he advances through its qualifying levels."
+    },
+    {
+     "h": "Debate above his own school from eleventh grade, aiming to place.",
+     "t": "Begun a year earlier, with one beginners' round in eighth grade and the squad coaching him."
+    },
+    {
+     "h": "A placing result in twelfth grade, in the strongest competition open to him.",
+     "t": "Entered in the event he does best, at whatever level he has actually reached by then."
+    },
+    {
+     "h": "A standing responsibility at the shop — pricing or the counter, rather than shifts.",
+     "t": "Asked for after a term, so a manager can describe a role rather than confirm attendance."
+    }
+   ],
+   "takeaway": "The same three things, each carried one level higher — past his own school, with a result to show for it.",
+   "odds": [
+    {
+     "head": "Within reach",
+     "tiers": [
+      {
+       "name": "Reach",
+       "range": "9-16% admitted",
+       "colleges": [
+        "University of California, Berkeley",
+        "University of California, Los Angeles",
+        "Georgetown University",
+        "University of Michigan"
+       ]
+      }
+     ]
+    },
+    {
+     "head": "Toughest reaches",
+     "tiers": [
+      {
+       "name": "Far reach",
+       "range": "under 8% admitted",
+       "colleges": [
+        "University of Pennsylvania",
+        "New York University"
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "roadmap": {
+  "title": "The Five-Year Roadmap",
+  "lead": "Grade 8 through grade 12, grouped by term so a single block answers what happens this fall. Later years stay at goals and tasks on purpose: named programmes, prices and dates come nearer the time, when they can be confirmed.",
+  "stages": [
+   {
+    "grade": "Grades 8-9",
+    "name": "Explore",
+    "body": "Sample several formats and find what is genuinely his.",
+    "color": "g"
+   },
+   {
+    "grade": "Grade 10",
+    "name": "Solidify",
+    "body": "Choose the two or three he carries; let the rest go.",
+    "color": "p"
+   },
+   {
+    "grade": "Grades 11-12",
+    "name": "Specialize",
+    "body": "Nothing new. Go deeper, hold a real role, produce a result.",
+    "color": ""
+   }
+  ],
+  "grades": [
+   {
+    "grade": 8,
+    "years": "2026-27",
+    "tag": "Explore",
+    "terms": [
+     {
+      "term": "Fall 2026",
+      "span": "Aug-Dec",
+      "tag": "The term that sets up high school",
+      "goals": [
+       {
+        "goal": "Find his weakest subjects and get them up before high school starts.",
+        "goal_short": "Get the weaker subjects up",
+        "track": "target",
+        "cat": "ACADEMICS",
+        "cat_class": "academics",
+        "why_now": "A grade average is cumulative and the transcript colleges read starts in ninth grade, so the weaker subjects are fixed before the courses that count begin.",
+        "tasks": [
+         {
+          "text": "Ask the school for the recent report card and identify the weakest or underperforming subjects. Arrange regular help for the weakest one, so he starts high school steady in it.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Take the card business to a local fair with real customers.",
+        "goal_short": "The card business at a local fair",
+        "track": "target",
+        "cat": "VENTURE",
+        "cat_class": "venture",
+        "why_now": "The trading is entirely his own and has no organiser, judge or audience beyond his own reach, so one local fair adds a first audience without changing what he does.",
+        "tasks": [
+         {
+          "text": "Register for a business fair near home, take a booth, and sell to customers outside the family, so he practises selling to people who do not already know him.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Try a few kinds of debate and see which suits him.",
+        "goal_short": "Try a few kinds of debate",
+        "track": "target",
+        "cat": "DEBATE",
+        "cat_class": "debate",
+        "why_now": "He thinks by debating and says he prefers groups while most of what he does is on his own, so this year samples the formats before any one of them is chosen.",
+        "tasks": [
+         {
+          "text": "Try the debate formats open to him, through school or a local club: parliamentary, Lincoln-Douglas, public forum, congress, mock trial and Model UN. They reward different people.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Start volunteering as a family with one local organisation.",
+        "goal_short": "Family volunteering, one organisation",
+        "track": "target",
+        "cat": "SERVICE",
+        "cat_class": "service",
+        "why_now": "The family asked for service they can do together, and the value is the same organisation still being able to speak for his work in twelfth grade, so it starts now and stays.",
+        "tasks": [
+         {
+          "text": "Visit one or two local organisations that take families volunteering together, and commit to the one whose days and hours fit the week, so it can keep running for years.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Keep the things he already enjoys running exactly as they are.",
+        "goal_short": "Keep what he enjoys as it is",
+        "track": "target",
+        "cat": "SCHEDULE",
+        "cat_class": "schedule",
+        "why_now": "Chess and cooking need the family's own answers before anything is planned for them, and the racquet sport and theatre are protected and asked nothing.",
+        "tasks": [
+         {
+          "text": "Note which organisation ran the chess tournaments he has medals from, and roughly how many hours a week chess takes, so it can be placed properly if he wants to take it further.",
+          "track": "target"
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "term": "Spring 2027",
+      "span": "Jan-May",
+      "tag": "Kept lighter on purpose",
+      "goals": [
+       {
+        "goal": "Find his weakest subjects and get them up before high school starts.",
+        "goal_short": "Get the weaker subjects up",
+        "track": "target",
+        "cat": "ACADEMICS",
+        "cat_class": "academics",
+        "why_now": "A grade average is cumulative and the transcript colleges read starts in ninth grade, so the weaker subjects are fixed before the courses that count begin.",
+        "tasks": [
+         {
+          "text": "Check that subject against the class tests during the term rather than waiting for the next report card, so a slip is caught while there is time to act.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Take the card business to a local fair with real customers.",
+        "goal_short": "The card business at a local fair",
+        "track": "target",
+        "cat": "VENTURE",
+        "cat_class": "venture",
+        "why_now": "The trading is entirely his own and has no organiser, judge or audience beyond his own reach, so one local fair adds a first audience without changing what he does.",
+        "tasks": [
+         {
+          "text": "Sit down after the fair with what it earned and what he enjoyed, and settle then whether a second one is worth doing.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Try a few kinds of debate and see which suits him.",
+        "goal_short": "Try a few kinds of debate",
+        "track": "target",
+        "cat": "DEBATE",
+        "cat_class": "debate",
+        "why_now": "He thinks by debating and says he prefers groups while most of what he does is on his own, so this year samples the formats before any one of them is chosen.",
+        "tasks": [
+         {
+          "text": "Watch a local tournament in person in whichever format he liked best. The spring term is kept lighter on purpose, so watching rather than entering suits it.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Keep the things he already enjoys running exactly as they are.",
+        "goal_short": "Keep what he enjoys as it is",
+        "track": "target",
+        "cat": "SCHEDULE",
+        "cat_class": "schedule",
+        "why_now": "Chess and cooking need the family's own answers before anything is planned for them, and the racquet sport and theatre are protected and asked nothing.",
+        "tasks": [
+         {
+          "text": "Ask him whether he still cooks and competes, how much of his week it takes, and whether he would want it entered through school later. His answer decides that.",
+          "track": "target"
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "term": "Summer 2027",
+      "span": "Jun-Aug",
+      "tag": "Light on purpose, before ninth grade",
+      "goals": [
+       {
+        "goal": "Find his weakest subjects and get them up before high school starts.",
+        "goal_short": "Get the weaker subjects up",
+        "track": "target",
+        "cat": "ACADEMICS",
+        "cat_class": "academics",
+        "why_now": "A grade average is cumulative and the transcript colleges read starts in ninth grade, so the weaker subjects are fixed before the courses that count begin.",
+        "tasks": [
+         {
+          "text": "Take the strongest ninth-grade math and English placement he can carry well, so the advanced sequences stay open to him in the years that are on the transcript.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Take the card business to a local fair with real customers.",
+        "goal_short": "The card business at a local fair",
+        "track": "target",
+        "cat": "VENTURE",
+        "cat_class": "venture",
+        "why_now": "The trading is entirely his own and has no organiser, judge or audience beyond his own reach, so one local fair adds a first audience without changing what he does.",
+        "tasks": [
+         {
+          "text": "Keep the trading going over the summer at the hours he already gives it, and look at what it earned together before school starts again.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Try a few kinds of debate and see which suits him.",
+        "goal_short": "Try a few kinds of debate",
+        "track": "target",
+        "cat": "DEBATE",
+        "cat_class": "debate",
+        "why_now": "He thinks by debating and says he prefers groups while most of what he does is on his own, so this year samples the formats before any one of them is chosen.",
+        "tasks": [
+         {
+          "text": "Enter one beginners' round or practice tournament in the format he liked best, where a first attempt is expected to be a first attempt.",
+          "track": "stretch"
+         }
+        ]
+       },
+       {
+        "goal": "Start volunteering as a family with one local organisation.",
+        "goal_short": "Family volunteering, one organisation",
+        "track": "target",
+        "cat": "SERVICE",
+        "cat_class": "service",
+        "why_now": "The family asked for service they can do together, and the value is the same organisation still being able to speak for his work in twelfth grade, so it starts now and stays.",
+        "tasks": [
+         {
+          "text": "Take a longer stretch with the same organisation over the summer, while the school week is not competing for the hours.",
+          "track": "target"
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "term": "All year",
+      "span": "Aug-Jun",
+      "tag": "Runs across the whole year",
+      "goals": [
+       {
+        "goal": "Find his weakest subjects and get them up before high school starts.",
+        "goal_short": "Get the weaker subjects up",
+        "track": "target",
+        "cat": "ACADEMICS",
+        "cat_class": "academics",
+        "why_now": "A grade average is cumulative and the transcript colleges read starts in ninth grade, so the weaker subjects are fixed before the courses that count begin.",
+        "tasks": [
+         {
+          "text": "Set a grade average in the 3.8-and-above band as the entering target for high school, and check the class grades against it at the end of each term.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Take the card business to a local fair with real customers.",
+        "goal_short": "The card business at a local fair",
+        "track": "target",
+        "cat": "VENTURE",
+        "cat_class": "venture",
+        "why_now": "The trading is entirely his own and has no organiser, judge or audience beyond his own reach, so one local fair adds a first audience without changing what he does.",
+        "tasks": [
+         {
+          "text": "Start a simple record of what the business buys, sells and earns, and update it on the first of each month, so he can see how a full year actually went.",
+          "track": "stretch"
+         }
+        ]
+       },
+       {
+        "goal": "Start volunteering as a family with one local organisation.",
+        "goal_short": "Family volunteering, one organisation",
+        "track": "target",
+        "cat": "SERVICE",
+        "cat_class": "service",
+        "why_now": "The family asked for service they can do together, and the value is the same organisation still being able to speak for his work in twelfth grade, so it starts now and stays.",
+        "tasks": [
+         {
+          "text": "Go together on the agreed days each month, and check at the end of each term that the rhythm still fits alongside school.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Keep the things he already enjoys running exactly as they are.",
+        "goal_short": "Keep what he enjoys as it is",
+        "track": "target",
+        "cat": "SCHEDULE",
+        "cat_class": "schedule",
+        "why_now": "Chess and cooking need the family's own answers before anything is planned for them, and the racquet sport and theatre are protected and asked nothing.",
+        "tasks": [
+         {
+          "text": "Let him try tennis alongside the ping-pong and keep whichever he prefers. Theatre and the racquet play stay for enjoyment, with nothing riding on either.",
+          "track": "target"
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "grade": 9,
+    "years": "2027-28",
+    "tag": "Explore",
+    "terms": [
+     {
+      "term": "Fall 2027",
+      "span": "Aug-Dec",
+      "tag": "First term on the transcript",
+      "goals": [
+       {
+        "goal": "Get into the strongest classes he can do well in as a freshman.",
+        "goal_short": "The strongest freshman classes",
+        "track": "target",
+        "cat": "ACADEMICS",
+        "cat_class": "academics",
+        "why_now": "The transcript colleges read starts here and moving onto the honours track gets much harder later, so the placement is made at registration.",
+        "tasks": [
+         {
+          "text": "At registration, take the most demanding courses he has the foundation for, one step up at a time rather than in a jump. This is the first year on the transcript.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Join the school debate team and try the formats it competes in.",
+        "goal_short": "Join the school debate team",
+        "track": "target",
+        "cat": "DEBATE",
+        "cat_class": "debate",
+        "why_now": "A coached squad gives practice and many rounds rather than one decisive test, so he keeps comparing formats instead of settling on one.",
+        "tasks": [
+         {
+          "text": "Join the school team and take whichever formats the squad runs, so he is still comparing them rather than committing to one this year.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Join the business club at his new school and enter a selling competition.",
+        "goal_short": "Business club and a selling competition",
+        "track": "target",
+        "cat": "VENTURE",
+        "cat_class": "venture",
+        "why_now": "The card business has no organiser or judge attached to it, and a school business club is where the same selling gets looked at by someone outside the family.",
+        "tasks": [
+         {
+          "text": "Join the business club at his school and take the selling or entrepreneurship event that lets him present a product of his own choosing.",
+          "track": "target"
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "term": "Spring 2028",
+      "span": "Jan-May",
+      "tag": "First competitive season",
+      "goals": [
+       {
+        "goal": "Get into the strongest classes he can do well in as a freshman.",
+        "goal_short": "The strongest freshman classes",
+        "track": "target",
+        "cat": "ACADEMICS",
+        "cat_class": "academics",
+        "why_now": "The transcript colleges read starts here and moving onto the honours track gets much harder later, so the placement is made at registration.",
+        "tasks": [
+         {
+          "text": "Check each core grade against the term tests rather than the report card, and add help in any course that slips, so nothing carries into the next year.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Join the school debate team and try the formats it competes in.",
+        "goal_short": "Join the school debate team",
+        "track": "target",
+        "cat": "DEBATE",
+        "cat_class": "debate",
+        "why_now": "A coached squad gives practice and many rounds rather than one decisive test, so he keeps comparing formats instead of settling on one.",
+        "tasks": [
+         {
+          "text": "Enter the rounds his team already competes in, treating the first season as learning the format rather than as a season that has to produce a result.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Join the business club at his new school and enter a selling competition.",
+        "goal_short": "Business club and a selling competition",
+        "track": "target",
+        "cat": "VENTURE",
+        "cat_class": "venture",
+        "why_now": "The card business has no organiser or judge attached to it, and a school business club is where the same selling gets looked at by someone outside the family.",
+        "tasks": [
+         {
+          "text": "Enter the club's competition at school level with the card business as the product, so the selling is judged by people who are not family.",
+          "track": "target"
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "term": "Summer 2028",
+      "span": "Jun-Aug",
+      "tag": "Build the base for a second season",
+      "goals": [
+       {
+        "goal": "Get into the strongest classes he can do well in as a freshman.",
+        "goal_short": "The strongest freshman classes",
+        "track": "target",
+        "cat": "ACADEMICS",
+        "cat_class": "academics",
+        "why_now": "The transcript colleges read starts here and moving onto the honours track gets much harder later, so the placement is made at registration.",
+        "tasks": [
+         {
+          "text": "Line up next year's course choices with the counsellor before the summer ends, so any honours placement he wants is settled early rather than argued for late.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Join the school debate team and try the formats it competes in.",
+        "goal_short": "Join the school debate team",
+        "track": "target",
+        "cat": "DEBATE",
+        "cat_class": "debate",
+        "why_now": "A coached squad gives practice and many rounds rather than one decisive test, so he keeps comparing formats instead of settling on one.",
+        "tasks": [
+         {
+          "text": "Use a summer stretch on debate practice with the squad or a local club, so the second season starts from a stronger base than the first.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Join the business club at his new school and enter a selling competition.",
+        "goal_short": "Business club and a selling competition",
+        "track": "target",
+        "cat": "VENTURE",
+        "cat_class": "venture",
+        "why_now": "The card business has no organiser or judge attached to it, and a school business club is where the same selling gets looked at by someone outside the family.",
+        "tasks": [
+         {
+          "text": "Keep the trading running through the summer and bring the year's record to the club, so real numbers sit behind the next entry.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Keep the family volunteering going with the same organisation.",
+        "goal_short": "Same organisation, kept going",
+        "track": "target",
+        "cat": "SERVICE",
+        "cat_class": "service",
+        "why_now": "Continuity is the whole value here, because an organisation can only speak for years of work if the years are unbroken.",
+        "tasks": [
+         {
+          "text": "Take a longer stretch with the organisation over the summer, while the school week is not competing for the hours.",
+          "track": "target"
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "term": "All year",
+      "span": "Aug-Jun",
+      "tag": "Runs across the whole year",
+      "goals": [
+       {
+        "goal": "Keep the family volunteering going with the same organisation.",
+        "goal_short": "Same organisation, kept going",
+        "track": "target",
+        "cat": "SERVICE",
+        "cat_class": "service",
+        "why_now": "Continuity is the whole value here, because an organisation can only speak for years of work if the years are unbroken.",
+        "tasks": [
+         {
+          "text": "Hold the same days each month with the organisation from last year, and check at each term's end that the rhythm still fits the school week.",
+          "track": "target"
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "grade": 10,
+    "years": "2028-29",
+    "tag": "Solidify",
+    "terms": [
+     {
+      "term": "Fall 2028",
+      "span": "Aug-Dec",
+      "tag": "The year the set gets chosen",
+      "goals": [
+       {
+        "goal": "Take the hardest classes he can still get strong grades in.",
+        "goal_short": "The hardest classes he does well in",
+        "track": "target",
+        "cat": "ACADEMICS",
+        "cat_class": "academics",
+        "why_now": "Tenth-grade workload roughly doubles, and course rigour is one of only two factors Michigan's own form rates Very Important.",
+        "tasks": [
+         {
+          "text": "Set the course load at the most demanding he can carry well, and arrange regular help early rather than after a grade has already slipped.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Settle on the few activities he carries into the last two years.",
+        "goal_short": "Settle the few he carries",
+        "track": "target",
+        "cat": "SCHEDULE",
+        "cat_class": "schedule",
+        "why_now": "Tenth grade is where the set is chosen and the rest let go, and it is also where the chess and cooking answers finally get acted on.",
+        "tasks": [
+         {
+          "text": "Run another debate season with the school team, and treat how this one goes as the main input to what he keeps and what he lets go.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Get a paid weekend job at a shop that sells cards or games.",
+        "goal_short": "A paid weekend shop job",
+        "track": "target",
+        "cat": "VENTURE",
+        "cat_class": "venture",
+        "why_now": "A paid job with a named employer and a supervisor behind it is the sophomore step of the summer ladder, and it is where the selling he already does gets seen by someone who can speak for it.",
+        "tasks": [
+         {
+          "text": "Apply to card, game and collectibles shops near home for weekend hours, leading with the trading he already does in that category.",
+          "track": "target"
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "term": "Spring 2029",
+      "span": "Jan-May",
+      "tag": "Choose, and let the rest go",
+      "goals": [
+       {
+        "goal": "Take the hardest classes he can still get strong grades in.",
+        "goal_short": "The hardest classes he does well in",
+        "track": "target",
+        "cat": "ACADEMICS",
+        "cat_class": "academics",
+        "why_now": "Tenth-grade workload roughly doubles, and course rigour is one of only two factors Michigan's own form rates Very Important.",
+        "tasks": [
+         {
+          "text": "Compare his load against what his own school offers, and raise it one course next year if grades hold. Michigan rates rigour and grades Very Important, activities only Considered.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Start preparing for the college entrance tests he takes next year.",
+        "goal_short": "Start entrance test preparation",
+        "track": "target",
+        "cat": "ACADEMICS",
+        "cat_class": "academics",
+        "why_now": "Preparation begins once, in the year before the tests are taken, because the subject work behind them was meant to be done years earlier.",
+        "tasks": [
+         {
+          "text": "Sit a practice run of each of the two main entrance tests, then prepare for the one he scores better on rather than carrying both.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Settle on the few activities he carries into the last two years.",
+        "goal_short": "Settle the few he carries",
+        "track": "target",
+        "cat": "SCHEDULE",
+        "cat_class": "schedule",
+        "why_now": "Tenth grade is where the set is chosen and the rest let go, and it is also where the chess and cooking answers finally get acted on.",
+        "tasks": [
+         {
+          "text": "Sit down with what he enjoyed and what went well across the business, debate, chess and cooking, and settle on the two or three he carries.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Get a paid weekend job at a shop that sells cards or games.",
+        "goal_short": "A paid weekend shop job",
+        "track": "target",
+        "cat": "VENTURE",
+        "cat_class": "venture",
+        "why_now": "A paid job with a named employer and a supervisor behind it is the sophomore step of the summer ladder, and it is where the selling he already does gets seen by someone who can speak for it.",
+        "tasks": [
+         {
+          "text": "Once he has been there a term, ask the shop for a standing responsibility such as pricing or the counter, so the job is more than shifts.",
+          "track": "stretch"
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "term": "Summer 2029",
+      "span": "Jun-Aug",
+      "tag": "The summer the job carries",
+      "goals": [
+       {
+        "goal": "Take the hardest classes he can still get strong grades in.",
+        "goal_short": "The hardest classes he does well in",
+        "track": "target",
+        "cat": "ACADEMICS",
+        "cat_class": "academics",
+        "why_now": "Tenth-grade workload roughly doubles, and course rigour is one of only two factors Michigan's own form rates Very Important.",
+        "tasks": [
+         {
+          "text": "Settle next year's registration before the summer ends, adding rigour one course at a time rather than all at once.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Start preparing for the college entrance tests he takes next year.",
+        "goal_short": "Start entrance test preparation",
+        "track": "target",
+        "cat": "ACADEMICS",
+        "cat_class": "academics",
+        "why_now": "Preparation begins once, in the year before the tests are taken, because the subject work behind them was meant to be done years earlier.",
+        "tasks": [
+         {
+          "text": "Put steady preparation for the chosen test into the summer weeks, so junior year is not carrying the whole of it on top of coursework.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Settle on the few activities he carries into the last two years.",
+        "goal_short": "Settle the few he carries",
+        "track": "target",
+        "cat": "SCHEDULE",
+        "cat_class": "schedule",
+        "why_now": "Tenth grade is where the set is chosen and the rest let go, and it is also where the chess and cooking answers finally get acted on.",
+        "tasks": [
+         {
+          "text": "Tell the groups he is stepping back from, so the few he keeps get the full week. The racquet sport and theatre carry on for enjoyment.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Get a paid weekend job at a shop that sells cards or games.",
+        "goal_short": "A paid weekend shop job",
+        "track": "target",
+        "cat": "VENTURE",
+        "cat_class": "venture",
+        "why_now": "A paid job with a named employer and a supervisor behind it is the sophomore step of the summer ladder, and it is where the selling he already does gets seen by someone who can speak for it.",
+        "tasks": [
+         {
+          "text": "Take more hours at the shop over the summer, so a manager who has watched him work can speak to it later.",
+          "track": "target"
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "grade": 11,
+    "years": "2029-30",
+    "tag": "Specialize",
+    "terms": [
+     {
+      "term": "Fall 2029",
+      "span": "Aug-Dec",
+      "tag": "The heaviest year, and the test",
+      "goals": [
+       {
+        "goal": "Carry the heaviest course load he can still do well in.",
+        "goal_short": "The heaviest load he does well in",
+        "track": "target",
+        "cat": "ACADEMICS",
+        "cat_class": "academics",
+        "why_now": "Junior-year grades, and second-semester ones most of all, are the last transcript early-round readers see.",
+        "tasks": [
+         {
+          "text": "Register for the most demanding load he has carried well so far, and keep the core subjects strongest rather than spreading the rigour thin.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Take the college entrance tests this year and be finished with them.",
+        "goal_short": "Sit the entrance test and close it",
+        "track": "target",
+        "cat": "ACADEMICS",
+        "cat_class": "academics",
+        "why_now": "Preparation started the year before, so this year is for sitting the test and closing it out rather than opening a new front.",
+        "tasks": [
+         {
+          "text": "Sit the test he prepared for in the autumn window, leaving room for one retake later in the year if he wants a second go.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Take on a regular role at the group the family volunteers with.",
+        "goal_short": "A regular role at the group",
+        "track": "target",
+        "cat": "SERVICE",
+        "cat_class": "service",
+        "why_now": "Years at one organisation are what make a defined role available, and a real role inside an existing group is worth more than a title created for an application.",
+        "tasks": [
+         {
+          "text": "Ask the organisation for a standing responsibility he can hold, such as a shift, a team or a task of his own, now that he has been there for years.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Compete past his own school in debate and aim to place.",
+        "goal_short": "Compete past his own school",
+        "track": "stretch",
+        "cat": "DEBATE",
+        "cat_class": "debate",
+        "why_now": "Taking part at school level is the target and placing above it is the stretch, and this school list makes the step one level up rather than a national push.",
+        "tasks": [
+         {
+          "text": "Enter the qualifying rounds above school level in his strongest format, with the squad's coaching behind him rather than as a one-off entry.",
+          "track": "stretch"
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "term": "Spring 2030",
+      "span": "Jan-May",
+      "tag": "The term early readers see last",
+      "goals": [
+       {
+        "goal": "Carry the heaviest course load he can still do well in.",
+        "goal_short": "The heaviest load he does well in",
+        "track": "target",
+        "cat": "ACADEMICS",
+        "cat_class": "academics",
+        "why_now": "Junior-year grades, and second-semester ones most of all, are the last transcript early-round readers see.",
+        "tasks": [
+         {
+          "text": "Protect the second-semester grades above everything else this term, because they are the last ones early-round readers see.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Take the college entrance tests this year and be finished with them.",
+        "goal_short": "Sit the entrance test and close it",
+        "track": "target",
+        "cat": "ACADEMICS",
+        "cat_class": "academics",
+        "why_now": "Preparation started the year before, so this year is for sitting the test and closing it out rather than opening a new front.",
+        "tasks": [
+         {
+          "text": "Take the retake only if he wants a higher score, and stop there so the term stays on his courses.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Compete past his own school in debate and aim to place.",
+        "goal_short": "Compete past his own school",
+        "track": "stretch",
+        "cat": "DEBATE",
+        "cat_class": "debate",
+        "why_now": "Taking part at school level is the target and placing above it is the stretch, and this school list makes the step one level up rather than a national push.",
+        "tasks": [
+         {
+          "text": "If he advances, take the next level up. If he does not, enter the same level again with what the first attempt taught him.",
+          "track": "stretch"
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "term": "Summer 2030",
+      "span": "Jun-Aug",
+      "tag": "Senior year set up before it starts",
+      "goals": [
+       {
+        "goal": "Carry the heaviest course load he can still do well in.",
+        "goal_short": "The heaviest load he does well in",
+        "track": "target",
+        "cat": "ACADEMICS",
+        "cat_class": "academics",
+        "why_now": "Junior-year grades, and second-semester ones most of all, are the last transcript early-round readers see.",
+        "tasks": [
+         {
+          "text": "Line up the senior-year course list before the summer ends and keep it full, because a lighter final year is noticed.",
+          "track": "target"
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "term": "All year",
+      "span": "Aug-Jun",
+      "tag": "Runs across the whole year",
+      "goals": [
+       {
+        "goal": "Take on a regular role at the group the family volunteers with.",
+        "goal_short": "A regular role at the group",
+        "track": "target",
+        "cat": "SERVICE",
+        "cat_class": "service",
+        "why_now": "Years at one organisation are what make a defined role available, and a real role inside an existing group is worth more than a title created for an application.",
+        "tasks": [
+         {
+          "text": "Hold the role through the year, and check at each term's end that it still fits alongside the course load.",
+          "track": "target"
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "grade": 12,
+    "years": "2030-31",
+    "tag": "Specialize",
+    "terms": [
+     {
+      "term": "Summer 2030",
+      "span": "Jun-Aug",
+      "tag": "Before senior year starts",
+      "goals": [
+       {
+        "goal": "Build the application around the card business, debate and the volunteering.",
+        "goal_short": "Build the application around three things",
+        "track": "target",
+        "cat": "ACADEMICS",
+        "cat_class": "academics",
+        "why_now": "Senior autumn is for curation rather than new activity, and these three are the only parts with years of his own history behind them.",
+        "tasks": [
+         {
+          "text": "Over the summer before senior year, work out what the last three years say about him, and settle the story the application will tell.",
+          "track": "target"
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "term": "Fall 2030",
+      "span": "Aug-Dec",
+      "tag": "Curate, do not build",
+      "goals": [
+       {
+        "goal": "Keep grades strong in a full course load through senior year.",
+        "goal_short": "A full load, right through",
+        "track": "target",
+        "cat": "ACADEMICS",
+        "cat_class": "academics",
+        "why_now": "A lighter senior year is visible on the transcript and the first-term grades still reach early-round readers, so the load holds.",
+        "tasks": [
+         {
+          "text": "Check the autumn grades at mid-term and act on any slip then, because first-term senior grades still reach the readers deciding the early rounds.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Build the application around the card business, debate and the volunteering.",
+        "goal_short": "Build the application around three things",
+        "track": "target",
+        "cat": "ACADEMICS",
+        "cat_class": "academics",
+        "why_now": "Senior autumn is for curation rather than new activity, and these three are the only parts with years of his own history behind them.",
+        "tasks": [
+         {
+          "text": "Draft the personal statement early in the autumn, and order the activity and honours list by strength with the level each result reached.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Aim for a placing result in his strongest competition this year.",
+        "goal_short": "A placing result this year",
+        "track": "stretch",
+        "cat": "DEBATE",
+        "cat_class": "debate",
+        "why_now": "One more level in something he already leads is the only kind of new result a senior year can realistically produce.",
+        "tasks": [
+         {
+          "text": "Enter the strongest competition open to him in the event he does best, and aim to place rather than only to take part.",
+          "track": "stretch"
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "term": "Spring 2031",
+      "span": "Jan-May",
+      "tag": "Finish what was started",
+      "goals": [
+       {
+        "goal": "Keep grades strong in a full course load through senior year.",
+        "goal_short": "A full load, right through",
+        "track": "target",
+        "cat": "ACADEMICS",
+        "cat_class": "academics",
+        "why_now": "A lighter senior year is visible on the transcript and the first-term grades still reach early-round readers, so the load holds.",
+        "tasks": [
+         {
+          "text": "Finish the year in the courses he started, so the final transcript shows a full load rather than a year that eased off.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Build the application around the card business, debate and the volunteering.",
+        "goal_short": "Build the application around three things",
+        "track": "target",
+        "cat": "ACADEMICS",
+        "cat_class": "academics",
+        "why_now": "Senior autumn is for curation rather than new activity, and these three are the only parts with years of his own history behind them.",
+        "tasks": [
+         {
+          "text": "Finish the remaining applications and supplements, keeping to the same three parts of the story rather than adding anything new this late.",
+          "track": "target"
+         }
+        ]
+       },
+       {
+        "goal": "Aim for a placing result in his strongest competition this year.",
+        "goal_short": "A placing result this year",
+        "track": "stretch",
+        "cat": "DEBATE",
+        "cat_class": "debate",
+        "why_now": "One more level in something he already leads is the only kind of new result a senior year can realistically produce.",
+        "tasks": [
+         {
+          "text": "Put the result on the honours list with the level it reached, ordered against the others by strength.",
+          "track": "stretch"
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "term": "All year",
+      "span": "Aug-Jun",
+      "tag": "Runs across the whole year",
+      "goals": [
+       {
+        "goal": "Stay with the same volunteering group through his last year.",
+        "goal_short": "Same group, last year included",
+        "track": "target",
+        "cat": "SERVICE",
+        "cat_class": "service",
+        "why_now": "An organisation can only speak for years of work if the last year is not the year he stopped.",
+        "tasks": [
+         {
+          "text": "Hold the same days with the organisation through the year, and ask early whether someone there can write about the work he has done.",
+          "track": "target"
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "this_year": {
+  "title": "This Year in Detail: 2026-27",
+  "lead": "The specifics: which option, what it costs, who to call, and when to act.",
+  "terms": [
+   {
+    "term": "Fall 2026",
+    "dates": "August - December 2026",
+    "tag": "Four things, none of them heavy",
+    "intro": "One audience for the business, several debate formats tried, one service organisation chosen, and the weaker subjects found.",
+    "cards": [
+     {
+      "cat": "VENTURE",
+      "cat_class": "venture",
+      "title": "A booth at the Children's Business Fair",
+      "act": "Take a booth at the Santa Clara fair and sell outside the family.",
+      "body": "A one-day fair with judges and the public. His own business shown to strangers, not a new thing to start.",
+      "options": [
+       "1 · Free — the filing route · San Jose business tax registration · plus a Santa Clara County fictitious business name filing if he trades under another name · fees set by city and county · call to confirm · no free fair equivalent in the region",
+       "2 · Budget — Children's Business Fair, San Jose · Acton Children's Business Fair · Santa Clara fair, register by October 17 · ages 6 to 14 · in person · $50 booth fee · open entry",
+       "3 · Premium — paid filing help instead of the forms yourselves · parent-held · in person or online · call to confirm"
+      ],
+      "contact": "childrensbusinessfair.org/cities/san-jose-ca-usa — call to confirm the booth and age band.",
+      "plan_by": "By September 26. Booths are limited and fill two to three weeks ahead of the October 17 registration.",
+      "note": "Ask the city tax office and county clerk-recorder whether a minor can hold the registration."
+     },
+     {
+      "cat": "DEBATE",
+      "cat_class": "debate",
+      "title": "Try the debate formats open to him",
+      "act": "Sample formats through school or a local club.",
+      "body": "Parliamentary, Lincoln-Douglas, public forum, congress, mock trial and Model UN suit different people.",
+      "options": [
+       "1 · Free — the school's own speech and debate club · ask whether Sierramont fields one",
+       "2 · Budget — a local youth debate club in San Jose · in person · ask the term price",
+       "3 · Premium — a coached Bay Area middle-school programme · in person · call for price, ask about scholarships"
+      ],
+      "contact": "The Sierramont Middle School office first.",
+      "plan_by": "By early October, so he has a full term inside a format.",
+      "note": "A trial session is enough to tell which one he likes."
+     },
+     {
+      "cat": "SERVICE",
+      "cat_class": "service",
+      "title": "Choose one organisation the family goes to together",
+      "act": "Visit one or two, then commit to the one whose days fit.",
+      "body": "One organisation kept for years beats several tried briefly.",
+      "options": [
+       "1 · Free — a food bank, community kitchen or shelter near San Jose · no cost beyond travel",
+       "2 · Budget — a faith or community group with a standing family slot · no cost beyond travel",
+       "3 · Premium — a paid volunteer placement service · no fee is warranted here"
+      ],
+      "contact": "Ask each organisation whether they take a parent and student together.",
+      "plan_by": "Before the winter break, so the rhythm is set before spring.",
+      "note": "Choose on the days and hours, not on the cause alone."
+     },
+     {
+      "cat": "ACADEMICS",
+      "cat_class": "academics",
+      "title": "Find the weaker subjects before high school",
+      "act": "Ask the school for the recent report card.",
+      "body": "The grades colleges read begin in ninth grade, so a shaky subject is fixed while nothing counts.",
+      "options": [],
+      "contact": "The Sierramont Middle School counsellor.",
+      "plan_by": "By the end of October, leaving a full term to act.",
+      "note": "Arrange regular help with whatever the school offers."
+     }
+    ]
+   },
+   {
+    "term": "Spring 2027",
+    "dates": "January - May 2027",
+    "tag": "Kept lighter on purpose",
+    "intro": "Nothing new starts. Two things carry on, both low-stakes by design.",
+    "cards": [
+     {
+      "cat": "DEBATE",
+      "cat_class": "debate",
+      "title": "Watch a tournament in person",
+      "act": "Watch a round in whichever format he liked best.",
+      "body": "Watching costs nothing and shows him a round before he enters one.",
+      "options": [],
+      "contact": "The school or club coach.",
+      "plan_by": "By February, while dates remain in the season.",
+      "note": "Entering is a summer decision."
+     },
+     {
+      "cat": "ACADEMICS",
+      "cat_class": "academics",
+      "title": "Check the weaker subject against class tests",
+      "act": "Track it on the term's tests, not the report card.",
+      "body": "A slip found in March can still be turned around.",
+      "options": [],
+      "contact": "The subject teacher, then the counsellor.",
+      "plan_by": "By early March, at the first term tests.",
+      "note": "Settle with him then whether a second fair is worth doing."
+     }
+    ]
+   },
+   {
+    "term": "Summer 2027",
+    "dates": "June - August 2027",
+    "tag": "A light summer is the right answer",
+    "intro": "On the summer after eighth grade: a light one is entirely fine at this age. His own trading, the family service commitment and the ninth-grade placement, not a purchased programme.",
+    "cards": [
+     {
+      "cat": "ACADEMICS",
+      "cat_class": "academics",
+      "title": "Settle the ninth-grade placement",
+      "act": "Take the strongest math and English placement he can carry well.",
+      "body": "Placement decides which sequences stay open for four years, and is hard to undo.",
+      "options": [],
+      "contact": "The high school counsellor, once registration opens.",
+      "plan_by": "Ask the counsellor in January for the registration date.",
+      "note": "Strongest he can carry well, not strongest available."
+     },
+     {
+      "cat": "SERVICE",
+      "cat_class": "service",
+      "title": "A longer stretch with the same organisation",
+      "act": "Give the organisation more hours while school is not competing.",
+      "body": "The summer is where a family commitment gets its depth.",
+      "options": [],
+      "contact": "The volunteer coordinator at the organisation.",
+      "plan_by": "By May, because summer slots are agreed before term ends.",
+      "note": "He keeps trading at the hours he already gives it."
+     }
+    ]
+   }
+  ]
+ },
+ "parent_actions": {
+  "lead": "Ordered by when you need to act, not by importance.",
+  "items": [
+   {
+    "n": 1,
+    "when": "By September 26",
+    "text": "Register the booth for the Santa Clara Children's Business Fair, and confirm his age against the 6 to 14 band at the same time."
+   },
+   {
+    "n": 2,
+    "when": "Late September",
+    "text": "Ask the Sierramont office whether the school fields a speech and debate club, and which formats it runs."
+   },
+   {
+    "n": 3,
+    "when": "By the end of October",
+    "text": "Ask the school for the recent report card and identify the weakest or underperforming subjects."
+   },
+   {
+    "n": 4,
+    "when": "October",
+    "text": "Ask the San Jose business tax office and the Santa Clara County clerk-recorder what a business run by someone his age has to file."
+   },
+   {
+    "n": 5,
+    "when": "This term",
+    "text": "Note which organisation ran the chess tournaments his medals came from, and roughly how many hours a week chess, cooking and theatre take."
+   },
+   {
+    "n": 6,
+    "when": "This term",
+    "text": "Ask him whether he still cooks and competes, and whether he would want cooking entered through school later."
+   },
+   {
+    "n": 7,
+    "when": "Before the winter break",
+    "text": "Visit one or two local organisations that take families volunteering together, and commit to one."
+   },
+   {
+    "n": 8,
+    "when": "Before this plan is settled",
+    "text": "Confirm the six colleges and the graduating class year, and check the financial aid position at each college on the list."
+   },
+   {
+    "n": 9,
+    "when": "At ninth-grade registration",
+    "text": "Confirm whether his high school runs a DECA or FBLA chapter, and which debate league its team competes in."
+   }
+  ]
+ },
+ "final_note": [
+  "You wrote that he has a real business and real potential, and that what you do not want is that energy scattered. This plan is built to the same view. It adds nothing he did not already choose: the business stays exactly as it is, debate is where his own words already point, and the volunteering is the thing you asked for. Everything else he does is protected and asked nothing of.",
+  "The first steps are deliberately small and finishable. A one-day fair in October has a clear beginning and end. Sampling debate formats commits him to nothing. Where a result is involved, it comes through a coached team with many rounds and practice in between, so one round never decides anything on its own. The number of activities he carries is capped at two or three, and that choice is made in tenth grade, with a year and a half of trying things first. He is good at this when he has picked it himself and someone is behind him; the plan is arranged so both stay true."
+ ],
+ "course": {
+  "title": "The courses to take.",
+  "lead": "What his six schools ask for, and the two choices that decide most of it.",
+  "req_note": "each school's own admissions pages, Sept 2026",
+  "requirements": [
+   {
+    "subject": "English",
+    "asked": "4 years",
+    "who": "UC, Georgetown, NYU, Michigan",
+    "aim": "Strongest placement he holds."
+   },
+   {
+    "subject": "Math",
+    "key": true,
+    "asked": "4 years, through calculus",
+    "who": "UC recommends the 4th; Wharton, Stern and Georgetown business all name calculus",
+    "aim": "Advanced sequence from grade 9, calculus by grade 12."
+   },
+   {
+    "subject": "Science",
+    "asked": "2 years with labs, 3 is better",
+    "who": "UC requires 2, recommends 3; NYU 3 to 4",
+    "aim": "Set each year against what his school offers."
+   },
+   {
+    "subject": "World language",
+    "asked": "2 years of ONE language",
+    "who": "UC requires it; NYU wants 3 to 4",
+    "aim": "French from grade 9, as far as it goes."
+   },
+   {
+    "subject": "History",
+    "asked": "2 years",
+    "who": "UC requires it; Michigan wants 3",
+    "aim": "Covered by government and economics."
+   },
+   {
+    "subject": "Arts",
+    "key": true,
+    "asked": "1 full year — required",
+    "who": "UC A-G area F",
+    "aim": "His theatre may already count."
+   }
+  ],
+  "difference_head": "On the Stretch plan",
+  "difference": "Same subjects, same years. The Stretch aims higher inside them — the top of the GPA band, the upper end of the course load — and adds no new subject.",
+  "decisions": [
+   {
+    "when": "This spring",
+    "head": "Ask what grade 9 math placement is open to him",
+    "body": "Which placement keeps the advanced sequence available, and what he needs this year to be offered it.",
+    "keeps_open": "Calculus by grade 12."
+   },
+   {
+    "when": "Grade 9 registration",
+    "head": "Start French and stay with it",
+    "body": "Two years of one language is required at Berkeley and UCLA. How far he gets matters more than how many he tries.",
+    "keeps_open": "A requirement met, and a language worth writing down."
+   },
+   {
+    "when": "Grade 9 registration",
+    "head": "Check the theatre course is on the approved list",
+    "body": "One question to the counsellor. UC credit depends on the specific course, not the subject.",
+    "keeps_open": "An arts requirement he may already be meeting."
+   },
+   {
+    "when": "Every year after",
+    "head": "One harder course a year, never more",
+    "body": "The transcript these schools describe is a load that rose and grades that held. Take the hardest courses he can still hold a strong grade in — in that order.",
+    "keeps_open": "Room to sit the entrance tests in grade 11 without a term falling over."
+   }
+  ],
+  "act_on_head": "Two things to act on, and one of them is free",
+  "act_on": [
+   {
+    "label": "Calculus",
+    "text": "The course that matters most — Wharton, Stern and Georgetown's business school all name it. Whether he reaches it by grade 12 is decided by his grade-9 math placement, which is decided this year."
+   },
+   {
+    "label": "Arts",
+    "text": "Berkeley and UCLA require a full year of it, and Neerav already does theatre. If his high school's course is on the approved list, something he does for fun meets a hard requirement."
+   }
+  ]
+ },
+ "plans_title": "Target and Stretch.",
+ "plans_lead": "Two versions of the same five years. The Stretch aims at the top of the same bands rather than at new ones, and asks more of his activities.",
+ "tiers_head": "Where his six schools sit — and the two tiers with nothing in them",
+ "tiers": [
+  {
+   "name": "Far reach",
+   "range": "under 15% admitted",
+   "schools": [
+    {
+     "name": "Pennsylvania",
+     "rate": "4.9%"
+    },
+    {
+     "name": "New York University",
+     "rate": "7.7%"
+    },
+    {
+     "name": "UCLA",
+     "rate": "9.0%"
+    },
+    {
+     "name": "Berkeley",
+     "rate": "11.4%"
+    },
+    {
+     "name": "Georgetown",
+     "rate": "12.2%"
+    }
+   ]
+  },
+  {
+   "name": "Reach",
+   "range": "15 to 35%",
+   "schools": [
+    {
+     "name": "Michigan",
+     "rate": "15.6%"
+    }
+   ]
+  },
+  {
+   "name": "Target",
+   "range": "35 to 60%",
+   "schools": [],
+   "empty_note": "Nothing on his list. Worth adding two or three."
+  },
+  {
+   "name": "Likely",
+   "range": "over 60%",
+   "schools": [],
+   "empty_note": "Nothing on his list. Worth adding two."
+  }
+ ],
+ "tiers_note": "These are each school's own published admit rate for its most recent class — how selective the school is, not Neerav's chance of getting in. We do not print a personal percentage, because nothing we hold can honestly produce one for an eighth grader. The tiers are the same on both plans: a school's selectivity does not move because a student works harder. What the Stretch changes is what he has to show, not the odds he faces. The finding here is the two empty columns — five of these six schools admit under one applicant in eight, and there is plenty of time to add schools where the answer is more likely to be yes."
+}

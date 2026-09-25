@@ -2565,3 +2565,85 @@ is information, not a gap: it is how a family sees that their list has no school
 answer is likely to be yes. In grade 8 there are five years to fix that, which makes it the
 most actionable thing on the page — and far more valuable than the probability I was asked
 for and could not honestly produce.
+
+## 89. A field the template renders and the spec never names is a blank page
+> *"update the skill and prompts, add rules where it was mentioned."*
+
+The reverse audit — every logged rule must be in force somewhere, not just written down —
+turned up the thing that would actually have broken her next run. **Four fields the
+template renders were named nowhere in the writer spec:**
+
+    c.plans_title      the heading of the Two Plans page
+    c.plans_lead       its only prose
+    c.course.act_on        \\ the two things to act on: the most useful
+    c.course.act_on_head   / block on the courses page
+
+Every one of them I built by hand-editing `out_writer.json`. Hand-edited output renders
+perfectly, **so the page looks finished while the prompt that has to reproduce it says
+nothing at all.** On a real run those four blocks come back empty and the courses page
+loses its point.
+
+`audit_render_contract` now checks three directions: the template reads it, so the spec
+must name it; the template reads it, so `_safe` must default it; and the card macros'
+`card.*` fields the same way. It found the four immediately, plus two top-level keys with
+no default.
+
+Its own first run reported phantom keys `c.s` and `c.t` — from the STYLESHEET, where
+`.ct .c.t{...}` is two CSS classes. **The audit committing the substring-for-substance
+mistake it exists to catch**, for the fifth time in this codebase. Scoped to Jinja
+expressions only.
+
+## 90. Temperature was 0.2 in one place and unset in two others
+Pinned to 0 at every call site. The two web-research paths passed no temperature at all,
+so they ran at the API default while the main path ran at 0.2 — the same engine sampling
+differently depending on which function you were in, which nobody chose.
+
+Temperature 0 does not make a model deterministic; batching and serving still vary. It
+removes the variance that is ours to remove. **What holds the shape steady across runs is
+the gate set, not the temperature.**
+
+## 91. The module that loads is not always the module on disk
+Chasing a golden-test failure that would not go away after reverting the change: the source
+file said `13px`, the loaded module's CSS said `12px`, and `render.__file__` pointed at the
+right file.
+
+Python decides a `.pyc` is fresh by comparing the source's mtime at **one-second
+granularity**. The `.pyc` was written at 04:07:33.912 and the source at 04:07:33.997 — 85
+milliseconds later, inside the same second — so the cache was considered valid and stale
+bytecode was served.
+
+For most work this is invisible. For a tool whose entire job is *"does the source still
+produce this document"*, it is the one failure that invalidates the answer: it can report
+a change that was reverted, or miss one that was made. `evals/golden.py` clears
+`__pycache__` before importing.
+
+Worth carrying: **an edit saved within the same second as the last import may not be the
+code that runs.** Every fast edit-test loop in this repo is exposed to it.
+
+## 92. Three answers to "will it generate the same PDF"
+> *"make sure if i run again, my system should generate same of pdf"*
+
+The question has three readings and only two of them are achievable — saying which is
+which is more useful than a yes.
+
+    SAME DRAFT -> SAME DOCUMENT      YES, and now proven. The HTML is byte-identical
+                                     across renders. The PDF is not, because WeasyPrint
+                                     stamps a creation time into it, so the golden is the
+                                     HTML. `evals/golden.py`, with a diff on mismatch.
+
+    SAME INTAKE -> SAME SHAPE        YES, and by the gate set rather than by luck. A run
+                                     that came back missing the stat row, the four tiers
+                                     or the requirement citations is REJECTED. That is
+                                     what reproducible means for a generative system:
+                                     not that it repeats itself, but that it cannot
+                                     quietly return something worse.
+
+    SAME INTAKE -> SAME WORDS        NO, and not worth chasing. A model at temperature 0
+                                     still varies with batching. What must not vary is
+                                     whether the document is correct.
+
+**The honest caveat, and it is the big one: every page since v12 was hand-built into
+`out_writer.json` to show the shape.** The prompt now describes all of it and the gates
+now enforce it, but the writer has not once been run against the new spec — there is no
+API key in this environment. Until that run happens, "the system generates this PDF" is a
+claim the repo makes and nobody has tested.

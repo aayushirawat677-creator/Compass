@@ -27,7 +27,11 @@ MODEL_TOP = os.environ.get("COMPASS_MODEL_TOP", "claude-opus-4-20250514")     # 
 MODEL_MID = os.environ.get("COMPASS_MODEL_MID", "claude-sonnet-4-20250514")   # projected, plan, writer
 
 MAX_TOKENS = 4096
-TEMPERATURE = 0.2          # low — we want reproducible-ish structure
+TEMPERATURE = 0.0          # [#90] Not 0.2. Two runs of one intake must not differ because
+                           # we left headroom we had no use for. Temperature 0 does not make
+                           # a model byte-deterministic — batching and routing still vary —
+                           # but it removes the variance that is ours to remove. What holds
+                           # the SHAPE steady across runs is the gate set, not this number.
 # Live research depth. The program registry only really covers debate, so every
 # other activity is researched live — that is the mechanism, not a fallback. Set
 # generously: a verified, bookable option is worth far more than a saved call. [#45]

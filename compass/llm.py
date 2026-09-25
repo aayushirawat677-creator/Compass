@@ -107,6 +107,8 @@ def research_json(task_description, constraints, tier="mid", max_searches=5):   
         resp = client.messages.create(
             model=settings.MODELS.get(tier, settings.MODELS["mid"]),
             max_tokens=4000,
+            temperature=settings.TEMPERATURE,   # [#90] was unset, so this path ran at the
+                                                # API default while the main path ran at 0.2
             system=RESEARCH_SYSTEM,
             tools=[{"type": "web_search_20250305", "name": "web_search",
                     "max_uses": max_searches}],
@@ -148,7 +150,7 @@ def research_fact(question, tier="mid", max_searches=4):   # [#25]
         client = anthropic.Anthropic(api_key=key)
         resp = client.messages.create(
             model=settings.MODELS.get(tier, settings.MODELS["mid"]),
-            max_tokens=1500, system=FACT_SYSTEM,
+            max_tokens=1500, temperature=settings.TEMPERATURE, system=FACT_SYSTEM,
             tools=[{"type": "web_search_20250305", "name": "web_search", "max_uses": max_searches}],
             messages=[{"role": "user", "content": question}],
         )

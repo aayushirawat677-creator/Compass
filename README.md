@@ -1,12 +1,19 @@
 # Compass Engine
 
-Turns one college-planning intake form into a designed, multi-page **Strategic Plan PDF** for a
-family — via nine agent/module steps, with runtime gates that stop bad output propagating and a
-rubric suite for grading each step.
+Turns one college-planning intake form into a designed, twelve-page **Strategic Plan PDF** for
+a family — via ten agent/module steps, with **26 runtime gates** that stop bad output
+propagating and a rubric suite for grading each step.
 
 ```
-intake.json  ──▶  9 steps (5 agents + 4 modules, gated)  ──▶  Strategic_Plan.pdf
+intake.json  ──▶  10 steps (6 agents + 4 modules, gated)  ──▶  Strategic_Plan.pdf
 ```
+
+**Status:** the prompts and gates are current; **the writer has not been run against them.**
+Every page of the sample document was hand-built to establish the shape. See `docs/HANDOFF.md`.
+
+**The engine's one discipline:** say what was measured, and say who measured it. Five evidence
+sources are kept apart because collapsing them is how a plan starts asserting things — see
+`docs/ORCHESTRATION.md`. No number in a family's document is a probability about their child.
 
 ---
 
@@ -27,6 +34,10 @@ python run.py --intake data/neerav_intake.json --out out/plan.pdf --dump-state
 # 3) Grade the run
 python evals/grade_agents.py out/plan.state.json   # per-agent, against each rubric
 python evals/grade.py        out/plan.plan.json    # the rendered document
+
+# 4) Is any of this actually wired, and did the render change?
+python evals/audit.py      # 64 structural checks across prompts, gates and template
+python evals/golden.py     # same draft -> same document (HTML hash, with a diff)
 ```
 
 > **Mock vs real matters more than it looks.** In mock mode `llm.ask_json()` returns a canned

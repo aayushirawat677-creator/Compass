@@ -1,0 +1,1437 @@
+
+<style>
+@page { size: letter; margin: 0; }
+@page content { margin: 40px 56px 40px; }
+* { box-sizing: border-box; }
+:root{
+  --ink:#1c2a21; --cream:#f4f1e8; --card:#fbfaf4; --gold:#a5852f; --gold2:#9c7b2e;
+  --muted:#6f7469; --line:#e0dccb; --green:#5c6b3d; --greenbg:#e7ecd7;
+  --purple:#5b4a86; --purplebg:#e8e4f1; --tan:#efe8d6;
+}
+body{ margin:0; color:#20281f; font-family:'Inter','Helvetica Neue',Arial,sans-serif; font-size:10.45px; line-height:1.4; }
+.serif{ font-family:'Playfair Display','Georgia',serif; }
+h1,h2,h3,.serif{ font-family:'Playfair Display','Georgia',serif; color:#182117; font-weight:700; }
+
+/* ---------- cover ---------- */
+.cover{ page: cover; background:var(--ink); color:#efeadc; height:100vh; padding:60px 64px; position:relative; }
+.cover .brand{ color:var(--gold); letter-spacing:.28em; font-size:12px; font-weight:700; }
+.cover .logo{ position:absolute; top:56px; right:64px; color:var(--gold); font-size:34px; }
+.cover .title{ position:absolute; bottom:150px; left:64px; font-size:78px; line-height:.98; color:#f4efe1; }
+.cover .sub{ position:absolute; bottom:112px; left:66px; color:var(--gold); font-style:italic; font-size:19px; }
+.cover .foot{ position:absolute; bottom:56px; left:64px; right:64px; display:flex; justify-content:space-between;
+  border-top:1px solid #3a463a; padding-top:10px; color:#8a927f; letter-spacing:.12em; font-size:9.5px; }
+
+/* ---------- content page frame ---------- */
+.page{ page: content; padding:0; page-break-before:always; }
+.rhead{ color:#9aa08f; letter-spacing:.18em; font-size:9px; text-transform:uppercase; margin-bottom:12px; }
+.slabel{ color:var(--gold2); letter-spacing:.16em; font-size:10px; font-weight:700; text-transform:uppercase; margin-bottom:6px; }
+h2.sec{ font-size:30px; margin:0 0 6px; }
+.lead{ color:var(--muted); font-style:italic; font-size:12.5px; line-height:1.38; max-width:82%; margin-bottom:10px; }
+.subhead{ font-size:15px; margin:16px 0 2px; }
+.thesis{ color:var(--gold2); font-style:italic; font-size:12px; margin-bottom:5px; }
+p{ margin:4px 0; }
+.small{ font-size:10px; } .mut{ color:var(--muted); }
+
+/* boxes */
+.box{ background:var(--tan); border-left:4px solid var(--gold); padding:12px 15px; border-radius:3px; margin:14px 0; }
+.box .lab{ color:var(--gold2); letter-spacing:.14em; font-size:9.5px; font-weight:700; text-transform:uppercase; margin-bottom:4px; }
+.darkbox{ background:var(--ink); color:#efeadc; border-radius:6px; padding:16px 18px; margin:12px 0; }
+.darkbox .lab{ color:var(--gold); letter-spacing:.16em; font-size:10px; font-weight:700; text-transform:uppercase; margin-bottom:6px; }
+.darkbox p{ font-style:italic; }
+
+/* projected card */
+.pcard{ border:1px solid var(--line); border-radius:8px; background:var(--card); margin:10px 0 6px; overflow:hidden; }
+.pcard .bar{ height:6px; }
+.pcard .body{ padding:16px 18px; }
+.pcard .plabel{ color:var(--muted); letter-spacing:.14em; font-size:9px; font-weight:700; text-transform:uppercase; }
+.pcard h3{ font-size:19px; margin:3px 0 2px; }
+.pcard .psub{ color:var(--muted); font-style:italic; font-size:11px; margin-bottom:10px; }
+.stats{ display:flex; flex-wrap:wrap; gap:6px; margin:7px 0; }
+.stat{ flex:1 1 30%; border:1px solid var(--line); border-radius:5px; padding:6px 9px; background:#fff; }
+.stat .k{ color:var(--muted); letter-spacing:.1em; font-size:8.5px; text-transform:uppercase; }
+.stat .v{ font-size:14.5px; font-weight:700; line-height:1.25; } .stat .v small{ font-weight:400; color:var(--muted); font-size:9.3px; }
+.cred{ margin-top:8px; } .cred .lab{ color:var(--gold2); letter-spacing:.12em; font-size:9px; font-weight:700; text-transform:uppercase; margin-bottom:4px; }
+.cred li{ list-style:none; padding-left:14px; position:relative; margin:2.5px 0; }
+.cred li:before{ content:'▪'; position:absolute; left:0; color:var(--green); }
+.tracks{ display:flex; flex-wrap:wrap; gap:3px 14px; }
+/* Two plans, side by side, in the colours the document already uses for them. [#80] */
+.planrow{ display:flex; gap:10px; margin:12px 0 4px; }
+.plan{ flex:1 1 50%; border:1px solid var(--line); border-radius:6px; padding:9px 11px 10px; }
+.plan.p1{ background:#f4f5f0; border-left:3px solid #5c6b3d; }
+.plan.p2{ background:#f3f1f7; border-left:3px solid #5b4a86; }
+.plan .ph{ font-size:9px; font-weight:700; letter-spacing:.13em; text-transform:uppercase; margin-bottom:6px; }
+.plan.p1 .ph{ color:#5c6b3d; } .plan.p2 .ph{ color:#5b4a86; }
+.pfigs{ display:flex; gap:5px; margin-bottom:6px; }
+.pfig{ flex:1 1 33%; background:#fff; border-radius:4px; padding:5px 7px; }
+.pfig .fk{ display:block; color:var(--muted); font-size:7.6px; letter-spacing:.08em; text-transform:uppercase; }
+.pfig .fv{ display:block; font-weight:700; font-size:11.5px; margin-top:1px; }
+.plan .pline{ font-size:9.3px; line-height:1.45; color:var(--ink); }
+.shared{ float:right; color:var(--muted); font-weight:400; letter-spacing:.04em; text-transform:none; font-size:8.6px; font-style:italic; }
+.diffbox{ margin-top:11px; border:1px solid #d8d2e4; background:#f7f5fb; border-radius:6px; padding:9px 12px 10px; }
+.diffbox .lab{ color:#5b4a86; letter-spacing:.11em; font-size:8.8px; font-weight:700; text-transform:uppercase; margin-bottom:4px; }
+.diffbox p{ margin:0; }
+.acti{ display:flex; gap:9px; margin:4px 0; font-size:9.4px; line-height:1.45; }
+.acti .actk{ flex:0 0 66px; font-weight:700; color:var(--gold2); letter-spacing:.07em;
+             text-transform:uppercase; font-size:8.4px; padding-top:1px; }
+.keybox{ border-color:#cdbf94; background:#faf6ea; }
+.keybox .lab{ color:var(--gold2); }
+/* Requirements: subject | what the schools ask | what the plan aims at. [#82] */
+.reqhead{ display:flex; gap:10px; color:var(--muted); font-size:7.8px; letter-spacing:.1em;
+          text-transform:uppercase; font-weight:700; padding-bottom:3px; border-bottom:1px solid var(--line); }
+.reqrow{ display:flex; gap:10px; padding:3.5px 0; border-bottom:1px solid #edeae1; font-size:9.2px; line-height:1.38; }
+.reqrow.key{ background:#faf6ea; }
+.reqhead span:first-child, .rq1{ flex:0 0 86px; font-weight:700; }
+.reqhead span:nth-child(2), .rq2{ flex:1 1 46%; }
+.reqhead span:nth-child(3), .rq3{ flex:1 1 40%; color:var(--muted); }
+.rq2 em{ display:block; color:var(--muted); font-size:8.2px; font-style:normal; margin-top:1px; }
+/* Decisions: a when-column and a body-column, so the moments line up down the page. */
+.cdec{ display:flex; gap:11px; padding:4px 0; border-top:1px solid var(--line); }
+.cdec:first-of-type{ border-top:0; }
+.cdw{ color:var(--gold2); font-size:8.2px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; min-width:104px; padding-top:2px; }
+.cdhd{ font-weight:700; margin-bottom:1px; }
+.cdk{ margin-top:3px; font-size:9.1px; color:var(--muted); }
+.cdk span{ color:var(--gold2); letter-spacing:.09em; text-transform:uppercase; font-size:8px; font-weight:700; margin-right:5px; }
+.cblk{ margin-top:11px; border-top:1px solid var(--line); padding-top:7px; }
+.cblk .lab{ color:var(--gold2); letter-spacing:.12em; font-size:9px; font-weight:700; text-transform:uppercase; margin-bottom:5px; }
+.trk{ flex:1 1 46%; font-size:9.6px; display:flex; gap:6px; }
+.trk .tk{ color:var(--muted); min-width:74px; letter-spacing:.04em; text-transform:uppercase; font-size:8.6px; padding-top:1px; }
+.reachrow{ display:flex; gap:16px; margin-top:8px; font-size:10px; }
+.oddsrow{ display:flex; gap:22px; margin-top:10px; border-top:1px solid var(--line); padding-top:8px; }
+.oddswide{ margin-top:14px; }
+/* Four tiers by published admit rate. [#88] */
+.tierwrap{ margin-top:14px; border-top:1px solid var(--line); padding-top:9px; }
+.tierlab{ color:var(--gold2); letter-spacing:.12em; font-size:9px; font-weight:700; text-transform:uppercase; margin-bottom:6px; }
+.tierrow{ display:flex; gap:7px; }
+.tier{ flex:1 1 25%; min-width:0; border:1px solid var(--line); border-radius:6px; padding:7px 8px 8px; background:#f4f5f0; }
+.tier.empty{ background:transparent; border-style:dashed; }
+.tier .tn{ font-size:8.4px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#3a463a; }
+.tier .tr{ font-size:8.6px; color:var(--gold2); font-style:italic; margin-bottom:5px; }
+.tchip{ background:#fff; border:1px solid var(--line); border-radius:4px; padding:3px 6px; margin:3px 0;
+        font-size:8.8px; display:flex; justify-content:space-between; gap:5px; align-items:baseline; }
+.tchip em{ color:var(--muted); font-style:normal; font-size:8px; white-space:nowrap; }
+.tempty{ font-size:8.6px; color:var(--muted); font-style:italic; padding:6px 0 2px; line-height:1.4; }
+.tiernote{ margin-top:7px; font-size:8.8px; line-height:1.5; color:var(--muted); border-left:2px solid var(--line); padding-left:9px; }
+/* Two cards on one page. [#81] */
+.twocards{ display:flex; gap:11px; margin-top:12px; align-items:stretch; }
+.mcard{ flex:1 1 50%; min-width:0; border:1px solid var(--line); border-radius:7px;
+        background:var(--card); }
+.mbar{ height:4px; border-radius:6px 6px 0 0; }
+.m1 .mbar{ background:#5c6b3d; } .m2 .mbar{ background:#5b4a86; }
+.mbody{ padding:10px 12px 12px; }
+.mlabel{ font-size:8.2px; font-weight:700; letter-spacing:.11em; text-transform:uppercase; }
+.m1 .mlabel{ color:#5c6b3d; } .m2 .mlabel{ color:#5b4a86; }
+.mtitle{ font-size:13px; line-height:1.24; margin:4px 0 7px; }
+.mstats{ display:flex; flex-wrap:wrap; gap:4px; }
+.mstat{ flex:1 1 0; min-width:calc(50% - 2px); max-width:calc(50% - 2px); box-sizing:border-box;
+        border:1px solid var(--line); border-radius:4px; padding:4px 7px 5px; background:#fff; }
+.mstat .k{ color:var(--muted); font-size:7.4px; letter-spacing:.08em; text-transform:uppercase; }
+.mstat .v{ font-weight:700; font-size:11.5px; line-height:1.2; margin-top:1px; }
+.mstat .sb{ color:var(--muted); font-size:7.8px; line-height:1.3; margin-top:1px; }
+.mcred{ margin-top:9px; }
+.mcred .lab, .mtake .lab{ color:var(--gold2); letter-spacing:.11em; font-size:8.2px; font-weight:700; text-transform:uppercase; margin-bottom:4px; }
+.mcred ul{ margin:0; padding:0; }
+.mcred li{ list-style:none; padding-left:11px; position:relative; margin:3.5px 0; font-size:9.2px; line-height:1.42; }
+.mcred li:before{ content:'▪'; position:absolute; left:0; color:var(--green); }
+.mtake{ margin-top:10px; background:#232a20; border-radius:5px; padding:7px 9px 8px; }
+.mtake p{ margin:0; color:#eae6db; font-style:italic; font-size:9.2px; line-height:1.45; }
+.oddsrow > div{ flex:1 1 50%; }
+.ot{ font-size:9.6px; margin:2.5px 0; line-height:1.4; }
+.oddsrow .lab{ color:var(--gold2); letter-spacing:.12em; font-size:9px; font-weight:700; text-transform:uppercase; margin-bottom:4px; }
+.ot .otn{ font-weight:700; color:#3a463a; }
+.ot .otr{ color:var(--gold2); font-weight:700; }
+.ot .otc{ color:var(--ink); }
+.reachrow .lab{ letter-spacing:.1em; font-size:8.5px; font-weight:700; text-transform:uppercase; color:var(--muted); }
+
+/* tier bands */
+.bands{ display:flex; gap:10px; margin:8px 0; }
+.band{ flex:1; border:1px solid var(--line); border-radius:6px; padding:10px; }
+.band .bh{ font-weight:700; letter-spacing:.08em; font-size:9.5px; text-transform:uppercase; color:#3a463a; }
+.band .br{ color:var(--muted); font-style:italic; font-size:10px; margin-bottom:6px; }
+.pill{ border:1px solid var(--line); border-radius:4px; padding:4px 7px; margin:4px 0; font-size:10px; background:#fff; }
+.pill.likely{ background:var(--greenbg); border-color:#cdd8b6; }
+
+/* course targets */
+.ct{ display:flex; gap:14px; margin:10px 0; }
+.ct .c{ flex:1; border-radius:6px; padding:12px 14px; }
+.ct .c.t{ background:#eef1e4; border-top:4px solid var(--green); }
+.ct .c.s{ background:#eee9f4; border-top:4px solid var(--purple); }
+.ct .c .k{ letter-spacing:.12em; font-size:9px; font-weight:700; text-transform:uppercase; color:var(--muted); }
+.ct .c .g{ font-size:26px; font-weight:700; margin:2px 0 6px; }
+table{ width:100%; border-collapse:collapse; margin-top:8px; }
+th,td{ text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); font-size:10px; vertical-align:top; }
+th{ color:#3a463a; letter-spacing:.06em; font-size:9px; text-transform:uppercase; }
+td.tg{ color:var(--green); } td.st{ color:var(--purple); }
+
+/* roadmap */
+.grow.stretchgoal{ border-left:3px solid var(--purple); padding-left:9px; background:rgba(91,74,134,.045); }
+.trackpill{ font-size:7.5px; letter-spacing:.1em; text-transform:uppercase; padding:1px 5px;
+  border-radius:8px; margin-left:6px; vertical-align:2px; }
+.trackpill.s{ background:var(--purplebg); color:var(--purple); }
+.why{ font-size:9.5px; color:var(--muted); font-style:italic; margin:1px 0 3px; }
+.stages{ display:flex; gap:12px; margin:10px 0; }
+.stage{ flex:1; border:1px solid var(--line); border-top:3px solid var(--gold); border-radius:5px; padding:10px 12px; }
+.stage.g{ border-top-color:var(--green); } .stage.p{ border-top-color:var(--purple); }
+.stage .k{ letter-spacing:.12em; font-size:8.5px; font-weight:700; text-transform:uppercase; color:var(--muted); }
+.stage h4{ margin:2px 0 4px; font-size:15px; } .stage.g h4{ color:var(--green); } .stage.p h4{ color:var(--purple); }
+.gradebar{ background:var(--ink); color:#efeadc; border-radius:6px 6px 0 0; padding:9px 14px; display:flex; justify-content:space-between; margin-top:14px; }
+.gradebar .g{ font-family:'Playfair Display',serif; font-size:17px; font-weight:700; }
+.gradebar .yrs{ color:#b7bda9; font-size:9px; letter-spacing:.1em; }
+.gradebar .tag{ color:var(--gold); font-style:italic; font-size:12px; }
+.gwrap{ border:1px solid var(--line); border-top:none; border-radius:0 0 6px 6px; padding:10px 14px; margin-bottom:10px; }
+.grow{ margin:7px 0; } .grow .t{ font-weight:700; padding-left:14px; position:relative; }
+.grow .t:before{ content:'■'; position:absolute; left:0; font-size:9px; }
+.grow .task{ display:flex; gap:8px; margin:3px 0 3px 14px; }
+.termpill{ background:var(--tan); color:#5a5030; border-radius:3px; padding:2px 7px; font-size:8.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; white-space:nowrap; height:fit-content; }
+/* current year: the semester is the container, named once */
+.termblock{ margin:9px 0 2px; }
+.termblock + .termblock{ border-top:1px solid var(--line); padding-top:8px; }
+.termhead{ display:flex; align-items:baseline; gap:8px; margin-bottom:5px; }
+.termhead .tname{ font-size:14px; font-weight:700; color:#182117; }
+.termhead .tspan{ color:var(--muted); letter-spacing:.12em; font-size:8.5px; text-transform:uppercase; }
+.termhead .ttag{ margin-left:auto; color:var(--gold2); font-style:italic; font-size:10.5px; }
+.catchip{ font-size:7.5px; letter-spacing:.1em; text-transform:uppercase; padding:1px 6px; border-radius:3px;
+  margin-right:7px; vertical-align:1px; background:#e6e3d6; color:#4b4a3a; }
+.catchip.debate{ background:var(--purplebg); color:var(--purple); }
+.catchip.venture{ background:#f3e9cf; color:#8a6a1c; }
+.catchip.service{ background:var(--greenbg); color:var(--green); }
+.catchip.academics{ background:#e2e5dd; color:#3a463a; }
+.catchip.summer{ background:#f6ecd8; color:#96762a; }
+.catchip.schedule{ background:#eceadf; color:#6a6450; }
+.catchip.other{ background:#eceadf; color:#6a6450; }
+/* profile: where each existing thread can reach */
+.threads{ border:1px solid var(--line); border-radius:5px; padding:11px 14px; margin:12px 0 4px; background:var(--card); }
+.thlab{ color:var(--gold2); letter-spacing:.14em; font-size:9.5px; font-weight:700; text-transform:uppercase; margin-bottom:6px; }
+.throw{ display:flex; align-items:baseline; gap:9px; margin:5px 0 0; }
+.throw .thname{ font-weight:700; }
+.throw .threach{ color:var(--muted); font-size:10px; }
+.throw .thdisp{ margin-left:auto; color:var(--green); font-style:italic; font-size:10px; white-space:nowrap; }
+.thnote{ font-size:9.5px; color:var(--muted); font-style:italic; margin:0 0 3px 46px; }
+.box.ask{ background:#efeaf4; border-left-color:var(--purple); }
+.box.ask .lab{ color:var(--purple); }
+.grow.again .t{ font-weight:600; color:#41493d; }
+.growbare{ margin:3px 0 3px 14px; padding-left:11px; position:relative; }
+.growbare:before{ content:'\00b7'; position:absolute; left:0; color:var(--gold2); font-weight:700; }
+.growbare.stretchgoal{ border-left:3px solid var(--purple); padding-left:9px; margin-left:11px; background:rgba(91,74,134,.045); }
+.contpill{ font-size:7.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--muted);
+  border:1px solid var(--line); border-radius:8px; padding:1px 6px; margin-left:7px; vertical-align:2px; }
+.subtask{ margin:2px 0 2px 16px; padding-left:11px; position:relative; }
+.subtask:before{ content:'·'; position:absolute; left:0; color:var(--gold2); font-weight:700; }
+
+/* recommendation cards */
+.reccard{ border:1px solid var(--line); border-left:4px solid var(--gold); border-radius:5px; background:var(--card); padding:9px 12px; margin:7px 0; }
+.catpill{ background:var(--ink); color:#efeadc; border-radius:3px; padding:2px 7px; font-size:8.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+.catpill.debate{ background:var(--purple); } .catpill.venture{ background:var(--gold); color:#241d07; }
+.catpill.service{ background:var(--green); } .catpill.academics{ background:#3a463a; }
+.actpill{ background:#e7e0cb; color:#6a5a2a; border-radius:3px; padding:2px 7px; font-size:8px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+.reccard h4{ display:inline; font-size:13.5px; margin:0 5px; }
+.planby{ color:var(--gold2); font-weight:700; font-size:10px; margin-top:6px; }
+
+/* parent actions */
+.pa{ display:flex; gap:12px; margin:10px 0; }
+.pa .n{ width:22px; height:22px; border:1.5px solid var(--gold); border-radius:50%; color:var(--gold2); font-weight:700;
+  text-align:center; line-height:19px; font-size:11px; flex:none; }
+.pa .when{ color:var(--gold2); letter-spacing:.1em; font-size:9px; font-weight:700; text-transform:uppercase; }
+</style>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="brand">◉ COMPASS</div><div class="logo">✦</div>
+  <div class="title serif">Strategic<br>Plan.</div>
+  <div class="sub">Neerav U. · Grade 8th grade · Prepared Prepared for Priyanka U.</div>
+  <div class="foot"><span>CONFIDENTIAL · SIERRAMONT MIDDLE SCHOOL, SAN JOSE, CA FAMILY</span><span>GENERATED FROM INTAKE · SEPTEMBER 24, 2026</span></div>
+</div>
+
+
+
+
+
+
+<!-- 01 PROFILE -->
+<div class="page">
+  <div class="rhead">Compass · Strategic Plan · Neerav U. · Grade 8th grade</div>
+  <div class="slabel">01 · Profile</div>
+  <h2 class="sec">Neerav at a Glance</h2>
+  <div class="lead">Neerav U., eighth grade at Sierramont Middle School, San Jose. What he does, and how he works.</div>
+  
+    <div class="subhead serif">The business he built himself</div>
+    <div class="thesis">He runs a Pokemon-card business with customers, and it has a goal attached.</div>
+    <p>He buys and sells Pokemon cards outside school, about four to six hours a week, and it makes a few thousand dollars a year. The goal his mother describes is to find cards that can be kept and become valuable enough to pay for a semester of college tuition, $5,000 to $10,000. Before this he ran an in-game Roblox business selling to other kids. Asked what he loves, he answers running my business and debating ideas.</p>
+  
+    <div class="subhead serif">What else he does</div>
+    <div class="thesis">He competes across several areas, and tends to place when he does.</div>
+    <p>He has won medals in chess tournaments. He was a top-five finalist with a medal at a district-level cooking competition. He has played ping-pong for one to two years, one to three hours a week, and would like to try tennis instead. He performed in two elementary-school musicals. His interests run wider: writing and journalism, music, debate, business, languages and culture, history and politics, philosophy. He travelled to India, including the Ladakh mountains, river rafting and zip-lining, and wrote about that trip, and to France and on an African safari.</p>
+  
+    <div class="subhead serif">How he works best</div>
+    <div class="thesis">He makes friends easily and people seek him out, which is where being able to lead a group starts.</div>
+    <p>He gets along with people and works well in a group. His mother names Leader among the words that describe him. He learns by listening and discussion. He thinks by debating: he takes apart something in politics or business, asks what if we did this versus that, and compares the outcomes. He works best when the concept is taught before it is tested, when instructions are clear, when there are milestones, and when a mistake has a route back, such as a retake.</p>
+  
+    <div class="subhead serif">What is in his favour, and what shapes the choices</div>
+    <div class="thesis">A university-educated household, a first-generation American background, and money he already earns himself.</div>
+    <p>His mother holds a Columbia University degree and his stepfather is a scientist at Stanford — an academic household, though neither is a tie to any of the six schools on his list. He is a first-generation American from an immigrant family; because his mother holds a college degree, that is background rather than a first-in-family-to-college advantage. He lives in San Jose, inside the University of California's home state, and in his own words he is open to all cultures and foods. Two things shape the choices: a focused set of commitments he can sustain well, and in-person activity close to home, with autumn dates preferred because spring brings a long allergy season his mother describes as debilitating.</p>
+  
+  
+  <div class="box"><div class="lab">Flags to confirm</div><p class="small">A few things to confirm with Neerav: the six colleges listed here, and roughly how many hours a week chess, cooking and theatre take. It would also help to know which organisation ran the chess tournaments and the district cooking competition, since that decides what those results can be entered into later.</p></div>
+</div>
+
+<!-- 02-03 THE TWO PLANS, SIDE BY SIDE -->
+
+<div class="page">
+  <div class="rhead">Compass · Strategic Plan · Neerav U. · Grade 8th grade</div>
+  <div class="slabel">02 · The Two Plans</div>
+  <h2 class="sec">Target and Stretch.</h2>
+  <div class="lead">Two versions of the same five years. The Stretch aims at the top of the same bands rather than at new ones, and asks more of his activities.</div>
+  <div class="twocards">
+    
+<div class="mcard m1">
+  <div class="mbar"></div>
+  <div class="mbody">
+    <div class="mlabel">TARGET PLAN · BUSINESS AND PUBLIC AFFAIRS · NEERAV U., GRADE 8</div>
+    <h3 class="serif mtitle">The card trader who took his business in front of judges.</h3>
+    <div class="mstats">
+      <div class="mstat"><div class="k">GPA</div><div class="v">3.8+</div><div class="sb">entering target, not a result</div></div><div class="mstat"><div class="k">Entrance tests</div><div class="v">1500+ / 34+</div><div class="sb">one sitting, grade 11</div></div><div class="mstat"><div class="k">Rigour</div><div class="v">7 to 13</div><div class="sb">advanced courses admits carried</div></div><div class="mstat"><div class="k">Math ceiling</div><div class="v">Calculus by grade 12</div><div class="sb">sequence kept open from grade 9</div></div>
+    </div>
+    <div class="mcred"><div class="lab">What his application will show</div><ul>
+      <li><strong>A card and collectibles business he has run for five years.</strong> Sold at public events and judged at his school's business club, with a paid weekend job at a card shop behind it from tenth grade and records going back to eighth.</li><li><strong>Four years on his school's debate team, competing past his own school by eleventh grade.</strong> Joined in ninth in the formats his squad runs, and aims at a placing result in his last year.</li><li><strong>Five unbroken years with one service organisation, holding a standing role in the last two.</strong> Begun as a family in eighth grade, so by senior year someone there can describe what he does.</li><li><strong>Chess, cooking, a racquet sport and theatre, carried the whole way through.</strong> Kept because he enjoys them. Nothing in this plan asks them to become something else.</li></ul></div>
+    <div class="mtake"><div class="lab">Takeaway</div><p>By senior year he applies as a student who built a real business, argued four years on a debate team, and stayed five years with one cause.</p></div>
+  </div>
+</div>
+
+    
+<div class="mcard m2">
+  <div class="mbar"></div>
+  <div class="mbody">
+    <div class="mlabel">STRETCH PLAN · BUSINESS AND PUBLIC AFFAIRS · NEERAV U., GRADE 8</div>
+    <h3 class="serif mtitle">The same trader, advanced past his own school.</h3>
+    <div class="mstats">
+      <div class="mstat"><div class="k">GPA</div><div class="v">3.9 to 4.0</div><div class="sb">the top of the same band</div></div><div class="mstat"><div class="k">Entrance tests</div><div class="v">1550+ / 35+</div><div class="sb">the top of the same band</div></div><div class="mstat"><div class="k">Rigour</div><div class="v">11 to 13</div><div class="sb">the upper end of what admits carried</div></div><div class="mstat"><div class="k">Math ceiling</div><div class="v">Calculus by grade 12</div><div class="sb">unchanged from Target</div></div>
+    </div>
+    <div class="mcred"><div class="lab">What his application will show</div><ul>
+      <li><strong>The same business, advanced past the school round toward the state conference.</strong> He does not only enter the selling event; he advances through its qualifying levels.</li><li><strong>Debate above his own school from eleventh grade, aiming to place.</strong> Begun a year earlier, with one beginners' round in eighth grade and the squad coaching him.</li><li><strong>A placing result in twelfth grade, in the strongest competition open to him.</strong> Entered in the event he does best, at whatever level he has actually reached by then.</li><li><strong>A standing responsibility at the shop — pricing or the counter, rather than shifts.</strong> Asked for after a term, so a manager can describe a role rather than confirm attendance.</li></ul></div>
+    <div class="mtake"><div class="lab">Takeaway</div><p>The same three things, each carried one level higher — past his own school, with a result to show for it.</p></div>
+  </div>
+</div>
+
+  </div>
+  
+  
+  <div class="tierwrap">
+    <div class="lab tierlab">Where his six schools sit — and the two tiers with nothing in them</div>
+    <div class="tierrow">
+      
+      <div class="tier ">
+        <div class="tn">Far reach</div><div class="tr">under 15% admitted</div>
+        
+          <div class="tchip"><span>Pennsylvania</span><em>4.9%</em></div><div class="tchip"><span>New York University</span><em>7.7%</em></div><div class="tchip"><span>UCLA</span><em>9.0%</em></div><div class="tchip"><span>Berkeley</span><em>11.4%</em></div><div class="tchip"><span>Georgetown</span><em>12.2%</em></div>
+        
+      </div>
+      
+      <div class="tier ">
+        <div class="tn">Reach</div><div class="tr">15 to 35%</div>
+        
+          <div class="tchip"><span>Michigan</span><em>15.6%</em></div>
+        
+      </div>
+      
+      <div class="tier empty">
+        <div class="tn">Target</div><div class="tr">35 to 60%</div>
+        <div class="tempty">Nothing on his list. Worth adding two or three.</div>
+      </div>
+      
+      <div class="tier empty">
+        <div class="tn">Likely</div><div class="tr">over 60%</div>
+        <div class="tempty">Nothing on his list. Worth adding two.</div>
+      </div>
+      
+    </div>
+    <div class="tiernote">These are each school's own published admit rate for its most recent class — how selective the school is, not Neerav's chance of getting in. We do not print a personal percentage, because nothing we hold can honestly produce one for an eighth grader. The tiers are the same on both plans: a school's selectivity does not move because a student works harder. What the Stretch changes is what he has to show, not the odds he faces. The finding here is the two empty columns — five of these six schools admit under one applicant in eight, and there is plenty of time to add schools where the answer is more likely to be yes.</div>
+  </div>
+  
+</div>
+
+<!-- 03 COURSES AND GRADES -->
+
+<div class="page">
+  <div class="rhead">Compass · Strategic Plan · Neerav U. · Grade 8th grade</div>
+  <div class="slabel">03 · Courses and Grades</div>
+  <h2 class="sec">The courses to take.</h2>
+  <div class="lead">What his six schools ask for, and the two choices that decide most of it.</div>
+
+  
+  <div class="cblk"><div class="lab">What his six schools ask for<span class="shared">each school's own admissions pages, Sept 2026</span></div>
+    <div class="reqhead"><span>Subject</span><span>What the schools ask for</span><span>What this plan aims at</span></div>
+    
+    <div class="reqrow ">
+      <span class="rq1">English</span>
+      <span class="rq2">4 years<em>UC, Georgetown, NYU, Michigan</em></span>
+      <span class="rq3">Strongest placement he holds.</span>
+    </div>
+    
+    <div class="reqrow key">
+      <span class="rq1">Math</span>
+      <span class="rq2">4 years, through calculus<em>UC recommends the 4th; Wharton, Stern and Georgetown business all name calculus</em></span>
+      <span class="rq3">Advanced sequence from grade 9, calculus by grade 12.</span>
+    </div>
+    
+    <div class="reqrow ">
+      <span class="rq1">Science</span>
+      <span class="rq2">2 years with labs, 3 is better<em>UC requires 2, recommends 3; NYU 3 to 4</em></span>
+      <span class="rq3">Set each year against what his school offers.</span>
+    </div>
+    
+    <div class="reqrow ">
+      <span class="rq1">World language</span>
+      <span class="rq2">2 years of ONE language<em>UC requires it; NYU wants 3 to 4</em></span>
+      <span class="rq3">French from grade 9, as far as it goes.</span>
+    </div>
+    
+    <div class="reqrow ">
+      <span class="rq1">History</span>
+      <span class="rq2">2 years<em>UC requires it; Michigan wants 3</em></span>
+      <span class="rq3">Covered by government and economics.</span>
+    </div>
+    
+    <div class="reqrow key">
+      <span class="rq1">Arts</span>
+      <span class="rq2">1 full year — required<em>UC A-G area F</em></span>
+      <span class="rq3">His theatre may already count.</span>
+    </div>
+    
+  </div>
+  
+
+  
+  
+  <div class="diffbox keybox">
+    <div class="lab">Two things to act on, and one of them is free</div>
+    
+    <div class="acti"><span class="actk">Calculus</span><span>The course that matters most — Wharton, Stern and Georgetown's business school all name it. Whether he reaches it by grade 12 is decided by his grade-9 math placement, which is decided this year.</span></div>
+    
+    <div class="acti"><span class="actk">Arts</span><span>Berkeley and UCLA require a full year of it, and Neerav already does theatre. If his high school's course is on the approved list, something he does for fun meets a hard requirement.</span></div>
+    
+  </div>
+  
+
+  
+  <div class="diffbox">
+    <div class="lab">On the Stretch plan</div>
+    <p class="small">Same subjects, same years. The Stretch aims higher inside them — the top of the GPA band, the upper end of the course load — and adds no new subject.</p>
+  </div>
+  
+
+  
+  <div class="cblk"><div class="lab">What to do, and when</div>
+    
+    <div class="cdec">
+      <div class="cdw">This spring</div>
+      <div><div class="cdhd">Ask what grade 9 math placement is open to him</div>
+        <div class="small">Which placement keeps the advanced sequence available, and what he needs this year to be offered it.</div>
+        <div class="cdk"><span>Keeps open</span> Calculus by grade 12.</div>
+      </div>
+    </div>
+    
+    <div class="cdec">
+      <div class="cdw">Grade 9 registration</div>
+      <div><div class="cdhd">Start French and stay with it</div>
+        <div class="small">Two years of one language is required at Berkeley and UCLA. How far he gets matters more than how many he tries.</div>
+        <div class="cdk"><span>Keeps open</span> A requirement met, and a language worth writing down.</div>
+      </div>
+    </div>
+    
+    <div class="cdec">
+      <div class="cdw">Grade 9 registration</div>
+      <div><div class="cdhd">Check the theatre course is on the approved list</div>
+        <div class="small">One question to the counsellor. UC credit depends on the specific course, not the subject.</div>
+        <div class="cdk"><span>Keeps open</span> An arts requirement he may already be meeting.</div>
+      </div>
+    </div>
+    
+    <div class="cdec">
+      <div class="cdw">Every year after</div>
+      <div><div class="cdhd">One harder course a year, never more</div>
+        <div class="small">The transcript these schools describe is a load that rose and grades that held. Take the hardest courses he can still hold a strong grade in — in that order.</div>
+        <div class="cdk"><span>Keeps open</span> Room to sit the entrance tests in grade 11 without a term falling over.</div>
+      </div>
+    </div>
+    
+  </div>
+  
+
+  
+</div>
+
+<!-- 05 ROADMAP -->
+<div class="page">
+  <div class="rhead">Compass · Strategic Plan · Neerav U. · Grade 8th grade</div>
+  <div class="slabel">04 · The Roadmap</div>
+  <h2 class="sec">The Five-Year Roadmap</h2>
+  <div class="lead">Grade 8 through grade 12, grouped by term so a single block answers what happens this fall. Later years stay at goals and tasks on purpose: named programmes, prices and dates come nearer the time, when they can be confirmed.</div>
+  <div class="stages">
+    <div class="stage g"><div class="k">Grades 8-9</div><h4 class="serif">Explore</h4><p class="small">Sample several formats and find what is genuinely his.</p></div><div class="stage p"><div class="k">Grade 10</div><h4 class="serif">Solidify</h4><p class="small">Choose the two or three he carries; let the rest go.</p></div><div class="stage "><div class="k">Grades 11-12</div><h4 class="serif">Specialize</h4><p class="small">Nothing new. Go deeper, hold a real role, produce a result.</p></div>
+  </div>
+  
+    <div class="gradebar"><span><span class="g">8</span> <span class="yrs">2026-27</span></span><span class="tag">Explore</span></div>
+    <div class="gwrap">
+      
+        
+        
+        
+          <div class="termblock">
+            <div class="termhead"><span class="tname serif">Fall 2026</span><span class="tspan">Aug-Dec</span><span class="ttag">The term that sets up high school</span></div>
+            
+              
+              
+              
+              
+              
+              
+              
+              <div class="grow ">
+                <div class="t"><span class="catchip academics">ACADEMICS</span>Find his weakest subjects and get them up before high school starts.</div>
+                <div class="subtask">Ask the school for the recent report card and identify the weakest or underperforming subjects. Arrange regular help for the weakest one, so he starts high school steady in it.</div>
+              </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+              <div class="grow ">
+                <div class="t"><span class="catchip venture">VENTURE</span>Take the card business to a local fair with real customers.</div>
+                <div class="subtask">Register for a business fair near home, take a booth, and sell to customers outside the family, so he practises selling to people who do not already know him.</div>
+              </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+              <div class="grow ">
+                <div class="t"><span class="catchip debate">DEBATE</span>Try a few kinds of debate and see which suits him.</div>
+                <div class="subtask">Try the debate formats open to him, through school or a local club: parliamentary, Lincoln-Douglas, public forum, congress, mock trial and Model UN. They reward different people.</div>
+              </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+              <div class="grow ">
+                <div class="t"><span class="catchip service">SERVICE</span>Start volunteering as a family with one local organisation.</div>
+                <div class="subtask">Visit one or two local organisations that take families volunteering together, and commit to the one whose days and hours fit the week, so it can keep running for years.</div>
+              </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+              <div class="grow ">
+                <div class="t"><span class="catchip schedule">SCHEDULE</span>Keep the things he already enjoys running exactly as they are.</div>
+                <div class="subtask">Note which organisation ran the chess tournaments he has medals from, and roughly how many hours a week chess takes, so it can be placed properly if he wants to take it further.</div>
+              </div>
+              
+            
+          </div>
+        
+          <div class="termblock">
+            <div class="termhead"><span class="tname serif">Spring 2027</span><span class="tspan">Jan-May</span><span class="ttag">Kept lighter on purpose</span></div>
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip academics">ACADEMICS</span><span>Check that subject against the class tests during the term rather than waiting for the next report card, so a slip is caught while there is time to act.</span>
+                </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip venture">VENTURE</span><span>Sit down after the fair with what it earned and what he enjoyed, and settle then whether a second one is worth doing.</span>
+                </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip debate">DEBATE</span><span>Watch a local tournament in person in whichever format he liked best. The spring term is kept lighter on purpose, so watching rather than entering suits it.</span>
+                </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip schedule">SCHEDULE</span><span>Ask him whether he still cooks and competes, how much of his week it takes, and whether he would want it entered through school later. His answer decides that.</span>
+                </div>
+              
+            
+          </div>
+        
+          <div class="termblock">
+            <div class="termhead"><span class="tname serif">Summer 2027</span><span class="tspan">Jun-Aug</span><span class="ttag">Light on purpose, before ninth grade</span></div>
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip academics">ACADEMICS</span><span>Take the strongest ninth-grade math and English placement he can carry well, so the advanced sequences stay open to him in the years that are on the transcript.</span>
+                </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip venture">VENTURE</span><span>Keep the trading going over the summer at the hours he already gives it, and look at what it earned together before school starts again.</span>
+                </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip debate">DEBATE</span><span>Enter one beginners' round or practice tournament in the format he liked best, where a first attempt is expected to be a first attempt.</span><span class="trackpill s">stretch</span>
+                </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip service">SERVICE</span><span>Take a longer stretch with the same organisation over the summer, while the school week is not competing for the hours.</span>
+                </div>
+              
+            
+          </div>
+        
+          <div class="termblock">
+            <div class="termhead"><span class="tname serif">All year</span><span class="tspan">Aug-Jun</span><span class="ttag">Runs across the whole year</span></div>
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip academics">ACADEMICS</span><span>Set a grade average in the 3.8-and-above band as the entering target for high school, and check the class grades against it at the end of each term.</span>
+                </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip venture">VENTURE</span><span>Start a simple record of what the business buys, sells and earns, and update it on the first of each month, so he can see how a full year actually went.</span><span class="trackpill s">stretch</span>
+                </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip service">SERVICE</span><span>Go together on the agreed days each month, and check at the end of each term that the rhythm still fits alongside school.</span>
+                </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip schedule">SCHEDULE</span><span>Let him try tennis alongside the ping-pong and keep whichever he prefers. Theatre and the racquet play stay for enjoyment, with nothing riding on either.</span>
+                </div>
+              
+            
+          </div>
+        
+      
+    </div>
+  
+    <div class="gradebar"><span><span class="g">9</span> <span class="yrs">2027-28</span></span><span class="tag">Explore</span></div>
+    <div class="gwrap">
+      
+        
+        
+        
+          <div class="termblock">
+            <div class="termhead"><span class="tname serif">Fall 2027</span><span class="tspan">Aug-Dec</span><span class="ttag">First term on the transcript</span></div>
+            
+              
+              
+              
+              
+              
+              
+              
+              <div class="grow ">
+                <div class="t"><span class="catchip academics">ACADEMICS</span>Get into the strongest classes he can do well in as a freshman.</div>
+                <div class="subtask">At registration, take the most demanding courses he has the foundation for, one step up at a time rather than in a jump. This is the first year on the transcript.</div>
+              </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+              <div class="grow ">
+                <div class="t"><span class="catchip debate">DEBATE</span>Join the school debate team and try the formats it competes in.</div>
+                <div class="subtask">Join the school team and take whichever formats the squad runs, so he is still comparing them rather than committing to one this year.</div>
+              </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+              <div class="grow ">
+                <div class="t"><span class="catchip venture">VENTURE</span>Join the business club at his new school and enter a selling competition.</div>
+                <div class="subtask">Join the business club at his school and take the selling or entrepreneurship event that lets him present a product of his own choosing.</div>
+              </div>
+              
+            
+          </div>
+        
+          <div class="termblock">
+            <div class="termhead"><span class="tname serif">Spring 2028</span><span class="tspan">Jan-May</span><span class="ttag">First competitive season</span></div>
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip academics">ACADEMICS</span><span>Check each core grade against the term tests rather than the report card, and add help in any course that slips, so nothing carries into the next year.</span>
+                </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip debate">DEBATE</span><span>Enter the rounds his team already competes in, treating the first season as learning the format rather than as a season that has to produce a result.</span>
+                </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip venture">VENTURE</span><span>Enter the club's competition at school level with the card business as the product, so the selling is judged by people who are not family.</span>
+                </div>
+              
+            
+          </div>
+        
+          <div class="termblock">
+            <div class="termhead"><span class="tname serif">Summer 2028</span><span class="tspan">Jun-Aug</span><span class="ttag">Build the base for a second season</span></div>
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip academics">ACADEMICS</span><span>Line up next year's course choices with the counsellor before the summer ends, so any honours placement he wants is settled early rather than argued for late.</span>
+                </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip debate">DEBATE</span><span>Use a summer stretch on debate practice with the squad or a local club, so the second season starts from a stronger base than the first.</span>
+                </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip venture">VENTURE</span><span>Keep the trading running through the summer and bring the year's record to the club, so real numbers sit behind the next entry.</span>
+                </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+              <div class="grow ">
+                <div class="t"><span class="catchip service">SERVICE</span>Keep the family volunteering going with the same organisation.</div>
+                <div class="subtask">Take a longer stretch with the organisation over the summer, while the school week is not competing for the hours.</div>
+              </div>
+              
+            
+          </div>
+        
+          <div class="termblock">
+            <div class="termhead"><span class="tname serif">All year</span><span class="tspan">Aug-Jun</span><span class="ttag">Runs across the whole year</span></div>
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip service">SERVICE</span><span>Hold the same days each month with the organisation from last year, and check at each term's end that the rhythm still fits the school week.</span>
+                </div>
+              
+            
+          </div>
+        
+      
+    </div>
+  
+    <div class="gradebar"><span><span class="g">10</span> <span class="yrs">2028-29</span></span><span class="tag">Solidify</span></div>
+    <div class="gwrap">
+      
+        
+        
+        
+          <div class="termblock">
+            <div class="termhead"><span class="tname serif">Fall 2028</span><span class="tspan">Aug-Dec</span><span class="ttag">The year the set gets chosen</span></div>
+            
+              
+              
+              
+              
+              
+              
+              
+              <div class="grow ">
+                <div class="t"><span class="catchip academics">ACADEMICS</span>Take the hardest classes he can still get strong grades in.</div>
+                <div class="subtask">Set the course load at the most demanding he can carry well, and arrange regular help early rather than after a grade has already slipped.</div>
+              </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+              <div class="grow ">
+                <div class="t"><span class="catchip schedule">SCHEDULE</span>Settle on the few activities he carries into the last two years.</div>
+                <div class="subtask">Run another debate season with the school team, and treat how this one goes as the main input to what he keeps and what he lets go.</div>
+              </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+              <div class="grow ">
+                <div class="t"><span class="catchip venture">VENTURE</span>Get a paid weekend job at a shop that sells cards or games.</div>
+                <div class="subtask">Apply to card, game and collectibles shops near home for weekend hours, leading with the trading he already does in that category.</div>
+              </div>
+              
+            
+          </div>
+        
+          <div class="termblock">
+            <div class="termhead"><span class="tname serif">Spring 2029</span><span class="tspan">Jan-May</span><span class="ttag">Choose, and let the rest go</span></div>
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip academics">ACADEMICS</span><span>Compare his load against what his own school offers, and raise it one course next year if grades hold. Michigan rates rigour and grades Very Important, activities only Considered.</span>
+                </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+              <div class="grow ">
+                <div class="t"><span class="catchip academics">ACADEMICS</span>Start preparing for the college entrance tests he takes next year.</div>
+                <div class="subtask">Sit a practice run of each of the two main entrance tests, then prepare for the one he scores better on rather than carrying both.</div>
+              </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip schedule">SCHEDULE</span><span>Sit down with what he enjoyed and what went well across the business, debate, chess and cooking, and settle on the two or three he carries.</span>
+                </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip venture">VENTURE</span><span>Once he has been there a term, ask the shop for a standing responsibility such as pricing or the counter, so the job is more than shifts.</span><span class="trackpill s">stretch</span>
+                </div>
+              
+            
+          </div>
+        
+          <div class="termblock">
+            <div class="termhead"><span class="tname serif">Summer 2029</span><span class="tspan">Jun-Aug</span><span class="ttag">The summer the job carries</span></div>
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip academics">ACADEMICS</span><span>Settle next year's registration before the summer ends, adding rigour one course at a time rather than all at once.</span>
+                </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip academics">ACADEMICS</span><span>Put steady preparation for the chosen test into the summer weeks, so junior year is not carrying the whole of it on top of coursework.</span>
+                </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip schedule">SCHEDULE</span><span>Tell the groups he is stepping back from, so the few he keeps get the full week. The racquet sport and theatre carry on for enjoyment.</span>
+                </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip venture">VENTURE</span><span>Take more hours at the shop over the summer, so a manager who has watched him work can speak to it later.</span>
+                </div>
+              
+            
+          </div>
+        
+      
+    </div>
+  
+    <div class="gradebar"><span><span class="g">11</span> <span class="yrs">2029-30</span></span><span class="tag">Specialize</span></div>
+    <div class="gwrap">
+      
+        
+        
+        
+          <div class="termblock">
+            <div class="termhead"><span class="tname serif">Fall 2029</span><span class="tspan">Aug-Dec</span><span class="ttag">The heaviest year, and the test</span></div>
+            
+              
+              
+              
+              
+              
+              
+              
+              <div class="grow ">
+                <div class="t"><span class="catchip academics">ACADEMICS</span>Carry the heaviest course load he can still do well in.</div>
+                <div class="subtask">Register for the most demanding load he has carried well so far, and keep the core subjects strongest rather than spreading the rigour thin.</div>
+              </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+              <div class="grow ">
+                <div class="t"><span class="catchip academics">ACADEMICS</span>Take the college entrance tests this year and be finished with them.</div>
+                <div class="subtask">Sit the test he prepared for in the autumn window, leaving room for one retake later in the year if he wants a second go.</div>
+              </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+              <div class="grow ">
+                <div class="t"><span class="catchip service">SERVICE</span>Take on a regular role at the group the family volunteers with.</div>
+                <div class="subtask">Ask the organisation for a standing responsibility he can hold, such as a shift, a team or a task of his own, now that he has been there for years.</div>
+              </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+              <div class="grow stretchgoal">
+                <div class="t"><span class="catchip debate">DEBATE</span>Compete past his own school in debate and aim to place.<span class="trackpill s">stretch</span></div>
+                <div class="subtask">Enter the qualifying rounds above school level in his strongest format, with the squad's coaching behind him rather than as a one-off entry.</div>
+              </div>
+              
+            
+          </div>
+        
+          <div class="termblock">
+            <div class="termhead"><span class="tname serif">Spring 2030</span><span class="tspan">Jan-May</span><span class="ttag">The term early readers see last</span></div>
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip academics">ACADEMICS</span><span>Protect the second-semester grades above everything else this term, because they are the last ones early-round readers see.</span>
+                </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip academics">ACADEMICS</span><span>Take the retake only if he wants a higher score, and stop there so the term stays on his courses.</span>
+                </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare stretchgoal">
+                  <span class="catchip debate">DEBATE</span><span>If he advances, take the next level up. If he does not, enter the same level again with what the first attempt taught him.</span>
+                </div>
+              
+            
+          </div>
+        
+          <div class="termblock">
+            <div class="termhead"><span class="tname serif">Summer 2030</span><span class="tspan">Jun-Aug</span><span class="ttag">Senior year set up before it starts</span></div>
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip academics">ACADEMICS</span><span>Line up the senior-year course list before the summer ends and keep it full, because a lighter final year is noticed.</span>
+                </div>
+              
+            
+          </div>
+        
+          <div class="termblock">
+            <div class="termhead"><span class="tname serif">All year</span><span class="tspan">Aug-Jun</span><span class="ttag">Runs across the whole year</span></div>
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip service">SERVICE</span><span>Hold the role through the year, and check at each term's end that it still fits alongside the course load.</span>
+                </div>
+              
+            
+          </div>
+        
+      
+    </div>
+  
+    <div class="gradebar"><span><span class="g">12</span> <span class="yrs">2030-31</span></span><span class="tag">Specialize</span></div>
+    <div class="gwrap">
+      
+        
+        
+        
+          <div class="termblock">
+            <div class="termhead"><span class="tname serif">Summer 2030</span><span class="tspan">Jun-Aug</span><span class="ttag">Before senior year starts</span></div>
+            
+              
+              
+              
+              
+              
+              
+              
+              <div class="grow ">
+                <div class="t"><span class="catchip academics">ACADEMICS</span>Build the application around the card business, debate and the volunteering.</div>
+                <div class="subtask">Over the summer before senior year, work out what the last three years say about him, and settle the story the application will tell.</div>
+              </div>
+              
+            
+          </div>
+        
+          <div class="termblock">
+            <div class="termhead"><span class="tname serif">Fall 2030</span><span class="tspan">Aug-Dec</span><span class="ttag">Curate, do not build</span></div>
+            
+              
+              
+              
+              
+              
+              
+              
+              <div class="grow ">
+                <div class="t"><span class="catchip academics">ACADEMICS</span>Keep grades strong in a full course load through senior year.</div>
+                <div class="subtask">Check the autumn grades at mid-term and act on any slip then, because first-term senior grades still reach the readers deciding the early rounds.</div>
+              </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip academics">ACADEMICS</span><span>Draft the personal statement early in the autumn, and order the activity and honours list by strength with the level each result reached.</span>
+                </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+              <div class="grow stretchgoal">
+                <div class="t"><span class="catchip debate">DEBATE</span>Aim for a placing result in his strongest competition this year.<span class="trackpill s">stretch</span></div>
+                <div class="subtask">Enter the strongest competition open to him in the event he does best, and aim to place rather than only to take part.</div>
+              </div>
+              
+            
+          </div>
+        
+          <div class="termblock">
+            <div class="termhead"><span class="tname serif">Spring 2031</span><span class="tspan">Jan-May</span><span class="ttag">Finish what was started</span></div>
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip academics">ACADEMICS</span><span>Finish the year in the courses he started, so the final transcript shows a full load rather than a year that eased off.</span>
+                </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare ">
+                  <span class="catchip academics">ACADEMICS</span><span>Finish the remaining applications and supplements, keeping to the same three parts of the story rather than adding anything new this late.</span>
+                </div>
+              
+            
+              
+              
+              
+              
+              
+              
+              
+                <div class="growbare stretchgoal">
+                  <span class="catchip debate">DEBATE</span><span>Put the result on the honours list with the level it reached, ordered against the others by strength.</span>
+                </div>
+              
+            
+          </div>
+        
+          <div class="termblock">
+            <div class="termhead"><span class="tname serif">All year</span><span class="tspan">Aug-Jun</span><span class="ttag">Runs across the whole year</span></div>
+            
+              
+              
+              
+              
+              
+              
+              
+              <div class="grow ">
+                <div class="t"><span class="catchip service">SERVICE</span>Stay with the same volunteering group through his last year.</div>
+                <div class="subtask">Hold the same days with the organisation through the year, and ask early whether someone there can write about the work he has done.</div>
+              </div>
+              
+            
+          </div>
+        
+      
+    </div>
+  
+</div>
+
+
+
+<!-- 06 THIS YEAR -->
+<div class="page">
+  <div class="rhead">Compass · Strategic Plan · Neerav U. · Grade 8th grade</div>
+  <div class="slabel">05 · This Year, Specifically</div>
+  <h2 class="sec">This Year in Detail: 2026-27</h2>
+  <div class="lead">The specifics: which option, what it costs, who to call, and when to act.</div>
+  
+    
+      <div class="gradebar"><span><span class="g" style="font-size:15px">Fall 2026</span> <span class="yrs">August - December 2026</span></span><span class="tag">Four things, none of them heavy</span></div>
+      <div class="gwrap">
+        <p class="small mut" style="font-style:italic;margin-bottom:6px">One audience for the business, several debate formats tried, one service organisation chosen, and the weaker subjects found.</p>
+        
+    <div class="reccard">
+      <span class="catpill venture">VENTURE</span> <span class="serif" style="font-size:14px;font-weight:700">A booth at the Children's Business Fair</span> <span class="actpill">Take a booth at the Santa Clara fair and sell outside the family.</span>
+      <p class="small">A one-day fair with judges and the public. His own business shown to strangers, not a new thing to start.</p>
+      <p class="small" style="margin:3px 0">1 · Free — the filing route · San Jose business tax registration · plus a Santa Clara County fictitious business name filing if he trades under another name · fees set by city and county · call to confirm · no free fair equivalent in the region</p><p class="small" style="margin:3px 0">2 · Budget — Children's Business Fair, San Jose · Acton Children's Business Fair · Santa Clara fair, register by October 17 · ages 6 to 14 · in person · $50 booth fee · open entry</p><p class="small" style="margin:3px 0">3 · Premium — paid filing help instead of the forms yourselves · parent-held · in person or online · call to confirm</p>
+      <p class="small" style="color:#9c7b2e">CONTACT — childrensbusinessfair.org/cities/san-jose-ca-usa — call to confirm the booth and age band.</p>
+      <div class="planby">PLAN BY — By September 26. Booths are limited and fill two to three weeks ahead of the October 17 registration.</div>
+      <div class="box" style="margin-top:8px"><p class="small">Ask the city tax office and county clerk-recorder whether a minor can hold the registration.</p></div>
+    </div>
+
+    <div class="reccard">
+      <span class="catpill debate">DEBATE</span> <span class="serif" style="font-size:14px;font-weight:700">Try the debate formats open to him</span> <span class="actpill">Sample formats through school or a local club.</span>
+      <p class="small">Parliamentary, Lincoln-Douglas, public forum, congress, mock trial and Model UN suit different people.</p>
+      <p class="small" style="margin:3px 0">1 · Free — the school's own speech and debate club · ask whether Sierramont fields one</p><p class="small" style="margin:3px 0">2 · Budget — a local youth debate club in San Jose · in person · ask the term price</p><p class="small" style="margin:3px 0">3 · Premium — a coached Bay Area middle-school programme · in person · call for price, ask about scholarships</p>
+      <p class="small" style="color:#9c7b2e">CONTACT — The Sierramont Middle School office first.</p>
+      <div class="planby">PLAN BY — By early October, so he has a full term inside a format.</div>
+      <div class="box" style="margin-top:8px"><p class="small">A trial session is enough to tell which one he likes.</p></div>
+    </div>
+
+    <div class="reccard">
+      <span class="catpill service">SERVICE</span> <span class="serif" style="font-size:14px;font-weight:700">Choose one organisation the family goes to together</span> <span class="actpill">Visit one or two, then commit to the one whose days fit.</span>
+      <p class="small">One organisation kept for years beats several tried briefly.</p>
+      <p class="small" style="margin:3px 0">1 · Free — a food bank, community kitchen or shelter near San Jose · no cost beyond travel</p><p class="small" style="margin:3px 0">2 · Budget — a faith or community group with a standing family slot · no cost beyond travel</p><p class="small" style="margin:3px 0">3 · Premium — a paid volunteer placement service · no fee is warranted here</p>
+      <p class="small" style="color:#9c7b2e">CONTACT — Ask each organisation whether they take a parent and student together.</p>
+      <div class="planby">PLAN BY — Before the winter break, so the rhythm is set before spring.</div>
+      <div class="box" style="margin-top:8px"><p class="small">Choose on the days and hours, not on the cause alone.</p></div>
+    </div>
+
+    <div class="reccard">
+      <span class="catpill academics">ACADEMICS</span> <span class="serif" style="font-size:14px;font-weight:700">Find the weaker subjects before high school</span> <span class="actpill">Ask the school for the recent report card.</span>
+      <p class="small">The grades colleges read begin in ninth grade, so a shaky subject is fixed while nothing counts.</p>
+      
+      <p class="small" style="color:#9c7b2e">CONTACT — The Sierramont Middle School counsellor.</p>
+      <div class="planby">PLAN BY — By the end of October, leaving a full term to act.</div>
+      <div class="box" style="margin-top:8px"><p class="small">Arrange regular help with whatever the school offers.</p></div>
+    </div>
+
+      </div>
+    
+      <div class="gradebar"><span><span class="g" style="font-size:15px">Spring 2027</span> <span class="yrs">January - May 2027</span></span><span class="tag">Kept lighter on purpose</span></div>
+      <div class="gwrap">
+        <p class="small mut" style="font-style:italic;margin-bottom:6px">Nothing new starts. Two things carry on, both low-stakes by design.</p>
+        
+    <div class="reccard">
+      <span class="catpill debate">DEBATE</span> <span class="serif" style="font-size:14px;font-weight:700">Watch a tournament in person</span> <span class="actpill">Watch a round in whichever format he liked best.</span>
+      <p class="small">Watching costs nothing and shows him a round before he enters one.</p>
+      
+      <p class="small" style="color:#9c7b2e">CONTACT — The school or club coach.</p>
+      <div class="planby">PLAN BY — By February, while dates remain in the season.</div>
+      <div class="box" style="margin-top:8px"><p class="small">Entering is a summer decision.</p></div>
+    </div>
+
+    <div class="reccard">
+      <span class="catpill academics">ACADEMICS</span> <span class="serif" style="font-size:14px;font-weight:700">Check the weaker subject against class tests</span> <span class="actpill">Track it on the term's tests, not the report card.</span>
+      <p class="small">A slip found in March can still be turned around.</p>
+      
+      <p class="small" style="color:#9c7b2e">CONTACT — The subject teacher, then the counsellor.</p>
+      <div class="planby">PLAN BY — By early March, at the first term tests.</div>
+      <div class="box" style="margin-top:8px"><p class="small">Settle with him then whether a second fair is worth doing.</p></div>
+    </div>
+
+      </div>
+    
+      <div class="gradebar"><span><span class="g" style="font-size:15px">Summer 2027</span> <span class="yrs">June - August 2027</span></span><span class="tag">A light summer is the right answer</span></div>
+      <div class="gwrap">
+        <p class="small mut" style="font-style:italic;margin-bottom:6px">On the summer after eighth grade: a light one is entirely fine at this age. His own trading, the family service commitment and the ninth-grade placement, not a purchased programme.</p>
+        
+    <div class="reccard">
+      <span class="catpill academics">ACADEMICS</span> <span class="serif" style="font-size:14px;font-weight:700">Settle the ninth-grade placement</span> <span class="actpill">Take the strongest math and English placement he can carry well.</span>
+      <p class="small">Placement decides which sequences stay open for four years, and is hard to undo.</p>
+      
+      <p class="small" style="color:#9c7b2e">CONTACT — The high school counsellor, once registration opens.</p>
+      <div class="planby">PLAN BY — Ask the counsellor in January for the registration date.</div>
+      <div class="box" style="margin-top:8px"><p class="small">Strongest he can carry well, not strongest available.</p></div>
+    </div>
+
+    <div class="reccard">
+      <span class="catpill service">SERVICE</span> <span class="serif" style="font-size:14px;font-weight:700">A longer stretch with the same organisation</span> <span class="actpill">Give the organisation more hours while school is not competing.</span>
+      <p class="small">The summer is where a family commitment gets its depth.</p>
+      
+      <p class="small" style="color:#9c7b2e">CONTACT — The volunteer coordinator at the organisation.</p>
+      <div class="planby">PLAN BY — By May, because summer slots are agreed before term ends.</div>
+      <div class="box" style="margin-top:8px"><p class="small">He keeps trading at the hours he already gives it.</p></div>
+    </div>
+
+      </div>
+    
+  
+</div>
+
+<!-- 07 PARENT ACTIONS -->
+<div class="page">
+  <div class="rhead">Compass · Strategic Plan · Neerav U. · Grade 8th grade</div>
+  <div class="slabel">06 · Parent Actions</div>
+  <h2 class="sec">What to do now.</h2>
+  <div class="lead">Ordered by when you need to act, not by importance.</div>
+  
+    <div class="pa"><div class="n">1</div><div><div class="when">By September 26</div><div class="small">Register the booth for the Santa Clara Children's Business Fair, and confirm his age against the 6 to 14 band at the same time.</div></div></div>
+  
+    <div class="pa"><div class="n">2</div><div><div class="when">Late September</div><div class="small">Ask the Sierramont office whether the school fields a speech and debate club, and which formats it runs.</div></div></div>
+  
+    <div class="pa"><div class="n">3</div><div><div class="when">By the end of October</div><div class="small">Ask the school for the recent report card and identify the weakest or underperforming subjects.</div></div></div>
+  
+    <div class="pa"><div class="n">4</div><div><div class="when">October</div><div class="small">Ask the San Jose business tax office and the Santa Clara County clerk-recorder what a business run by someone his age has to file.</div></div></div>
+  
+    <div class="pa"><div class="n">5</div><div><div class="when">This term</div><div class="small">Note which organisation ran the chess tournaments his medals came from, and roughly how many hours a week chess, cooking and theatre take.</div></div></div>
+  
+    <div class="pa"><div class="n">6</div><div><div class="when">This term</div><div class="small">Ask him whether he still cooks and competes, and whether he would want cooking entered through school later.</div></div></div>
+  
+    <div class="pa"><div class="n">7</div><div><div class="when">Before the winter break</div><div class="small">Visit one or two local organisations that take families volunteering together, and commit to one.</div></div></div>
+  
+    <div class="pa"><div class="n">8</div><div><div class="when">Before this plan is settled</div><div class="small">Confirm the six colleges and the graduating class year, and check the financial aid position at each college on the list.</div></div></div>
+  
+    <div class="pa"><div class="n">9</div><div><div class="when">At ninth-grade registration</div><div class="small">Confirm whether his high school runs a DECA or FBLA chapter, and which debate league its team competes in.</div></div></div>
+  
+  <div class="darkbox" style="margin-top:24px"><div class="lab">A final note</div>
+    <p>You wrote that he has a real business and real potential, and that what you do not want is that energy scattered. This plan is built to the same view. It adds nothing he did not already choose: the business stays exactly as it is, debate is where his own words already point, and the volunteering is the thing you asked for. Everything else he does is protected and asked nothing of.</p><p>The first steps are deliberately small and finishable. A one-day fair in October has a clear beginning and end. Sampling debate formats commits him to nothing. Where a result is involved, it comes through a coached team with many rounds and practice in between, so one round never decides anything on its own. The number of activities he carries is capped at two or three, and that choice is made in tenth grade, with a year and a half of trying things first. He is good at this when he has picked it himself and someone is behind him; the plan is arranged so both stay true.</p></div>
+</div>

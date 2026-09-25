@@ -590,6 +590,8 @@ def _safe(d):
         d[key]["card"]["odds"] = _odds(d[key]["card"].get("odds"))
         # The card no longer carries courses. [#78]
         d[key]["card"].pop("academics", None)
+    for f in ("plans_title", "plans_lead"):
+        d.setdefault(f, "")
     d.setdefault("tiers", [])
     d.setdefault("tiers_head", "")
     d.setdefault("tiers_note", "")

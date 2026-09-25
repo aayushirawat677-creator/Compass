@@ -1,191 +1,131 @@
-# Compass — agent orchestration
+# How Compass runs
 
-How the pieces actually run. Every box below exists in the code: agent steps
-resolve through `compass/prompts.py::BY_STEP`, deterministic steps through
-`compass/modules.py`, gates through `compass/gates.py`, and the order is
-`compass/pipeline.py::run()`.
-
-**Shape grammar:** stadium = LLM agent · rectangle = deterministic module ·
-cylinder = stored data · hexagon = runtime gate · parallelogram = input ·
-dashed edge = failure path (retry, rewrite, escalate).
-
-```mermaid
-flowchart TB
-
-  subgraph OFFLINE["REFERENCE DATA — built once, read by every run"]
-    direction TB
-    SRC[/"Reddit results posts<br/>parsed + verified"/]
-    PUB[/"Published sources<br/>CDS / official"/]
-    CORPUS[("corpus.csv<br/>2,613 students")]
-    APPROWS[("application rows<br/>30,414 after explode")]
-    RATES[("admit_rates.json<br/>33 schools + aliases")]
-    FIND[("findings.json")]
-    TAB[("tabroom_circuits.csv<br/>debate")]
-    MORE[("more competition DBs<br/>robotics · math · venture …")]
-    PROG[("programs.csv<br/>common program schema")]
-    SRC --> CORPUS
-    CORPUS -->|"load_corpus(applications=True)"| APPROWS
-    PUB -->|"refresh_rates.ensure_rate()"| RATES
-    REG["sources.json + programs.py<br/>registry → one common schema"]
-    TAB --> REG
-    PROG --> REG
-    MORE -.->|"register, don't rewire"| REG
-    CTX["context.py<br/>retrieval layer"]
-    RATES --> CTX
-    FIND --> CTX
-    REG --> CTX
-  end
-
-  subgraph RUNTIME["RUNTIME — per student"]
-    direction TB
-    IN[/"Intake form<br/>parent + student"/]
-    G0{{"gate: intake"}}
-    S1(["1 · Profile<br/>describes the kid"])
-    G1{{"gate: profile"}}
-    S2(["2 · Projected Profile<br/>best-case anchor"])
-    S3["3 · Match &amp; Rank<br/>modules.match_rank"]
-    G3{{"gate: retrieval"}}
-    S4(["4 · Gap Analyst<br/>diagnoses"])
-    G4{{"gate: gap"}}
-    S5(["5 · Strategy<br/>decides the moves"])
-    G5{{"gate: strategy"}}
-    S6(["6 · Two Paths<br/>target / stretch fork"])
-    G6{{"gate: two_paths"}}
-    S7(["7a · Plan Goals<br/>schedules"])
-    G7{{"gate: plan"}}
-    S8(["7b · Recommendations<br/>fan-out, one call per task"])
-    RES(["live research<br/>verified web lookup"])
-    S9["7c · Constraint Guardrail<br/>modules.constraint_guardrail"]
-    G8{{"gate: recs"}}
-    S10["7d · Tiering<br/>modules.tiering"]
-    S11(["8 · Writer<br/>composes the plan"])
-    G9{{"gate: draft"}}
-    S12(["9 · Critic<br/>tone / honesty / plain English"])
-    RENDER["render.py"]
-    PDF[("Strategic Plan PDF")]
-    TRAIL["quality trail<br/>gates.summarise()"]
-    HUMAN["Human review<br/>no PDF"]
-
-    IN --> G0 --> S1 --> G1 --> S2 --> S3 --> G3 --> S4 --> G4 --> S5 --> G5 --> S6 --> G6 --> S7 --> G7 --> S8
-    S8 -->|"catalog empty for this task"| RES
-    RES --> S9
-    S8 --> S9 --> G8 --> S10 --> S11 --> G9 --> S12 --> RENDER --> PDF
-
-    G1 -.->|"retry once, failure as feedback"| S1
-    G4 -.->|"retry once"| S4
-    G5 -.->|"retry once"| S5
-    G6 -.->|"retry once"| S6
-    G7 -.->|"retry once"| S7
-    G9 -.->|"rewrite"| S11
-    S12 -.->|"findings"| S11
-
-    G0 -.->|"ESCALATE"| HUMAN
-    G3 -.->|"ESCALATE: no admits / mock fallback"| HUMAN
-    G8 -.->|"ESCALATE: nothing verifiable"| HUMAN
-    G3 -.->|"DEGRADE: marked, run continues"| TRAIL
-    TRAIL --> PDF
-  end
-
-  APPROWS -->|"admit cards for the intended colleges"| S3
-  CTX -->|"ladder + findings"| S4
-  CTX -->|"what moved the needle"| S5
-  CTX -->|"published rates"| S6
-  CTX -->|"programs for this task"| S8
-  CTX -->|"published rates + evidence"| S11
-```
+*Current as of rule #92. The log (`ENGINE_FEEDBACK_LOG.md`) is the reasoning; this is the map.*
 
 ---
 
-## The boundary the shape enforces
+## The pipeline
 
-**Profile describes → Gap diagnoses → Strategy decides → Two Paths forks →
-Plan schedules → Recommendations sources → Writer writes → Critic checks.**
+Ten steps. Each one is a separate agent call with its own prompt, its own gates, and a
+verdict that can send it back.
 
-No step does the job of the step before it. A profile that diagnoses, or a
-writer that decides, is a bug — not a style problem. `gate_profile` fails a
-profile containing numbers for exactly this reason.
+```
+1  profile      describes the child, from the intake and nothing else
+2  projected     backend match key — never rendered
+3  match & rank  pulls similar admitted profiles           [deterministic]
+4  gap           diagnoses what is missing
+4b appraiser     judges what each activity can become      [#59]
+5  strategy      decides what the plan will do
+6  plan_goals    schedules it, semester by semester        [#57]
+7  two_paths     summarises it as Target and Stretch
+8  writer        turns all of it into the document
+9  critic        reads the result as a stranger would
+```
 
-## Steps
+**The boundary is the point.** R1 describes, gap diagnoses, the appraiser judges ceilings,
+R4 decides, R6 schedules, R7 summarises, R9 writes, R8 checks. A step that reaches across
+that line produces the failure modes the log is mostly about: a writer that invents, a
+planner that appraises, a profile that asks questions it should have answered.
 
-| # | Step | Kind | Reads | Gate |
-|---|---|---|---|---|
-| 1 | Profile | agent (top) | intake | `gate_profile` — retry |
-| 2 | Projected Profile | agent (mid) | profile | — |
-| 3 | Match & Rank | module | 30,414 application rows | `gate_retrieval` — escalate / degrade |
-| 4 | Gap Analyst | agent (top) | profile, cards, tally, ladder + findings | `gate_gap` — retry |
-| 5 | Strategy | agent (top) | gap map, profile, findings | `gate_strategy` — retry |
-| 6 | Two Paths | agent (top) | selected moves, admit pattern, published rates | `gate_two_paths` — retry |
-| 7a | Plan Goals | agent (mid) | selected moves, profile, grade | `gate_plan` — retry |
-| 7b | Recommendations | agent (mid), fan-out per task | program registry, constraints | — |
-| 7c | Constraint Guardrail | module | recommendations, constraints | `gate_recs` — escalate |
-| 7d | Tiering | module | intended colleges, seed | — |
-| 8 | Writer | agent (mid) | the whole plan, published rates, evidence | `gate_draft` |
-| 9 | Critic | agent (top) | draft | — |
-| — | Comparisons | agent (top) | profile, cards | supplement, run separately |
+`comparisons` runs separately and is not part of the chain.
 
-## Adding a competition database
+---
 
-Debate is one source, not the shape of the system. Every program and competition
-database resolves to one common schema, so a new activity is a data change:
+## The five evidence sources, and what each can answer
 
-| | |
+They are kept apart on purpose. Collapsing them is how a plan starts asserting things.
+
+| source | answers | file |
+|---|---|---|
+| **corpus** | what an admit *looked like* | `acceptance_rejected_college_data_verified.csv` |
+| **admit_rates** | how selective a school *is* | `admit_rates.json` |
+| **college_weights** | what a school says it *weighs* (CDS C7) | `college_weights.json` |
+| **course_requirements** | what a school says to *take* | `course_requirements.json` |
+| **expert_corpus** | what practitioners *advise* — **advisory only** | `expert_corpus.md` |
+
+**None of them gives a student's odds, and none may be used to imply one.** [#88]
+The corpus is the trap: its accept share for this family's six schools runs **3.7× to 7.7×
+above the published rate**, because people post to a results forum when the news is good.
+
+The expert corpus is the only source that is asserted rather than measured. It never
+overrides a measurement, it is tier-gated to the student's real list (§0.4), and its
+vendor statistics never reach a family as fact. [#73]
+
+---
+
+## The gates
+
+**26 of them**, four verdicts: `PASS` / `DEGRADE` / `RETRY` / `ESCALATE`.
+
+```
+intake       profile      retrieval    gap          strategy      plan
+recs         draft        two_paths    document     budget        appraisal
+honours_appraisal         open_questions            horizon       academics
+card_plan    parent_voice category_sweep            expert_use
+card_shape   course_page  requirements profile_grounding
+score_sanity no_personal_odds
+```
+
+Every gate has a **negative control** — a test feeding it the exact input it must reject.
+That rule paid for itself repeatedly: six gate bugs in one session were caught by controls,
+not by reading.
+
+### The two things gates keep teaching us
+
+**A rule is a suggestion until something rejects the output that breaks it.** [#78]
+The writer spec said "exactly 4 stats" while six rendered, "credentials 4–6" while seven
+did, "never repeat the stat row in a credential" while one carried the GPA band. Four
+written rules, none enforced, all four broken. The prompt is where a rule is *expressed*;
+a gate is where it is *in force*.
+
+**When a rule moves content, re-read every gate written under the old arrangement.** Five
+times now a newer rule has invalidated an older gate's assumption and failed correct work
+(#7, #8, #11, #16, #80→`gate_course_page`). A gate that rejects correct output is worse
+than no gate: the fix a writer reaches for is to pad.
+
+---
+
+## The document
+
+Twelve pages.
+
+```
+     cover
+01   Profile                only what the family told us              [#84]
+02   The Two Plans          both cards side by side + four tiers      [#81][#88]
+03   Courses and Grades     what the schools ask for                  [#82][#87]
+04   The Roadmap            five grades, semester by semester         [#57]
+05   This Year, Specifically
+06   Parent Actions
+```
+
+**Page 02 is one page on purpose.** The most important fact about the two plans is that
+their academic figures are nearly identical, and that cannot be seen across a page turn.
+The four tiers at its foot are placed by each school's **own published admit rate** —
+never a probability for this child — and two of the four being empty is the finding.
+
+---
+
+## Reproducibility
+
+Three different questions. [#92]
+
+| question | answer |
 |---|---|
-| `data/sources.json` | the registry — one entry per database: what it covers, which adapter reads it, when it was verified, and what is still missing |
-| `data/programs.csv` | the common schema every source resolves to |
-| `compass/programs.py` | the loader, the adapters, and the ladder |
+| same draft → same document? | **Yes**, proven by `evals/golden.py`. HTML is byte-identical; the PDF is not, because WeasyPrint stamps a creation time, so the golden is the HTML. |
+| same intake → same shape? | **Yes**, by the gate set. A run missing the stat row, the tiers or the citations is rejected. |
+| same intake → same words? | **No**, and not a goal. Temperature is pinned to 0 at every call site (#90), which removes the variance that is ours; batching still varies. |
 
-To add one: drop the raw file in `data/`, add an entry to `sources.json`, and —
-only if its columns differ — add a function to `ADAPTERS`. No step, prompt or
-gate changes. Check it landed with:
+Watch out for stale bytecode: Python compares source mtime at **one-second granularity**,
+so an edit saved inside the same second as the last import may not be the code that runs.
+`golden.py` clears `__pycache__` first. [#91]
+
+---
+
+## Running it
 
 ```bash
-python -c "from compass import programs; print(programs.coverage())"
+python evals/audit.py      # 64 structural checks: is any of this actually wired?
+python evals/golden.py     # did the render change?
+python run.py --intake data/neerav_intake.json --out out/plan.pdf --dump-state
 ```
-
-`coverage()` reports what the registry can and cannot answer, including
-`no_data_for` — the activities with no rows yet. A thin activity should surface
-as a gap, never as silence.
-
-**The ladder is the load-bearing part.** Every source maps its levels onto the
-same ordered six — school → district → regional → state → national →
-international — because Step 6 builds a stretch path by INTENSIFY: same activity,
-next rung up. A source that invents a seventh rung breaks that logic, so the
-loader blanks any level it does not recognise rather than passing it through. An
-empty rung is the honest answer: it says this activity has no verified path
-upward in our data yet, which is different from saying none exists.
-
-## Gate verdicts
-
-A gate does not ask "is this good?" It asks **"is this good enough for the next
-step to mean anything?"** Four verdicts:
-
-- **PASS** — continue.
-- **DEGRADE** — continue, but mark the run. A degraded run is always visible in
-  the output; it never passes silently.
-- **RETRY** — re-run the step once, handing it the failure as feedback.
-- **ESCALATE** — stop. No PDF. A human decides. Used only where continuing would
-  produce something a family might act on and be harmed by.
-
-`gate_retrieval` is the one that matters most. Empty or fabricated retrieval
-makes every downstream step fiction *and looks completely normal in the PDF* —
-which is exactly how it caught `match_rank` returning 0 cards from a 30,414-row
-table on its first live run.
-
-## Two rules the drawing encodes
-
-**Numbers belong to modules.** Counts, bands, tiers and rates are computed by
-deterministic code and handed to agents. An agent that states a number it was
-not handed is a bug, not a phrasing issue.
-
-**The corpus and the rate table answer different questions.** The corpus answers
-*"what does an admit to this school look like?"* The published rate table
-answers *"how selective is this school?"* The corpus never produces an admit
-rate — it is self-selected, and 32.6% of posts omit rejections.
-
----
-
-Source: [`orchestration.mmd`](orchestration.mmd) · Rendered image for slides:
-[`orchestration.png`](orchestration.png) · Standalone page:
-[`orchestration_page.html`](orchestration_page.html) · Rules and their history:
-[`ENGINE_FEEDBACK_LOG.md`](../ENGINE_FEEDBACK_LOG.md) · Gate detail:
-[`evals/GATES.md`](../evals/GATES.md)

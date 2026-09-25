@@ -1444,7 +1444,7 @@ Return ONLY the StrategicPlan JSON with EXACTLY these keys, each fully populated
   grades they can see for themselves, but the list of courses these schools ask for.
 
   {{title, lead, requirements:[{{subject, asked, who, aim, key}}], req_note,
-   headline_head, headline, difference_head, difference,
+   act_on_head, act_on:[{{label, text}}], difference_head, difference,
    decisions:[{{when, head, body, keeps_open}}], note}}
 
     * `requirements` — one row per subject, FROM `course_requirements_json` AND NOWHERE
@@ -1462,10 +1462,18 @@ Return ONLY the StrategicPlan JSON with EXACTLY these keys, each fully populated
           a fabrication. Where a school states nothing, it is simply not in that row's
           `who`. [see the UCLA near-miss in college_weights.json]
     * `req_note` — where the rows come from and when they were read.
-    * `headline_head` + `headline` — THE ONE COURSE THAT CARRIES THE MOST WEIGHT for this
-      student, and why, naming the schools that say so. This is the single most useful
-      thing on the page: it converts a table into one decision. Three or four sentences.
-      It must fall out of `requirements`, not out of general knowledge about admissions.
+    * `act_on_head` + `act_on:[{{label, text}}]` — THE TWO OR THREE THINGS TO ACT ON, and
+      the most useful block on the page: it turns a table into decisions. [#87]
+        - `label` is ONE word, the subject ("Calculus", "Arts").
+        - `text` is two or three sentences: what the schools say, and what it means for
+          THIS child.
+        - EACH ONE MUST FALL OUT OF `requirements`, naming the schools that say so — not
+          out of general knowledge about admissions.
+        - Look for the item that is ALREADY MET or nearly met. A requirement a child
+          happens to satisfy through something they do for pleasure is the most
+          encouraging line in the document, and it is invisible in a table of years.
+          Neerav does theatre; Berkeley and UCLA require a year of arts.
+        - Two is the usual number, three the maximum. Everything cannot be first.
     * `difference_head` + `difference` — where the two plans differ ON COURSES. State the
       answer IN THE HEADING so it survives skimming: "Why the Stretch plan asks for
       nothing extra here". Never a heading promising a difference the body then denies.
@@ -1630,6 +1638,12 @@ Return ONLY the StrategicPlan JSON with EXACTLY these keys, each fully populated
   tiers:[{{name, range, colleges:[...]}}]}}] (EXACTLY 2 columns, 2 tiers each),
   takeaway}}}}
   Stretch carries the same shape. NO `academics` and NO `bands` — those are gone. [#78]
+- plans_title / plans_lead: THE TWO PLANS PAGE. [#81] Both outcome cards sit on one page so
+  a reader can see their four academic figures against each other rather than remembering
+  one while looking at the other. `plans_title` is the page heading ("Target and Stretch.").
+  `plans_lead` is ONE or TWO sentences saying what the two plans are to each other — where
+  they are the same and where they part. It is the only prose on that page.
+
 - tiers / tiers_head / tiers_note: FOUR TIERS, BY THE SCHOOL'S PUBLISHED ADMIT RATE. [#88]
   `tiers:[{{name, range, schools:[{{name, rate}}], empty_note}}]` — Far reach, Reach, Target,
   Likely, always all four and always in that order.
@@ -1655,7 +1669,7 @@ Return ONLY the StrategicPlan JSON with EXACTLY these keys, each fully populated
       yes, and in grade 8 that is the most useful thing on the page.
 
 - course: {{title, lead, requirements:[{{subject, asked, who, aim, key}}], req_note,
-  headline_head, headline, difference_head, difference,
+  act_on_head, act_on:[{{label, text}}] (2-3), difference_head, difference,
   decisions:[{{when, head, body, keeps_open}}] (3-5), note}}
   — see COURSES AND GRADES above. [#78][#80][#82]
 - roadmap: {{title, lead, stages:[{{grade,name,body,color:''|'g'|'p'}}], grades:[...]}}

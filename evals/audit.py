@@ -207,9 +207,63 @@ def audit_prompts_build():
               f"never injected: {left}")
 
 
+# ------------------------------------------------- 8. template <-> spec <-> defaults
+def audit_render_contract():
+    """EVERY FIELD THE TEMPLATE RENDERS MUST BE SPECIFIED, AND DEFAULTED. [#89]
+
+    This is the check that decides whether a real run produces the document we have been
+    looking at. A field the TEMPLATE reads and the WRITER SPEC never names is not a subtle
+    defect: the writer has no reason to emit it, so that block renders empty and nobody
+    finds out until a family opens the PDF. It happened four times over — `act_on`,
+    `act_on_head`, `plans_title`, `plans_lead`, which between them are the heading of the
+    Two Plans page and the most useful block on the courses page.
+
+    It is invisible precisely because the fix that introduced it worked: hand-edited
+    writer output renders perfectly, so the page looks finished while the prompt that has
+    to reproduce it says nothing at all.
+
+    Three directions:
+      * template reads it   -> the spec must name it
+      * template reads it   -> `_safe` must default it (or a thin run raises)
+      * spec promises it    -> the template should use it, or we are asking the model for
+                               output nobody reads (a warning, not a failure: some fields
+                               are consumed by gates rather than by the page)
+    """
+    import re
+    tpl = open(os.path.join(ROOT, "compass", "render.py")).read()
+    # Scan JINJA EXPRESSIONS ONLY. A bare search for "c." also matches the stylesheet,
+    # where `.ct .c.t{...}` is two CSS classes and not a template field at all — this
+    # check reporting phantom keys `c.s` and `c.t` on its first run, which is the
+    # substring-for-substance mistake the audit exists to catch, committed by the audit.
+    jinja = " ".join(m.group(0) for m in re.finditer(r"\{\{.*?\}\}|\{%.*?%\}", tpl, re.S))
+    fields = sorted({m.group(1) for m in re.finditer(r"\bc\.([a-z_]+(?:\.[a-z_]+)*)", jinja)})
+    tops = sorted({f.split(".")[0] for f in fields if f.split(".")[0] not in ("cover",)})
+
+    unspecced = [f for f in fields
+                 if f.split(".")[-1] not in ("cover", "student", "grade")
+                 and not re.search(rf"\b{re.escape(f.split('.')[-1])}\b", PRM)]
+    check(not unspecced,
+          "every field the template renders is named in the writer spec",
+          f"renders blank on a real run: {['c.' + f for f in unspecced]}")
+
+    safe = tpl[tpl.index("def _safe("):] if "def _safe(" in tpl else ""
+    undefaulted = [t for t in tops if f'"{t}"' not in safe]
+    check(not undefaulted,
+          "every top-level template key has a default in _safe",
+          f"no default, so a thin draft raises: {undefaulted}")
+
+    # The card macros read `card.*` rather than `c.*`; check those too.
+    mac = sorted({m.group(1) for m in re.finditer(r"\bcard\.([a-z_]+)", jinja)})
+    unspecced_card = [k for k in mac if not re.search(rf"\b{k}\b", PRM)]
+    check(not unspecced_card,
+          "every card field the macros render is named in the writer spec",
+          f"renders blank: {['card.' + k for k in unspecced_card]}")
+
+
 if __name__ == "__main__":
     for fn in (audit_steps, audit_gates_wired, audit_gates_fire, audit_rules,
-               audit_contracts, audit_rubrics, audit_prompts_build):
+               audit_contracts, audit_rubrics, audit_prompts_build,
+               audit_render_contract):
         fn()
     for line in notes:
         print(line)
