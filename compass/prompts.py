@@ -1436,54 +1436,60 @@ Return ONLY the StrategicPlan JSON with EXACTLY these keys, each fully populated
   in `stretch_note`, where the two paths differ and why. If they do not differ, say that in
   one line and move on.
 
-  THE PAGE'S SHAPE ANSWERS "HOW ARE THE TWO PLANS DIFFERENT?" AT A GLANCE. [#80]
-  The first version of this page drew that distinction with a Target-against-Stretch table
-  whose stretch column said "Same." five times out of six — the distinction expressed by
-  repeating the word for no-distinction. The second buried the difference in a paragraph at
-  the foot, where it was honest and invisible. Neither let a reader SEE it. So the page runs:
+  THE SPINE IS WHAT THE SCHOOLS ASK FOR — NOT WHAT IS WRONG WITH HIM. [#82]
+  An earlier version of this page opened "Fix the weak subjects while nothing counts."
+  We have no transcript. A gap in our record is not a fact about their child (#33, #43),
+  and a WEAKNESS INFERRED FROM THAT GAP is the same error wearing a diagnosis. The page
+  may ask the family to go and look; it may not tell them what they will find.
 
-      1. THE TWO PLANS SIDE BY SIDE, each with the same three figures. A reader sees in
-         one second whether they match.
-      2. ONE shared subject grid, LABELLED as shared. A label carries "these are the same"
-         better than a column repeating it six times.
-      3. THE DIFFERENCE, once, in a box of its own — including when the difference is that
-         there is none, which is itself the thing the family most needs to know.
-      4. WHAT TO DO, as dated decisions.
+  What we CAN state, sourced, is what each school publishes as the preparation it wants —
+  `course_requirements_json`, a fifth evidence source, read from the schools' own
+  admissions pages. That is also what a family in grade 8 actually needs: not a verdict on
+  grades they can see for themselves, but the list of courses these schools ask for.
 
-  {{title, lead, plans:[{{name, figures:[{{k,v}}], line}}], tracks:[{{track,target}}],
-   tracks_note, difference_head, difference,
+  {{title, lead, requirements:[{{subject, asked, who, aim, key}}], req_note,
+   headline_head, headline, difference_head, difference,
    decisions:[{{when, head, body, keeps_open}}], note}}
 
-    * `plans` — EXACTLY TWO, Target then Stretch. Each carries THREE `figures` and the two
-      plans use THE SAME THREE KEYS in the same order, because the comparison only works if
-      the boxes line up. GPA, tests and advanced-course load is the usual set. `line` is ONE
-      sentence on what that plan asks of his courses.
-      Where a figure does not differ, PRINT IT ANYWAY, identical, on both sides. That is the
-      point: the reader sees two identical numbers and learns something.
-    * `tracks` — one short line per subject area, where to aim. A handful of words. Written
-      as a target to aim at, never as a course he has been placed in.
-    * `tracks_note` — a few words saying whether the grid holds for both plans ("identical
-      on both plans"), or which plan it describes when they genuinely diverge.
-    * `difference_head` + `difference` — the one block a parent reads to answer "so what
-      does the Stretch actually cost?". State the answer IN THE HEADING, so it survives
-      skimming: "Why the Stretch plan asks for nothing extra here", or "The two extra
-      courses the Stretch plan adds". The body is TWO or THREE sentences saying what is
-      bought and with what. Never write a heading that promises a difference the body then
-      denies.
-    * `decisions` — THREE to FIVE. Each is a real choice with a moment attached. `when` is
-      when a human acts, SHORT, and it sits in a narrow column so the moments line up down
-      the page: "Grade 9 registration", "Grade 8, this spring", "Every year after" — four
-      or five words at the outside. `head` is the decision in a handful of words. `body` is
-      ONE or TWO sentences on what to ask for and why. `keeps_open` is ONE line naming the
-      door that closes if it is missed — the field that earns this page. A decision with
-      nothing behind it is a chore.
+    * `requirements` — one row per subject, FROM `course_requirements_json` AND NOWHERE
+      ELSE. `asked` is what the schools ask, in plain words. `who` names which schools and
+      in what terms — it is the row's citation and it is what makes the row trustworthy.
+      `aim` is what THIS plan aims at for that subject, so the two sit side by side.
+      `key: true` shades the one or two rows that matter most for this student.
+        - REQUIRED, RECOMMENDED and EXPECTED ARE THREE DIFFERENT WORDS and the row must
+          use the school's own. "Required" means an application is incomplete without it;
+          "recommended" means the school says it helps; "expected" is a school describing
+          its admits rather than setting a bar. Printing a recommendation as a requirement
+          is over-goaling in the one place a parent cannot check us.
+        - NEVER SUPPLY A FIGURE THE SOURCE DOES NOT HOLD. Penn publishes no year counts at
+          all. A filled-in number for Penn would look exactly like the sourced rows and be
+          a fabrication. Where a school states nothing, it is simply not in that row's
+          `who`. [see the UCLA near-miss in college_weights.json]
+    * `req_note` — where the rows come from and when they were read.
+    * `headline_head` + `headline` — THE ONE COURSE THAT CARRIES THE MOST WEIGHT for this
+      student, and why, naming the schools that say so. This is the single most useful
+      thing on the page: it converts a table into one decision. Three or four sentences.
+      It must fall out of `requirements`, not out of general knowledge about admissions.
+    * `difference_head` + `difference` — where the two plans differ ON COURSES. State the
+      answer IN THE HEADING so it survives skimming: "Why the Stretch plan asks for
+      nothing extra here". Never a heading promising a difference the body then denies.
+      TWO or THREE sentences. Do not reprint the two stat rows here — the Two Plans page
+      already shows them side by side, and a second printing teaches nothing. [#80][#81]
+    * `decisions` — THREE to FIVE. Each a real choice with a moment attached. `when` is
+      when a human acts, SHORT — four or five words at the outside, since it sits in a
+      narrow column and the moments line up down the page. `body` ONE or TWO sentences.
+      `keeps_open` ONE line naming the door that closes if it is missed; that field is
+      what earns the page. A decision with nothing behind it is a chore.
+        - A decision about his own record is PHRASED AS A LOOK, NEVER A REPAIR. "Read his
+          report card together" is honest; "fix the weak subjects" asserts a weakness we
+          have no way to know about.
     * `note` — ONE sentence the family carries out of this page.
     * NO GRADE HE HAS NOT EARNED. For a student with no high-school transcript every figure
-      here is an ENTERING TARGET, and the page says so once, in the lead. [#64]
+      is an ENTERING TARGET, and the page says so once, in the lead. [#64]
     * NO COHORT STATISTICS. What admits held is how WE size the target; it is not something
       a parent needs to read. [#20]
-    * GRADES ARE NUMERALS on this page as on the card — "grade 9", not "ninth grade" — since
-      the `when` column and the figure boxes are both scanned rather than read. [#79]
+    * GRADES ARE NUMERALS here as on the card — "grade 9", not "ninth grade" — since the
+      `when` column and the table are scanned rather than read. [#79]
 
 - target / stretch: THE OUTCOME CARD. THE OUTPUT OF THE PLAN, NOT AN INPUT. [#17]
   This is NOT the step-2 Match Key (backend, never rendered, used only to retrieve similar
@@ -1613,10 +1619,10 @@ Return ONLY the StrategicPlan JSON with EXACTLY these keys, each fully populated
   tiers:[{{name, range, colleges:[...]}}]}}] (EXACTLY 2 columns, 2 tiers each),
   takeaway}}}}
   Stretch carries the same shape. NO `academics` and NO `bands` — those are gone. [#78]
-- course: {{title, lead, plans:[{{name, figures:[{{k,v}}], line}}] (EXACTLY 2),
-  tracks:[{{track, target}}], tracks_note, difference_head, difference,
+- course: {{title, lead, requirements:[{{subject, asked, who, aim, key}}], req_note,
+  headline_head, headline, difference_head, difference,
   decisions:[{{when, head, body, keeps_open}}] (3-5), note}}
-  — see COURSES AND GRADES above. [#78][#80]
+  — see COURSES AND GRADES above. [#78][#80][#82]
 - roadmap: {{title, lead, stages:[{{grade,name,body,color:''|'g'|'p'}}], grades:[...]}}
   `grades` has one entry per grade, current grade first. EVERY GRADE TAKES THE SAME SHAPE:
   the SEMESTER is the container and the goals sit inside it. [#57]
@@ -1783,8 +1789,9 @@ SECTION SHAPES THAT KEEP IT AT TWELVE PAGES [#38]
       Never name something already inside its lead time — give the next occurrence.
     * `contact` is the last thing to cut. It is how a parent acts.
 
-  course — two plans at the top, one shared grid, one difference box, dated decisions. [#80]
+  course — the schools' requirements, the one course that matters, dated decisions. [#82]
     * `when` four or five words at the outside — it sits in a narrow column.
+    * Every `requirements` row comes from `course_requirements_json`. No row without a source.
     * `body` at most two sentences; `keeps_open` ONE line naming the door that closes if the
       decision is missed. A decision with nothing behind it is a chore, not a plan.
     * `difference` at most three sentences, and the heading states the answer.

@@ -77,22 +77,57 @@ p{ margin:4px 0; }
 .pfig .fv{ display:block; font-weight:700; font-size:11.5px; margin-top:1px; }
 .plan .pline{ font-size:9.3px; line-height:1.45; color:var(--ink); }
 .shared{ float:right; color:var(--muted); font-weight:400; letter-spacing:.04em; text-transform:none; font-size:8.6px; font-style:italic; }
-.diffbox{ margin-top:13px; border:1px solid #d8d2e4; background:#f7f5fb; border-radius:6px; padding:9px 12px 10px; }
+.diffbox{ margin-top:11px; border:1px solid #d8d2e4; background:#f7f5fb; border-radius:6px; padding:9px 12px 10px; }
 .diffbox .lab{ color:#5b4a86; letter-spacing:.11em; font-size:8.8px; font-weight:700; text-transform:uppercase; margin-bottom:4px; }
 .diffbox p{ margin:0; }
+.keybox{ border-color:#cdbf94; background:#faf6ea; }
+.keybox .lab{ color:var(--gold2); }
+/* Requirements: subject | what the schools ask | what the plan aims at. [#82] */
+.reqhead{ display:flex; gap:10px; color:var(--muted); font-size:7.8px; letter-spacing:.1em;
+          text-transform:uppercase; font-weight:700; padding-bottom:3px; border-bottom:1px solid var(--line); }
+.reqrow{ display:flex; gap:10px; padding:3.5px 0; border-bottom:1px solid #edeae1; font-size:9.2px; line-height:1.38; }
+.reqrow.key{ background:#faf6ea; }
+.reqhead span:first-child, .rq1{ flex:0 0 86px; font-weight:700; }
+.reqhead span:nth-child(2), .rq2{ flex:1 1 46%; }
+.reqhead span:nth-child(3), .rq3{ flex:1 1 40%; color:var(--muted); }
+.rq2 em{ display:block; color:var(--muted); font-size:8.2px; font-style:normal; margin-top:1px; }
 /* Decisions: a when-column and a body-column, so the moments line up down the page. */
-.cdec{ display:flex; gap:11px; padding:5px 0; border-top:1px solid var(--line); }
+.cdec{ display:flex; gap:11px; padding:4px 0; border-top:1px solid var(--line); }
 .cdec:first-of-type{ border-top:0; }
 .cdw{ color:var(--gold2); font-size:8.2px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; min-width:104px; padding-top:2px; }
 .cdhd{ font-weight:700; margin-bottom:1px; }
 .cdk{ margin-top:3px; font-size:9.1px; color:var(--muted); }
 .cdk span{ color:var(--gold2); letter-spacing:.09em; text-transform:uppercase; font-size:8px; font-weight:700; margin-right:5px; }
-.cblk{ margin-top:14px; border-top:1px solid var(--line); padding-top:8px; }
+.cblk{ margin-top:11px; border-top:1px solid var(--line); padding-top:7px; }
 .cblk .lab{ color:var(--gold2); letter-spacing:.12em; font-size:9px; font-weight:700; text-transform:uppercase; margin-bottom:5px; }
 .trk{ flex:1 1 46%; font-size:9.6px; display:flex; gap:6px; }
 .trk .tk{ color:var(--muted); min-width:74px; letter-spacing:.04em; text-transform:uppercase; font-size:8.6px; padding-top:1px; }
 .reachrow{ display:flex; gap:16px; margin-top:8px; font-size:10px; }
 .oddsrow{ display:flex; gap:22px; margin-top:10px; border-top:1px solid var(--line); padding-top:8px; }
+.oddswide{ margin-top:14px; }
+/* Two cards on one page. [#81] */
+.twocards{ display:flex; gap:11px; margin-top:12px; align-items:stretch; }
+.mcard{ flex:1 1 50%; min-width:0; border:1px solid var(--line); border-radius:7px;
+        background:var(--card); }
+.mbar{ height:4px; border-radius:6px 6px 0 0; }
+.m1 .mbar{ background:#5c6b3d; } .m2 .mbar{ background:#5b4a86; }
+.mbody{ padding:10px 12px 12px; }
+.mlabel{ font-size:8.2px; font-weight:700; letter-spacing:.11em; text-transform:uppercase; }
+.m1 .mlabel{ color:#5c6b3d; } .m2 .mlabel{ color:#5b4a86; }
+.mtitle{ font-size:13px; line-height:1.24; margin:4px 0 7px; }
+.mstats{ display:flex; flex-wrap:wrap; gap:4px; }
+.mstat{ flex:1 1 0; min-width:calc(50% - 2px); max-width:calc(50% - 2px); box-sizing:border-box;
+        border:1px solid var(--line); border-radius:4px; padding:4px 7px 5px; background:#fff; }
+.mstat .k{ color:var(--muted); font-size:7.4px; letter-spacing:.08em; text-transform:uppercase; }
+.mstat .v{ font-weight:700; font-size:11.5px; line-height:1.2; margin-top:1px; }
+.mstat .sb{ color:var(--muted); font-size:7.8px; line-height:1.3; margin-top:1px; }
+.mcred{ margin-top:9px; }
+.mcred .lab, .mtake .lab{ color:var(--gold2); letter-spacing:.11em; font-size:8.2px; font-weight:700; text-transform:uppercase; margin-bottom:4px; }
+.mcred ul{ margin:0; padding:0; }
+.mcred li{ list-style:none; padding-left:11px; position:relative; margin:3.5px 0; font-size:9.2px; line-height:1.42; }
+.mcred li:before{ content:'▪'; position:absolute; left:0; color:var(--green); }
+.mtake{ margin-top:10px; background:#232a20; border-radius:5px; padding:7px 9px 8px; }
+.mtake p{ margin:0; color:#eae6db; font-style:italic; font-size:9.2px; line-height:1.45; }
 .oddsrow > div{ flex:1 1 50%; }
 .ot{ font-size:9.6px; margin:2.5px 0; line-height:1.4; }
 .oddsrow .lab{ color:var(--gold2); letter-spacing:.12em; font-size:9px; font-weight:700; text-transform:uppercase; margin-bottom:4px; }
@@ -203,36 +238,22 @@ TEMPLATE = Template(r"""
   <div class="foot"><span>CONFIDENTIAL · {{ c.cover.family|upper }} FAMILY</span><span>GENERATED FROM INTAKE · {{ c.cover.date|upper }}</span></div>
 </div>
 
-{% macro pcard(card, color) %}
-<div class="pcard">
-  <div class="bar" style="background:{{ '#5c6b3d' if color=='g' else '#5b4a86' }}"></div>
-  <div class="body">
-    <div class="plabel">{{ card.label }}</div>
-    <h3 class="serif">{{ card.title }}</h3>
-    <div class="psub">{{ card.subtitle }}</div>
-    <div class="stats">
-      {% for s in card.stats %}<div class="stat"><div class="k">{{ s.k }}</div><div class="v">{{ s.v }} <small>{{ s.sub }}</small></div></div>{% endfor %}
+{# TWO CARDS ON ONE PAGE, so the identical figures can be seen rather than remembered.
+   [#81] Narrower than the old full-width card, so: stats stack two-across, the credential
+   bodies stay (they are the difference between the plans and the whole reason for the
+   comparison), and the odds move out to a strip shared by both. #}
+{% macro minicard(card, color) %}
+<div class="mcard {{ 'm1' if color=='g' else 'm2' }}">
+  <div class="mbar"></div>
+  <div class="mbody">
+    <div class="mlabel">{{ card.label }}</div>
+    <h3 class="serif mtitle">{{ card.title }}</h3>
+    <div class="mstats">
+      {% for s in card.stats %}<div class="mstat"><div class="k">{{ s.k }}</div><div class="v">{{ s.v }}</div>{% if s.sub %}<div class="sb">{{ s.sub }}</div>{% endif %}</div>{% endfor %}
     </div>
-    {# NO COURSES ON THE CARD. [#78] They had a page, I merged them here in #76, and that
-       was wrong in a way the page count hid: this card PROJECTS — it is what he looks
-       like in senior year if the plan is carried out. A course target is a DECISION the
-       family makes at registration. Putting a decision inside a projection tells a parent
-       their son's schedule is already settled. Courses went back to their own page. #}
-    <div class="cred"><div class="lab">What his application will show</div><ul>
+    <div class="mcred"><div class="lab">What his application will show</div><ul>
       {% for cr in card.credentials %}<li><strong>{{ cr.h }}</strong> {{ cr.t }}</li>{% endfor %}</ul></div>
-    {# ONE ODDS BLOCK, TWO TIERS A SIDE. [#78] This was three things saying the same thing:
-       a prose sentence about what is within reach, a prose sentence about the toughest
-       reaches, and a band strip underneath naming the same schools again with percentages.
-       Now: two columns, two labelled lines each, the schools named in full. #}
-    {% if card.odds %}
-    <div class="oddsrow">
-      {% for col in card.odds %}
-      <div><div class="lab">{{ '▲' if loop.first else '★' }} {{ col.head }}</div>
-        {% for t in col.tiers %}<div class="ot"><span class="otn">{{ t.name }}</span> <span class="otr">{{ t.range }}</span> <span class="otc">{{ t.colleges }}</span></div>{% endfor %}
-      </div>{% endfor %}
-    </div>
-    {% endif %}
-    <div class="darkbox"><div class="lab">Takeaway</div><p>{{ card.takeaway }}</p></div>
+    <div class="mtake"><div class="lab">Takeaway</div><p>{{ card.takeaway }}</p></div>
   </div>
 </div>
 {% endmacro %}
@@ -266,65 +287,70 @@ TEMPLATE = Template(r"""
   <div class="box"><div class="lab">Flags to confirm</div><p class="small">{{ c.profile.flags }}</p></div>
 </div>
 
-<!-- 02 TARGET PLAN -->
+<!-- 02-03 THE TWO PLANS, SIDE BY SIDE -->
+{# ONE PAGE, BOTH CARDS. [#81] They had a page each, which meant the reader held one in
+   her head while looking at the other — and the single most important fact about these
+   two plans is that their four academic figures are IDENTICAL. You cannot see that across
+   a page turn. Side by side, two stat rows carrying the same four numbers say in one
+   second what a paragraph says in five: the Stretch costs nothing academically.
+
+   The odds block moves OUT of the cards to a shared strip below, because it was the same
+   two tiers on both — the bands describe the family's college list, which does not change
+   between the plans. Inside two cards on one page it would have been a duplication three
+   inches wide. [#77][#78] #}
 <div class="page">
   <div class="rhead">Compass · Strategic Plan · {{ c.cover.student }} · Grade {{ c.cover.grade }}</div>
-  <div class="slabel">02 · The Target Plan</div>
-  <h2 class="sec">The Target plan.</h2>
-  <div class="lead">{{ c.target.lead }}</div>
-  {{ pcard(c.target.card, 'g') }}
+  <div class="slabel">02 · The Two Plans</div>
+  <h2 class="sec">{{ c.plans_title or 'Target and Stretch.' }}</h2>
+  <div class="lead">{{ c.plans_lead or (c.target.lead ~ ' ' ~ c.stretch.lead) }}</div>
+  <div class="twocards">
+    {{ minicard(c.target.card, 'g') }}
+    {{ minicard(c.stretch.card, 'p') }}
+  </div>
+  {% set odds = c.target.card.odds or c.stretch.card.odds %}
+  {% if odds %}
+  <div class="oddsrow oddswide">
+    {% for col in odds %}
+    <div><div class="lab">{{ '▲' if loop.first else '★' }} {{ col.head }}</div>
+      {% for t in col.tiers %}<div class="ot"><span class="otn">{{ t.name }}</span> <span class="otr">{{ t.range }}</span> <span class="otc">{{ t.colleges }}</span></div>{% endfor %}
+    </div>{% endfor %}
+  </div>
+  {% endif %}
 </div>
 
-<!-- 03 STRETCH PLAN -->
+<!-- 03 COURSES AND GRADES -->
+{# WHAT HIS COLLEGES ASK FOR — not what is wrong with him. [#82] The page used to open
+   "Fix the weak subjects", which presumes weak subjects. We have no transcript. A gap in
+   our record is not a fact about their child (#33, #43), and neither is a deficiency we
+   inferred from its absence.
+
+   So the spine of the page is now the six schools' own published requirements, which we
+   CAN state, sourced, and which is what a family in grade 8 actually needs: not a verdict
+   on his grades but the list of courses the schools ask for. The one honest instruction
+   about his own record is to go and read it — framed as a question, not a repair. #}
 <div class="page">
   <div class="rhead">Compass · Strategic Plan · {{ c.cover.student }} · Grade {{ c.cover.grade }}</div>
-  <div class="slabel">03 · The Stretch Plan</div>
-  <h2 class="sec">The Stretch plan.</h2>
-  <div class="lead">{{ c.stretch.lead }}</div>
-  {{ pcard(c.stretch.card, 'p') }}
-</div>
-
-<!-- 04 COURSES AND GRADES -->
-{# A PAGE OF ITS OWN, AND NOT A PROJECTION. [#78] The card says what he WILL LOOK LIKE;
-   a course target is something the family DECIDES, at a registration desk, on a date.
-
-   THE SHAPE OF THIS PAGE ANSWERS A QUESTION THE OLD TABLE ANSWERED BADLY. [#80] Aayushi
-   wants the two plans told apart at a glance. The first version did that with a
-   Target-against-Stretch table whose stretch column said "Same." five times out of six —
-   the distinction drawn by repeating the word for "no distinction". The second version
-   buried the difference in a paragraph at the foot, where it was honest and invisible.
-
-   So: the two plans sit side by side AT THE TOP, in their own colours, with the three
-   academic figures each. A reader sees in one second that the figures are identical and
-   that one line differs. Then ONE shared subject grid, labelled as shared, because a
-   column of "Same." is not information — the label carries it. Then the difference
-   itself, once, in a box of its own. Then what to do about it.  #}
-<div class="page">
-  <div class="rhead">Compass · Strategic Plan · {{ c.cover.student }} · Grade {{ c.cover.grade }}</div>
-  <div class="slabel">04 · Courses and Grades</div>
+  <div class="slabel">03 · Courses and Grades</div>
   <h2 class="sec">{{ c.course.title }}</h2>
   <div class="lead">{{ c.course.lead }}</div>
 
-  {% if c.course.plans %}
-  <div class="planrow">
-    {% for pl in c.course.plans %}
-    <div class="plan {{ 'p2' if loop.last else 'p1' }}">
-      <div class="ph">{{ pl.name }}</div>
-      <div class="pfigs">
-        {% for fg in pl.figures %}<div class="pfig"><span class="fk">{{ fg.k }}</span><span class="fv">{{ fg.v }}</span></div>{% endfor %}
-      </div>
-      <div class="pline">{{ pl.line }}</div>
+  {% if c.course.requirements %}
+  <div class="cblk"><div class="lab">What his six schools ask for{% if c.course.req_note %}<span class="shared">{{ c.course.req_note }}</span>{% endif %}</div>
+    <div class="reqhead"><span>Subject</span><span>What the schools ask for</span><span>What this plan aims at</span></div>
+    {% for r in c.course.requirements %}
+    <div class="reqrow {{ 'key' if r.key else '' }}">
+      <span class="rq1">{{ r.subject }}</span>
+      <span class="rq2">{{ r.asked }}{% if r.who %}<em>{{ r.who }}</em>{% endif %}</span>
+      <span class="rq3">{{ r.aim }}</span>
     </div>
     {% endfor %}
   </div>
   {% endif %}
 
-  {% if c.course.tracks %}
-  <div class="cblk">
-    <div class="lab">Where to aim, subject by subject{% if c.course.tracks_note %}<span class="shared">{{ c.course.tracks_note }}</span>{% endif %}</div>
-    <div class="tracks">
-      {% for t in c.course.tracks %}<div class="trk"><span class="tk">{{ t.track }}</span><span>{{ t.target }}</span></div>{% endfor %}
-    </div>
+  {% if c.course.headline %}
+  <div class="diffbox keybox">
+    <div class="lab">{{ c.course.headline_head or 'The one course that carries the most weight' }}</div>
+    <p class="small">{{ c.course.headline }}</p>
   </div>
   {% endif %}
 
@@ -349,14 +375,14 @@ TEMPLATE = Template(r"""
   </div>
   {% endif %}
 
-  {% if c.course.note %}<div class="darkbox" style="margin-top:14px"><div class="lab">The one thing to hold on to</div>
+  {% if c.course.note %}<div class="darkbox" style="margin-top:12px"><div class="lab">The one thing to hold on to</div>
     <p>{{ c.course.note }}</p></div>{% endif %}
 </div>
 
 <!-- 05 ROADMAP -->
 <div class="page">
   <div class="rhead">Compass · Strategic Plan · {{ c.cover.student }} · Grade {{ c.cover.grade }}</div>
-  <div class="slabel">05 · The Roadmap</div>
+  <div class="slabel">04 · The Roadmap</div>
   <h2 class="sec">{{ c.roadmap.title }}</h2>
   <div class="lead">{{ c.roadmap.lead }}</div>
   <div class="stages">
@@ -425,7 +451,7 @@ TEMPLATE = Template(r"""
 <!-- 06 THIS YEAR -->
 <div class="page">
   <div class="rhead">Compass · Strategic Plan · {{ c.cover.student }} · Grade {{ c.cover.grade }}</div>
-  <div class="slabel">06 · This Year, Specifically</div>
+  <div class="slabel">05 · This Year, Specifically</div>
   <h2 class="sec">{{ c.this_year.title }}</h2>
   <div class="lead">{{ c.this_year.lead }}</div>
   {% if c.this_year.terms %}
@@ -444,7 +470,7 @@ TEMPLATE = Template(r"""
 <!-- 07 PARENT ACTIONS -->
 <div class="page">
   <div class="rhead">Compass · Strategic Plan · {{ c.cover.student }} · Grade {{ c.cover.grade }}</div>
-  <div class="slabel">07 · Parent Actions</div>
+  <div class="slabel">06 · Parent Actions</div>
   <h2 class="sec">What to do now.</h2>
   <div class="lead">{{ c.parent_actions.lead }}</div>
   {% for a in c.parent_actions['items'] %}
@@ -523,9 +549,10 @@ def _safe(d):
         # The card no longer carries courses. [#78]
         d[key]["card"].pop("academics", None)
     d.setdefault("course", {})
-    for f in ("title", "lead", "difference", "difference_head", "tracks_note", "note"):
+    for f in ("title", "lead", "headline", "headline_head", "req_note", "plans_head",
+              "difference", "difference_head", "tracks_note", "note"):
         d["course"].setdefault(f, "")
-    for f in ("decisions", "tracks", "plans"):
+    for f in ("decisions", "tracks", "plans", "requirements"):
         d["course"].setdefault(f, [])
     d.setdefault("roadmap", {"title": "", "lead": "", "stages": [], "grades": []})
     d.setdefault("this_year", {"title": "", "lead": "", "cards": []})

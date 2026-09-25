@@ -1,0 +1,110 @@
+{
+  "_about": [
+    "WHAT EACH SCHOOL SAYS IT WANTS ON A HIGH-SCHOOL TRANSCRIPT, from its own",
+    "admissions site. A FIFTH evidence source, and the most concrete one we hold.",
+    "",
+    "  corpus ............... what an admit looked like            (our CSV)",
+    "  admit_rates .......... how selective the school is          (published rates)",
+    "  college_weights ...... what the school says it WEIGHS       (CDS C7)",
+    "  THIS FILE ............ what the school says to TAKE         (admissions site)",
+    "  expert_corpus ........ what practitioners advise            (advisory only)",
+    "",
+    "C7 says rigour is Very Important; it does not say which courses. This file does,",
+    "and unlike C7 it is published in plain HTML by every school, so the five of six",
+    "blocked for CDS are readable here.",
+    "",
+    "THE DISTINCTION THAT MATTERS ON THE PAGE: 'required' means an application is",
+    "incomplete without it. 'recommended' means the school says it helps. 'expected'",
+    "is a school describing its admitted students rather than setting a bar. Never",
+    "print one as another - telling a family a recommendation is a requirement is the",
+    "same failure as over-goaling, in the one place a parent cannot check us.",
+    "",
+    "NEVER state a figure this file does not hold. Penn publishes NO year counts at",
+    "all - it says to take core subjects for four years and names calculus for",
+    "Wharton. A filled-in guess for Penn would look exactly like the rest of this",
+    "file and be a fabrication. [see college_weights.json's UCLA near-miss]"
+  ],
+  "_retrieved": "2026-09-25",
+  "_refresh": "Admissions sites change with each cycle. Re-verify anything older than 12 months.",
+  "schools": {
+    "Berkeley": { "status": "verified", "standard": "UC A-G", "see": "_uc_a_g" },
+    "UCLA":     { "status": "verified", "standard": "UC A-G", "see": "_uc_a_g" },
+    "Michigan": {
+      "status": "verified",
+      "source_url": "https://admissions.umich.edu/apply/first-year-applicants/college-preparation",
+      "framing": "expects; varies by college within the university",
+      "units": {
+        "english":        { "years": 4,      "note": "with at least two rigorous writing courses" },
+        "mathematics":    { "years": "3-4",  "note": "varies by school within the university" },
+        "science":        { "years": 2,      "note": "at least two laboratory science courses" },
+        "social_studies": { "years": 3 },
+        "world_language": { "years": 2,      "note": "LSA strongly encourages four years" }
+      },
+      "overall": "Five units (full-year courses) during each of the four years.",
+      "rigour": "Elect AP, IB, honors, enriched and accelerated courses when appropriate and available."
+    },
+    "Georgetown": {
+      "status": "verified",
+      "source_url": "https://uadmissions.georgetown.edu/applying/preparation-process/",
+      "framing": "expects, with a stated minimum",
+      "units": {
+        "english":        { "years": 4 },
+        "social_studies": { "years": 2, "note": "minimum" },
+        "world_language": { "years": 2, "note": "minimum" },
+        "mathematics":    { "years": 2, "note": "minimum; see the business-school line" },
+        "science":        { "years": 1, "note": "natural science" }
+      },
+      "by_school": {
+        "McDonough School of Business": {
+          "mathematics": "Minimum three years of math, through advanced algebra and trigonometry. Calculus is required within the program.",
+          "science": "Two years of natural science are recommended."
+        }
+      }
+    },
+    "Penn": {
+      "status": "verified_but_unquantified",
+      "source_url": "https://admissions.upenn.edu/how-to-apply/preparing-your-application/high-school-preparation",
+      "framing": "recommends; PUBLISHES NO YEAR COUNTS",
+      "units": null,
+      "general": "Take classes in core academic areas - English, social studies, math, science and foreign language - throughout your four years of high school.",
+      "by_school": {
+        "Wharton": "Strong preparation in mathematics, including calculus.",
+        "Engineering": "Strong preparation in physics and mathematics, particularly calculus.",
+        "Nursing": "Strong preparation in the sciences, particularly chemistry and biology."
+      },
+      "caution": "Penn states no year counts. Do not supply any."
+    },
+    "NYU": {
+      "status": "verified",
+      "source_url": "https://www.nyu.edu/admissions/undergraduate-admissions/how-to-apply/all-freshmen-applicants/high-secondary-school-preparation.html",
+      "framing": "describes best-prepared students; explicitly NOT a bar",
+      "units": {
+        "english":        { "years": 4 },
+        "social_studies": { "years": "3-4" },
+        "mathematics":    { "years": "3-4" },
+        "science":        { "years": "3-4", "note": "laboratory sciences" },
+        "world_language": { "years": "3-4" }
+      },
+      "by_school": {
+        "Stern School of Business": "Should have calculus or, at least, precalculus on their transcript."
+      },
+      "caveat": "NYU states it will not hold students at a disadvantage if they did not have the option."
+    }
+  },
+  "_uc_a_g": {
+    "status": "verified",
+    "applies_to": ["Berkeley", "UCLA", "every University of California campus"],
+    "source_url": "https://admission.universityofcalifornia.edu/admission-requirements/first-year-requirements/subject-requirement-a-g.html",
+    "framing": "REQUIRED - this is a hard gate, not a recommendation",
+    "areas": {
+      "a_history":       { "required": 2, "note": "one year world history/cultures/historical geography, plus one year US history (or half US history and half civics/American government)" },
+      "b_english":       { "required": 4, "note": "college-preparatory English with frequent writing" },
+      "c_mathematics":   { "required": 3, "recommended": 4, "note": "a fourth year of math is strongly recommended" },
+      "d_science":       { "required": 2, "recommended": 3 },
+      "e_world_language":{ "required": 2, "recommended": 3, "note": "the SAME language, or equivalent to the second level of high-school instruction" },
+      "f_arts":          { "required": 1, "note": "one YEARLONG course in dance, music, theater, visual arts or interdisciplinary arts" },
+      "g_elective":      { "required": 1 }
+    },
+    "course_list_caveat": "A-G credit depends on the specific course appearing on that high school's UC-approved course list. A subject taken is not automatically a subject counted - the family must check their own school's list."
+  }
+}

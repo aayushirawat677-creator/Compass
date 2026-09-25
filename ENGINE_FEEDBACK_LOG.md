@@ -2255,3 +2255,120 @@ still renders and silently compares nothing — the worst kind of defect, becaus
 does not notice they were shown a non-comparison. They just come away unsure.
 
 Seven negative controls, including the two that render perfectly while meaning nothing.
+
+## 81. Both cards on one page, so the identical numbers can be seen
+> *"can i have target baseball card and stretch plan baseball card on same page, it gives
+> visual differences"*
+
+They had a page each. The single most important fact about these two plans is that their
+four academic figures are **identical** — and you cannot see that across a page turn. A
+reader had to hold one card in her head and compare from memory, which is the same work
+the "Same." column asked of her, in a different costume.
+
+Side by side:
+
+    GPA 3.8+   TESTS 1500+/34+   RIGOUR 7 to 13   MATH Calculus by grade 12
+    GPA 3.8+   TESTS 1500+/34+   RIGOUR same      MATH Calculus by grade 12
+
+Two rows, eight boxes, one second. The credential lists beneath them are where the plans
+actually diverge, and now the divergence is visible against a constant.
+
+`minicard` is a narrower macro, not a rescaled `pcard`. What had to change for half the
+width: the odds block moved OUT to a strip shared by both cards — inside two cards it
+would have been the same two tiers printed three inches apart (#77, #78 again) — and the
+titles and stat sub-lines had to shorten, because a headline that reads well at full width
+wraps to three lines at half. **A card is not a size-independent object**; the writer spec
+now says so.
+
+### The bug that ate the page
+First render clipped both cards mid-sentence — no takeaway, credentials cut off. `.mcard`
+carried `overflow:hidden` (there to round the colour bar) and the content was taller than
+the flex line. The rounding moved onto the bar itself. Worth noting because the page LOOKED
+plausible: two tidy cards, ending early. A truncation that leaves a clean edge is harder to
+catch than one that leaves a ragged one.
+
+    13 pages -> 12.
+
+## 82. We do not know his transcript, so the page is about what the schools ask
+> *"since we dont know the kid transcipt we cannot say which course is weak for him yet.
+> i want something more about the course he should consider or is requirment from the
+> colleges he intend to go."*
+
+The page opened **"Fix the weak subjects while nothing counts."** We have never seen a
+report card. That sentence asserts weak subjects exist, and the assertion came from
+nowhere but the shape of the sentence I wanted to write.
+
+This is #33/#43 with a new face. Those rules say a gap in our record is not a fact about
+their child. **A DEFICIENCY INFERRED FROM THAT GAP is the same error wearing a diagnosis** —
+and it is worse, because it is about the child rather than about us. The page may ask the
+family to go and look. It may not tell them what they will find. The decision now reads
+"Read his report card together — not to find fault."
+
+### What replaced it, and where it came from
+We hold four evidence sources and none of them answered "what courses should he take". C7
+says Michigan rates rigour Very Important; it does not say which courses. So: a fifth
+source, `data/course_requirements.json` — what each school publishes as the preparation it
+wants, from its own admissions pages. **Unlike the Common Data Set, this is plain HTML on
+every school's site**, so the five of six blocked for CDS are all readable.
+
+The page is now a table: SUBJECT | WHAT THE SCHOOLS ASK FOR | WHAT THIS PLAN AIMS AT, with
+the citation under each row. Two rows shaded as the ones that matter for this child.
+
+### Two findings a family would not have
+  * **Calculus is the single highest-leverage course on his transcript, and three of his
+    six schools say so for business specifically.** Wharton: "strong preparation in
+    mathematics, including calculus". Stern: "should have calculus or, at least,
+    precalculus". Georgetown's business school requires it within the programme. Reaching
+    it by grade 12 is decided by his grade-9 placement, which is decided this year — the
+    earliest decision on the page and the one with the longest reach. It also confirms the
+    card's MATH CEILING stat from a completely independent direction.
+  * **Berkeley and UCLA REQUIRE a full year of visual or performing arts**, and Neerav does
+    theatre. It may already be satisfying a hard requirement he is doing for fun — subject
+    to the course being on his school's UC-approved list, which is a question to ask, not
+    a conclusion to print.
+
+### required / recommended / expected are three different claims
+The gate enforces the distinction because a parent cannot check which one we meant.
+Required means an application is incomplete without it — UC A-G is the only hard gate on
+this family's list. Recommended means the school says it helps. Expected is a school
+describing its admits rather than setting a bar. Rounding a recommendation up to a
+requirement is over-goaling in the one place the family cannot audit us.
+
+### Penn publishes no year counts, and that is the dangerous row
+Penn states only "take core subjects for four years" and, for Wharton, calculus. A row
+reading "Penn: 4 years of lab science" would sit among the sourced rows looking exactly
+like them. **This is the UCLA C7 near-miss in a new place** — a confident, plausible,
+completely invented table. `requirements.unquantified()` names such schools and
+`gate_requirements` rejects a figure attributed to one.
+
+### Three bugs in the gate, all of them the same bug
+Building it cost three rounds, each a matching failure, each caught by a control:
+
+  1. `for_schools` matched by substring, so **"NYU" never matched "New York University"**
+     and "UCLA" never matched "University of California, Los Angeles" — they share no
+     substring. `modules.COLLEGE_ALIASES` exists precisely for this and was written when
+     UCLA matched zero admits. I did not reach for it. Two of six schools dropped silently.
+  2. `unquantified()` checked `units` alone, so **Berkeley — whose requirements are the
+     only hard gate on the list — was reported as publishing no figures.** Its counts live
+     under `areas`, being the A-G table.
+  3. The citation matcher rejected a correctly-cited row, because a row's `who` said
+     "Michigan" and the list said "University of Michigan". A gate that rejects correct
+     work is worse than no gate: the fix a writer reaches for is to pad citations with
+     words no source used.
+
+And a fourth, subtler: the silent-school check scanned `who` and `asked` together and
+flagged a correct row whose citation ended "Wharton and Stern both name calculus" and whose
+summary began "3 years minimum". **`who` is attributable and `asked` is not** — only the
+citation can be checked for per-school figures. Six controls now, including that one.
+
+Sources: the UC A-G subject requirement page, Michigan's College Preparation page,
+Georgetown's Preparing for Georgetown, Penn's High School Preparation, NYU's
+High/Secondary School Preparation. All five URLs are in `data/course_requirements.json`.
+
+### And a fifth stale gate
+`gate_course_page` went on demanding the two plan columns after #81 moved them to the Two
+Plans page — so the correct document failed. That is the FIFTH time a newer rule has
+invalidated an older gate's assumption (#7, #8, #11, #16, this). The standing habit is
+written down and I did not follow it: **when a rule moves content, re-read every gate
+written under the old arrangement.** The columns are optional on this page now; what is
+required is that the page answer "where do the plans differ on courses" somewhere.

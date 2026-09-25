@@ -1407,11 +1407,23 @@ def gate_course_page(draft):
         return GateResult("course_page", PASS, [], "no courses page")
     f = []
 
+    # The two plan columns MOVED to the Two Plans page in #81, where both cards now sit
+    # side by side and show the same figures against each other. This gate was written
+    # when they lived here and went on demanding them — the fifth time a newer rule has
+    # invalidated an older gate's assumption (#7, #8, #11, #16). Standing habit: when a
+    # rule moves content, re-read every gate written under the old arrangement.
+    #
+    # So the columns are optional HERE and checked only if present. What is NOT optional
+    # is that the page answers "where do the two plans differ on courses" somewhere —
+    # which is now the difference box.
     plans = [p if isinstance(p, dict) else {} for p in (c.get("plans") or [])]
-    if len(plans) != 2:
-        f.append(f"courses page shows {len(plans)} plan column(s) — it takes exactly 2, "
-                 f"Target and Stretch")
-    else:
+    if not plans and not str(c.get("difference") or "").strip():
+        f.append("the courses page says nothing about how the two plans differ — either "
+                 "the plan columns or the difference box has to answer that")
+    if plans and len(plans) != 2:
+        f.append(f"courses page shows {len(plans)} plan column(s) — two, or none at all "
+                 f"with the difference box carrying it")
+    elif plans:
         keys = [[str(g.get("k", "")).strip().lower()
                  for g in (p.get("figures") or []) if isinstance(g, dict)] for p in plans]
         if keys[0] != keys[1]:
@@ -1459,3 +1471,109 @@ def gate_course_page(draft):
 
     return GateResult("course_page", RETRY if f else PASS, f,
                       "a comparison whose columns do not line up compares nothing" if f else "")
+
+def gate_requirements(draft, colleges=None):
+    """A REQUIREMENT ROW IS A CITATION OR IT IS A FABRICATION. [#82]
+
+    This page tells a family what six universities ask for. It is the most checkable thing
+    in the document and the most damaging to get wrong — a parent can read Berkeley's site,
+    and if we said "3 years of art" they would find "1" and stop believing the rest of it.
+
+    Three failures, in order of how quietly they happen:
+
+      * A ROW WITH NO SCHOOL BEHIND IT. `who` is the row's citation. A subject row naming
+        no school is general admissions knowledge dressed as research.
+      * A FIGURE FOR A SCHOOL THAT PUBLISHES NONE. Penn states no year counts anywhere —
+        only "take core subjects for four years" and "calculus for Wharton". A row reading
+        "Penn: 4 years of science" would sit among the sourced rows looking identical to
+        them. This is the UCLA C7 near-miss in a new place: a confident, plausible,
+        completely invented table.
+      * REQUIRED PRINTED AS RECOMMENDED, OR THE REVERSE. Three different claims, and the
+        parent cannot check which we meant. Calling a recommendation a requirement is
+        over-goaling; calling a requirement a recommendation loses them a hard gate.
+    """
+    import re
+    c = draft.get("course") or {}
+    rows = [r if isinstance(r, dict) else {} for r in (c.get("requirements") or [])]
+    if not rows:
+        return GateResult("requirements", PASS, [], "no requirements table")
+    f = []
+
+    try:
+        from . import requirements as rq
+        payload = rq.payload(colleges or [])
+    except Exception:
+        payload = {"schools": {}, "publishes_no_year_counts": [], "not_held_for": []}
+
+    # A citation reads "Michigan wants two rigorous writing courses", not "University of
+    # Michigan". Expand through the same alias table the retrieval step uses, or this gate
+    # rejects correctly-cited rows — which is worse than not having it, because the fix a
+    # writer would reach for is to pad the citation with words no source used.
+    from . import modules
+    known = set()
+    for k in (payload.get("schools") or {}):
+        known.add(k.lower())
+        known |= {v.lower() for v in modules.college_variants(k)}
+    for canon, variants in getattr(modules, "COLLEGE_ALIASES", {}).items():
+        if any(v.lower() in known for v in variants):
+            known.add(canon.lower())
+            known |= {v.lower() for v in variants}
+    # "UC" stands for the system, and the A-G table is what Berkeley and UCLA both point at.
+    if {"berkeley", "ucla"} & known:
+        known |= {"uc", "uc a-g", "university of california"}
+    silent = [s.lower() for s in (payload.get("publishes_no_year_counts") or [])]
+    unread = [s.lower() for s in (payload.get("not_held_for") or [])]
+
+    for r in rows:
+        subj = str(r.get("subject") or "?")
+        who = str(r.get("who") or "")
+        asked = str(r.get("asked") or "")
+        if not who.strip():
+            f.append(f"requirement row '{subj}' names no school — `who` is the citation, "
+                     f"and a row without one is general knowledge dressed as research")
+            continue
+        named = [k for k in known if k and k in who.lower()]
+        if not named:
+            f.append(f"requirement row '{subj}' cites '{who[:44]}', which matches no school "
+                     f"we hold requirements for")
+        # Check the CITATION only, segment by segment. `asked` is the row's summary
+        # across every school, so a figure there belongs to whichever school stated it —
+        # scanning the two together flagged a correct row whose citation ended
+        # "Wharton and Stern both name calculus" and whose summary happened to start
+        # "3 years minimum". The citation is the attributable field; the summary is not.
+        for seg in re.split(r"[·;]", who):
+            seg = seg.strip().lower()
+            if not seg:
+                continue
+            has_figure = re.search(r"\d+\s*(?:to\s*\d+\s*)?(?:year|unit)|\b\d(?:st|nd|rd|th)\b",
+                                   seg)
+            for sch in silent:
+                forms = sorted(set(modules.college_variants(sch)) | {sch, sch.split()[-1]},
+                               key=len, reverse=True)
+                if not any(re.search(rf"\b{re.escape(x)}\b", seg) for x in forms if x):
+                    continue
+                if has_figure:
+                    f.append(f"row '{subj}' gives {sch} a year count — that school "
+                             f"publishes none, so the figure is invented")
+                break
+        blob = who.lower()
+        for sch in unread:
+            forms = set(modules.college_variants(sch)) | {sch, sch.split()[-1]}
+            if any(re.search(rf"\b{re.escape(x)}\b", blob) for x in forms if x):
+                f.append(f"row '{subj}' cites {sch}, which we have not read")
+        if re.search(r"\brequire", asked, re.I) and re.search(r"\brecommend", who, re.I) \
+           and not re.search(r"\brequire", who, re.I):
+            f.append(f"row '{subj}' says 'required' over a citation that says only "
+                     f"'recommended' — they are different claims")
+
+    head = str(c.get("headline") or "")
+    if head:
+        cited = [k for k in known if k and k in head.lower()]
+        if not cited:
+            f.append("the headline course names no school — it must fall out of the "
+                     "requirements table, not out of general admissions knowledge")
+
+    return GateResult("requirements", RETRY if f else PASS, f,
+                      "a requirement row is a citation or it is a fabrication" if f else "")
+
+

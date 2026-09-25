@@ -5,7 +5,7 @@ Agent steps -> compass.llm ; deterministic steps -> compass.modules.
 import json, os, sys
 import settings
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
-from compass import llm, modules, context, gates, appraise, expert
+from compass import llm, modules, context, gates, appraise, expert, requirements
 from compass.prompts import BY_STEP
 
 
@@ -145,6 +145,12 @@ def run(intake: dict, log=print) -> dict:
     except (OSError, ValueError):
         weights = {}
 
+    # What each school says to TAKE, as opposed to what it says it WEIGHS. [#82]
+    reqs = requirements.payload(intended)
+    if reqs.get("not_held_for"):
+        log(f"      note: no published requirements held for "
+            f"{', '.join(reqs['not_held_for'])} — the page must say nothing about them")
+
     # A thread our category list cannot name is looked up, not ignored. The list is fixed
     # so the sweep can be enforced; that is not a claim nothing else exists. [#72]
     uncovered = [a for a in acts
@@ -169,6 +175,7 @@ def run(intake: dict, log=print) -> dict:
          "admit_pattern_json": state["admit_pattern"],
          "appraisals_json": appraisals,
          "college_weights_json": weights,
+         "course_requirements_json": reqs,
          "categories_json": list(modules.CATEGORIES),
          "expert_json": expert.for_step("strategy", _rates),
          "researched_json": researched,
@@ -200,6 +207,7 @@ def run(intake: dict, log=print) -> dict:
          # Without them grade 11 reads "carry it one rung further" and names no rung. [#61]
          "appraisals_json": appraisals,
          "college_weights_json": weights,
+         "course_requirements_json": reqs,
          "expert_json": expert.for_step("plan_goals", _rates)},
         lambda o: gates.gate_plan(o, state["strategy"]), state, log)
 
@@ -374,6 +382,11 @@ def run(intake: dict, log=print) -> dict:
     state.setdefault("_gates", []).append(gcp)
     if gcp.verdict != gates.PASS:
         log(f"      gate: {gcp.verdict} (course_page) — {'; '.join(gcp.failures)[:100]}")
+
+    greq = gates.gate_requirements(state["draft"], intended)
+    state.setdefault("_gates", []).append(greq)
+    if greq.verdict != gates.PASS:
+        log(f"      gate: {greq.verdict} (requirements) — {'; '.join(greq.failures)[:100]}")
 
     log("  9/10 Critic ........... tone / honesty / plain English")
     verdict = _agent("critic", {"strategic_plan_json": state["draft"]})
