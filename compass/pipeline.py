@@ -383,6 +383,16 @@ def run(intake: dict, log=print) -> dict:
     if gcp.verdict != gates.PASS:
         log(f"      gate: {gcp.verdict} (course_page) — {'; '.join(gcp.failures)[:100]}")
 
+    gno = gates.gate_no_personal_odds(state["draft"])
+    state.setdefault("_gates", []).append(gno)
+    if gno.verdict != gates.PASS:
+        log(f"      gate: {gno.verdict} (no_personal_odds) — {'; '.join(gno.failures)[:110]}")
+
+    gpg = gates.gate_profile_grounding(state["draft"], intake)
+    state.setdefault("_gates", []).append(gpg)
+    if gpg.verdict != gates.PASS:
+        log(f"      gate: {gpg.verdict} (profile_grounding) — {'; '.join(gpg.failures)[:110]}")
+
     gss = gates.gate_score_sanity(state["draft"])
     state.setdefault("_gates", []).append(gss)
     if gss.verdict != gates.PASS:

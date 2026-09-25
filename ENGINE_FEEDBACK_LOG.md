@@ -2421,3 +2421,147 @@ top of the same band" in as many words. The rigour row uses the IQR we already m
 **The distinction to keep: aiming high inside a measurement is a plan; claiming a
 measurement above the data is a sales document.** They print almost identically and only
 one of them is honest.
+
+## 84. The fact-check: two claims were real, four were not
+> *"check the facts you mentioned in the profile page … please do not hallucinate and make
+> things that aren't in the intake form."*
+
+Both flagged items were genuine. `$5,000-$10,000` is the parent's own words, and so is the
+Roblox business. But the check she asked for turned up four things that were not.
+
+    PAGE SAID                                  INTAKE SAYS
+    "cooking to a brief in front of judges     "district-level competition, top-5
+     who were not his teachers"                 finalist, medal"
+    "He chose the aim himself" / "the second    the goal, with no statement of who set it
+     one he started without anyone assigning"
+    "which is also why he is clear when         nothing about how he speaks
+     he speaks"
+    "makes him a legacy applicant at            "A parent's alma mater is a fact about the
+     Columbia"                                   parent" — the intake's own note
+    flags: "the fair's 6 to 14 band"            no fair, no age band
+
+**The profile is the one page whose entire job is to say back what the family told us, and
+it is where invention is least visible — because a fabricated detail there does not read
+like a claim. It reads like attentiveness.** A mother reading "in front of judges who were
+not his teachers" thinks we listened closely to her. We did not; we wrote a small scene
+around a result. And the one detail she can check is the one that tells her.
+
+That is a different failure from over-goaling and worse in one specific way: **it costs
+nothing to produce and it reads as care.**
+
+### The gate
+`gate_profile_grounding` checks three things mechanically against the intake:
+  * NUMBERS — every figure on the page must appear in the intake. "$5,000 to $10,000"
+    passes; "6 to 14" does not.
+  * PROPER NOUNS — every capitalised name. Roblox is theirs; DECA is ours.
+  * SCENE WORDS and UNGROUNDED CLAIMS — "judges", "to a brief", "against a clock" describe
+    circumstances the intake records only as a result; "legacy", "recruited" need evidence
+    we structurally never hold.
+
+It caught nine of the ten findings on the first run. **It does not catch the two agency
+claims** ("he chose the aim himself") or the speaking inference — those are grammatically
+identical to grounded sentences and I fixed them by hand and by prompt rule. Worth being
+honest that the gate is partial.
+
+Its own bug: `"California's" appears nowhere in the intake` — a false positive, because the
+intake says "University of California" and the page added a possessive. A gate that
+rejects correct work teaches the writer to pad. Fixed by stripping `'s` before comparing.
+
+### The flags box was leaking
+It told a parent to confirm "whether his high school runs a DECA or FBLA chapter … an
+FCCLA chapter or a ProStart programme". Four named bodies (#63 forbids them four years
+out) and an operator checklist, on a page a mother reads. She has told me twice that
+system-internal content must not reach the PDF. It is now what the FAMILY can confirm.
+
+## 85. The profile reflects; it does not ask
+> *"remove this part from profile page"* [the question box]
+
+Three questions in a box under the portrait. One of them asked which body ran his chess
+tournaments — **our record's gap, wearing a question mark**, on the page whose whole job
+is to say back what the family told us. It turned "here is your son" into "here is your
+son, and here is what we could not work out about him."
+
+Removed from the profile. A genuine choice for a family belongs in Parent Actions, where
+they are already being asked to do something; it does not belong under their child's
+portrait. [#33][#43][#69][#75]
+
+## 86. Rendering is a read
+`_safe()` did `dict(d)` — a shallow copy — then wrote into the nested card dicts, so
+rendering silently rewrote the writer's own output: `card.odds[*].colleges` went from the
+writer's list to the joined string the template wants. A gate run AFTER rendering then
+split that string on commas and reported "University of California" as a truncated campus
+name.
+
+**A correct document failed a correct gate because the two ran in the wrong order.** Gate
+results must not depend on whether rendering has happened. Deep copy.
+
+## 87. Concision is not the same as fewer words
+> *"can you make this page more concise and to point valuable for parent and child."*
+
+The courses page lost about 40% of its length and got MORE useful, which is the tell that
+the cuts were the right ones. What went:
+  * the per-row citation essays ("UC: 2 required, 3 recommended · Michigan: two lab
+    courses · NYU: 3 to 4") — four data points proving one number. Kept a short source
+    tag: traceable, not a footnote.
+  * the Stretch box, three sentences down to one, since the facing page now shows the two
+    stat rows side by side.
+  * the closing dark box, which repeated the last decision row verbatim.
+  * the lead's first sentence, a disclaimer about US rather than value for THEM.
+
+What went IN, and why the page is better rather than just shorter: **the arts finding was
+promoted next to calculus.** One long paragraph about calculus became two labelled items —
+CALCULUS, the thing that matters most, and ARTS, the thing he may already be doing. For a
+13-year-old that second one is the most encouraging sentence in the document, and it was
+buried in a table row.
+
+## 88. Four tiers, and the two that are empty
+> *"4 tiers of college and probability based on the each card, target and stretch card"*
+> *"a clear differentiation where could lead to if target plan used vs stretch plan"*
+
+I tested the differentiation directly before building it, and the answer was no.
+
+    Among top-band applicants (3.8+, 1500+/34+) who held a VENTURE and DEBATE,
+    what does adding a LEADERSHIP OFFICE and an AWARD do to the measured accept share?
+
+    Penn        35.1% -> 35.8%   (n 57 -> 53)
+    NYU         40.0% -> 40.0%   (n 20)
+    Berkeley    57.4% -> 58.1%   (n 47 -> 43)
+    UCLA        69.4% -> 69.7%   (n 36 -> 33)
+    Georgetown  44.4% -> 37.5%   (n 18 -> 16)   <- down
+    Michigan    62.1% -> 62.1%   (n 29)
+
+Fractions of a point on samples of 16 to 57, and one moves the wrong way. **The Stretch
+profile is indistinguishable from the Target profile in our data** — the same result the
+traction hypothesis got (70.7% vs 72.2%, p=0.82). Printing two different probabilities
+would have been the most consequential fabrication in the document, because a family plans
+around it.
+
+### And the corpus cannot be used as odds at all
+    SCHOOL       OUR CORPUS SHARE   PUBLISHED RATE   RATIO
+    Penn                   35.1%             4.87%    7.2x
+    NYU                    40.0%             7.70%    5.2x
+    Berkeley               57.4%            11.40%    5.0x
+    UCLA                   69.4%             8.98%    7.7x
+    Georgetown             44.4%            12.17%    3.7x
+    Michigan               62.1%            15.64%    4.0x
+
+Three to nearly eight times the published rate, because **people post to a results forum
+when the news is good.** Read as odds it would tell this family Penn is a 35% school.
+
+So the strip places his six schools by each school's OWN published rate, the note says so,
+and `gate_no_personal_odds` rejects any phrasing that converts a school's rate into a
+child's chance. The gate's first bug was instructive: the honest disclaimer *contains the
+phrase it denies* ("not Neerav's chance of getting in"), so the gate rejected the sentence
+we most want kept. Negation-aware now.
+
+### The empty columns are the finding
+    FAR REACH (<15%)  Penn 4.9 · NYU 7.7 · UCLA 9.0 · Berkeley 11.4 · Georgetown 12.2
+    REACH (15-35%)    Michigan 15.6
+    TARGET (35-60%)   — nothing on his list —
+    LIKELY (60%+)     — nothing on his list —
+
+Five of six admit under one applicant in eight, and **two tiers are empty**. An empty tier
+is information, not a gap: it is how a family sees that their list has no school where the
+answer is likely to be yes. In grade 8 there are five years to fix that, which makes it the
+most actionable thing on the page — and far more valuable than the probability I was asked
+for and could not honestly produce.

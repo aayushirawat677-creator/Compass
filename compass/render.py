@@ -80,6 +80,9 @@ p{ margin:4px 0; }
 .diffbox{ margin-top:11px; border:1px solid #d8d2e4; background:#f7f5fb; border-radius:6px; padding:9px 12px 10px; }
 .diffbox .lab{ color:#5b4a86; letter-spacing:.11em; font-size:8.8px; font-weight:700; text-transform:uppercase; margin-bottom:4px; }
 .diffbox p{ margin:0; }
+.acti{ display:flex; gap:9px; margin:4px 0; font-size:9.4px; line-height:1.45; }
+.acti .actk{ flex:0 0 66px; font-weight:700; color:var(--gold2); letter-spacing:.07em;
+             text-transform:uppercase; font-size:8.4px; padding-top:1px; }
 .keybox{ border-color:#cdbf94; background:#faf6ea; }
 .keybox .lab{ color:var(--gold2); }
 /* Requirements: subject | what the schools ask | what the plan aims at. [#82] */
@@ -105,6 +108,19 @@ p{ margin:4px 0; }
 .reachrow{ display:flex; gap:16px; margin-top:8px; font-size:10px; }
 .oddsrow{ display:flex; gap:22px; margin-top:10px; border-top:1px solid var(--line); padding-top:8px; }
 .oddswide{ margin-top:14px; }
+/* Four tiers by published admit rate. [#88] */
+.tierwrap{ margin-top:14px; border-top:1px solid var(--line); padding-top:9px; }
+.tierlab{ color:var(--gold2); letter-spacing:.12em; font-size:9px; font-weight:700; text-transform:uppercase; margin-bottom:6px; }
+.tierrow{ display:flex; gap:7px; }
+.tier{ flex:1 1 25%; min-width:0; border:1px solid var(--line); border-radius:6px; padding:7px 8px 8px; background:#f4f5f0; }
+.tier.empty{ background:transparent; border-style:dashed; }
+.tier .tn{ font-size:8.4px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#3a463a; }
+.tier .tr{ font-size:8.6px; color:var(--gold2); font-style:italic; margin-bottom:5px; }
+.tchip{ background:#fff; border:1px solid var(--line); border-radius:4px; padding:3px 6px; margin:3px 0;
+        font-size:8.8px; display:flex; justify-content:space-between; gap:5px; align-items:baseline; }
+.tchip em{ color:var(--muted); font-style:normal; font-size:8px; white-space:nowrap; }
+.tempty{ font-size:8.6px; color:var(--muted); font-style:italic; padding:6px 0 2px; line-height:1.4; }
+.tiernote{ margin-top:7px; font-size:8.8px; line-height:1.5; color:var(--muted); border-left:2px solid var(--line); padding-left:9px; }
 /* Two cards on one page. [#81] */
 .twocards{ display:flex; gap:11px; margin-top:12px; align-items:stretch; }
 .mcard{ flex:1 1 50%; min-width:0; border:1px solid var(--line); border-radius:7px;
@@ -279,11 +295,11 @@ TEMPLATE = Template(r"""
     <div class="thesis">{{ blk.thesis }}</div>
     <p>{{ blk.body }}</p>
   {% endfor %}
-  {% if c.profile.family_questions %}
-  <div class="box ask"><div class="lab">We'd like your view before we decide</div>
-    {% for q in c.profile.family_questions %}<p class="small" style="margin:4px 0"><strong>{{ q.about }}</strong> — {{ q.question }}</p>{% endfor %}
-  </div>
-  {% endif %}
+  {# NO QUESTION BOX ON THE PROFILE. [#85] The profile's job is to say back what the family
+     told us. A box of questions underneath it turns the page from "here is your son" into
+     "here is your son, and here is what we could not work out about him" — and one of the
+     three asked which body ran his chess tournaments, which is our record's gap wearing a
+     question mark. The profile does not ask; it reflects. [#33][#43][#75] #}
   <div class="box"><div class="lab">Flags to confirm</div><p class="small">{{ c.profile.flags }}</p></div>
 </div>
 
@@ -307,13 +323,23 @@ TEMPLATE = Template(r"""
     {{ minicard(c.target.card, 'g') }}
     {{ minicard(c.stretch.card, 'p') }}
   </div>
-  {% set odds = c.target.card.odds or c.stretch.card.odds %}
-  {% if odds %}
-  <div class="oddsrow oddswide">
-    {% for col in odds %}
-    <div><div class="lab">{{ '▲' if loop.first else '★' }} {{ col.head }}</div>
-      {% for t in col.tiers %}<div class="ot"><span class="otn">{{ t.name }}</span> <span class="otr">{{ t.range }}</span> <span class="otc">{{ t.colleges }}</span></div>{% endfor %}
-    </div>{% endfor %}
+  {# FOUR TIERS, BY THE SCHOOL'S OWN PUBLISHED ADMIT RATE. [#88] Not by a probability for
+     this child, which we do not have and cannot compute. An EMPTY tier is information, not
+     a gap: it is how a family sees that their list has no safety in it. #}
+  {% if c.tiers %}
+  <div class="tierwrap">
+    <div class="lab tierlab">{{ c.tiers_head or 'Where this list sits' }}</div>
+    <div class="tierrow">
+      {% for t in c.tiers %}
+      <div class="tier {{ 'empty' if not t.schools else '' }}">
+        <div class="tn">{{ t.name }}</div><div class="tr">{{ t.range }}</div>
+        {% if t.schools %}
+          {% for sc in t.schools %}<div class="tchip"><span>{{ sc.name }}</span><em>{{ sc.rate }}</em></div>{% endfor %}
+        {% else %}<div class="tempty">{{ t.empty_note or 'nothing on his list' }}</div>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% if c.tiers_note %}<div class="tiernote">{{ c.tiers_note }}</div>{% endif %}
   </div>
   {% endif %}
 </div>
@@ -347,10 +373,14 @@ TEMPLATE = Template(r"""
   </div>
   {% endif %}
 
-  {% if c.course.headline %}
+  {# The page's highest-value block, so it gets the clearest treatment: one labelled item
+     each, not a paragraph a reader has to parse to find the second thing. [#87] #}
+  {% if c.course.act_on %}
   <div class="diffbox keybox">
-    <div class="lab">{{ c.course.headline_head or 'The one course that carries the most weight' }}</div>
-    <p class="small">{{ c.course.headline }}</p>
+    <div class="lab">{{ c.course.act_on_head or 'What to act on first' }}</div>
+    {% for a in c.course.act_on %}
+    <div class="acti"><span class="actk">{{ a.label }}</span><span>{{ a.text }}</span></div>
+    {% endfor %}
   </div>
   {% endif %}
 
@@ -530,7 +560,19 @@ def _odds(cols):
 
 
 def _safe(d):
-    d = dict(d or {})
+    """Fill in what the template needs, WITHOUT touching the caller's object. [#86]
+
+    This used to `dict(d)` — a shallow copy — and then write into the nested card dicts,
+    so rendering silently rewrote the writer's own output: `card.odds[*].colleges` went
+    from the list the writer emitted to the joined string the template wants. A gate run
+    AFTER rendering then split that string on commas and reported "University of
+    California" as a truncated campus name — a correct document failing a correct gate
+    because the two ran in the wrong order.
+
+    Rendering is a read. Nothing downstream of it should be able to tell it happened.
+    """
+    import copy
+    d = copy.deepcopy(d or {})
     d.setdefault("cover", {})
     for k, v in {"student": "Student", "grade": "", "prepared": "", "family": "", "date": ""}.items():
         d["cover"].setdefault(k, v)
@@ -548,11 +590,14 @@ def _safe(d):
         d[key]["card"]["odds"] = _odds(d[key]["card"].get("odds"))
         # The card no longer carries courses. [#78]
         d[key]["card"].pop("academics", None)
+    d.setdefault("tiers", [])
+    d.setdefault("tiers_head", "")
+    d.setdefault("tiers_note", "")
     d.setdefault("course", {})
-    for f in ("title", "lead", "headline", "headline_head", "req_note", "plans_head",
+    for f in ("title", "lead", "act_on_head", "req_note", "plans_head",
               "difference", "difference_head", "tracks_note", "note"):
         d["course"].setdefault(f, "")
-    for f in ("decisions", "tracks", "plans", "requirements"):
+    for f in ("decisions", "tracks", "plans", "requirements", "act_on"):
         d["course"].setdefault(f, [])
     d.setdefault("roadmap", {"title": "", "lead": "", "stages": [], "grades": []})
     d.setdefault("this_year", {"title": "", "lead": "", "cards": []})

@@ -1403,17 +1403,13 @@ Return ONLY the StrategicPlan JSON with EXACTLY these keys, each fully populated
   simply never asked to do anything. That IS the appraisal, expressed as the plan rather
   than as our reasoning about the plan. Showing both is showing our working. [#33][#43]
 
-  `family_questions` — every appraisal with `needs_family_input: true`, carrying its
-  `family_question` and nothing else from that appraisal. These are choices we did not make
-  alone. One sentence each. [#69]
-    * NEVER carry the appraisal's reasoning, its `why`, or anything from
-      `operator_questions`. Those are ours. A parent reading this page should think "they
-      are asking me to choose", not "they do not know very much about my son".
-    * NEVER print what we lack: no "we only have one thing on record", no "two things are
-      missing from what we have", no "we do not know whether he still does it", no "our
-      read is". A gap in our record is not a fact about their child. [#33][#43]
-    * `threads_lead` says in ONE line that the plan is built as things stand until they
-      answer. It does not apologise, explain, or preview the questions.
+  `family_questions` — DO NOT EMIT. [#85] These sat in a box under the profile and turned
+  the page from "here is your son" into "here is your son, and here is what we could not
+  work out about him". One of them asked which body ran his chess tournaments: a gap in OUR
+  record, wearing a question mark, on the page whose whole job is to say back what the
+  family told us. A genuine choice for the family belongs in Parent Actions, where the
+  parent is already being asked to do something; it does not belong under their child's
+  portrait. The profile reflects; it does not ask. [#33][#43][#69][#75]
 
   The `threads` rows obey the same rule. `note` is one line about the ACTIVITY — "nobody
   outside the family sees the result" is about the activity. "The organising body behind
@@ -1634,6 +1630,30 @@ Return ONLY the StrategicPlan JSON with EXACTLY these keys, each fully populated
   tiers:[{{name, range, colleges:[...]}}]}}] (EXACTLY 2 columns, 2 tiers each),
   takeaway}}}}
   Stretch carries the same shape. NO `academics` and NO `bands` — those are gone. [#78]
+- tiers / tiers_head / tiers_note: FOUR TIERS, BY THE SCHOOL'S PUBLISHED ADMIT RATE. [#88]
+  `tiers:[{{name, range, schools:[{{name, rate}}], empty_note}}]` — Far reach, Reach, Target,
+  Likely, always all four and always in that order.
+
+  THE RATE BELONGS TO THE SCHOOL, NEVER TO THE STUDENT. We hold nothing that can produce
+  P(admit | this child), and the temptation to supply one is strongest here because a
+  percentage in a tier looks like it is already about him.
+    * Our own corpus CANNOT be used for this. Its accept share for these six schools runs
+      3.7x to 7.7x above the published rate — people post to a results forum when the news
+      is good. Read as odds it would tell this family Penn is a 35% school. Penn admitted
+      4.87%. [#22]
+    * The tiers ARE THE SAME ON BOTH PLANS. A school's selectivity is a property of the
+      school; it does not move because a student works harder. We tested the alternative
+      directly: among top-band applicants holding a venture and debate, adding a leadership
+      office and an award moved the measured share by under a point at four of six schools
+      and DOWN at a fifth. There is no measured Target-versus-Stretch difference to print,
+      and inventing one would be the most consequential fabrication in the document.
+      Say instead what the Stretch actually changes: what he has to show.
+    * `tiers_note` MUST say the figures are the schools' own published rates.
+    * AN EMPTY TIER IS INFORMATION. Do not hide it, do not pad it, do not move a school up
+      to fill it. `empty_note` names what is missing. A list with nothing in Target or
+      Likely is a family who has not yet chosen a school where the answer is likely to be
+      yes, and in grade 8 that is the most useful thing on the page.
+
 - course: {{title, lead, requirements:[{{subject, asked, who, aim, key}}], req_note,
   headline_head, headline, difference_head, difference,
   decisions:[{{when, head, body, keeps_open}}] (3-5), note}}

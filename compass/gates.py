@@ -1566,12 +1566,14 @@ def gate_requirements(draft, colleges=None):
             f.append(f"row '{subj}' says 'required' over a citation that says only "
                      f"'recommended' — they are different claims")
 
-    head = str(c.get("headline") or "")
-    if head:
-        cited = [k for k in known if k and k in head.lower()]
-        if not cited:
-            f.append("the headline course names no school — it must fall out of the "
-                     "requirements table, not out of general admissions knowledge")
+    # The act-on block is the page's strongest claim, so it carries the same burden as a
+    # row: it must fall out of the requirements table, not out of general knowledge. [#87]
+    acts = [a if isinstance(a, dict) else {} for a in (c.get("act_on") or [])]
+    if acts and not any(k for a in acts for k in known if k and k in str(a.get("text","")).lower()):
+        f.append("the act-on block names no school — it must fall out of the "
+                 "requirements table, not out of general admissions knowledge")
+    if len(acts) > 3:
+        f.append(f"{len(acts)} things to act on first — three is the most that can be first")
 
     return GateResult("requirements", RETRY if f else PASS, f,
                       "a requirement row is a citation or it is a fabrication" if f else "")
@@ -1647,3 +1649,178 @@ def gate_score_sanity(draft):
     return GateResult("score_sanity", RETRY if f else PASS, f,
                       "a number above its own scale reads as a document nobody checked"
                       if f else "")
+
+
+# Claims that need evidence we structurally do not have. [#84]
+_UNGROUNDED_CLAIMS = (
+    (r"\blegacy\b", "legacy status is a policy claim about a named school, and schools "
+                    "define it differently; we hold no admissions policy"),
+    (r"\brecruit(ed|able)\b", "recruitment is a coach's decision, not a fact about a child"),
+    (r"\bhook\b", "'hook' is our vocabulary for our own reasoning"),
+    (r"\bguarantee|\bwill get in|\bassure", "no plan can promise an outcome"),
+)
+
+# Words that describe the CIRCUMSTANCES of an achievement the intake records only as a
+# result. Each one is a small scene the writer supplied. [#84]
+_SCENE_WORDS = (r"\bjudges?\b", r"\bagainst a clock\b", r"\btimed\b", r"\bto a brief\b",
+                r"\baudience\b", r"\bpanel\b", r"\bstage\b")
+
+
+def gate_profile_grounding(draft, intake):
+    """EVERY SPECIFIC ON THE PROFILE PAGE CAME FROM THE PARENT, OR IT DID NOT HAPPEN. [#84]
+
+    The profile is the one page whose entire job is to say back what the family told us.
+    It is also where invention is least visible: a fabricated detail there does not look
+    like a claim, it looks like attentiveness. The parent wrote "district-level
+    competition, top-5 finalist, medal" and the page read "cooking to a brief in front of
+    judges who were not his teachers, against a clock". Every one of those is plausible.
+    None of them was said. A mother reading that thinks we know her son; she is wrong, and
+    the one detail she can check is the one that tells her.
+
+    That failure mode is different from over-goaling and worse in one specific way: it
+    costs nothing to produce and it reads as care.
+
+    Three checks, all mechanical:
+      * NUMBERS. Any figure on the page must appear in the intake. "$5,000 to $10,000" is
+        the parent's own; "the fair's 6 to 14 band" is an age limit on a fair that has no
+        organiser yet.
+      * PROPER NOUNS. Any capitalised name must appear in the intake. Roblox is theirs;
+        a school, body or programme we introduced is ours.
+      * SCENE WORDS and UNGROUNDED CLAIMS. The circumstances of an achievement recorded
+        only as a result, and claims (legacy, recruited) needing evidence we never hold.
+    """
+    import json
+    import re
+    p = draft.get("profile") or {}
+    if not p:
+        return GateResult("profile_grounding", PASS, [], "no profile")
+    hay = json.dumps(intake or {}).lower()
+    f = []
+
+    def prose():
+        for b in (p.get("blocks") or []):
+            if isinstance(b, dict):
+                yield "block", f"{b.get('subhead','')} {b.get('thesis','')} {b.get('body','')}"
+        for q in (p.get("family_questions") or []):
+            if isinstance(q, dict):
+                yield "question", f"{q.get('about','')} {q.get('question','')}"
+        yield "lead", str(p.get("lead") or "")
+        yield "flags", str(p.get("flags") or "")
+
+    # Spelled-out small numbers are how prose carries a figure; map before comparing.
+    WORDNUM = {"one": "1", "two": "2", "three": "3", "four": "4", "five": "5", "six": "6",
+               "seven": "7", "eight": "8", "nine": "9", "ten": "10", "twelve": "12"}
+
+    def in_intake_num(tok):
+        t = tok.replace(",", "").replace("$", "").strip().lower()
+        t = WORDNUM.get(t, t)
+        if not t:
+            return True
+        flat = hay.replace(",", "").replace("$", "")
+        return bool(re.search(rf"(?<![\d.]){re.escape(t)}(?![\d])", flat))
+
+    for where, text in prose():
+        if not text.strip():
+            continue
+        for m in re.finditer(r"\$?\b\d[\d,]*(?:\.\d+)?\b", text):
+            tok = m.group(0)
+            if tok.strip("$") in ("1", "2"):          # "one or two subjects", ordinals
+                continue
+            if not in_intake_num(tok):
+                ctx = text[max(0, m.start() - 34):m.end() + 34]
+                f.append(f"profile {where}: the figure {tok} is not in the intake — "
+                         f"…{ctx.strip()}…")
+        for m in re.finditer(r"(?<![.!?]\s)(?<!^)\b([A-Z][a-zA-Z&'\-]{2,})(?:\s+[A-Z][a-zA-Z&'\-]{2,})*", text):
+            name = m.group(0)
+            head = name.split()[0].lower()
+            if head in {"he", "his", "she", "her", "they", "the", "and", "but", "asked",
+                        "before", "two", "confirm", "leader", "at", "if", "would", "were"}:
+                continue
+            # Strip the possessive before comparing: the intake says "University of
+            # California" and the page said "the University of California's home state".
+            bare = re.sub(r"['\u2019]s\b", "", name).lower()
+            if bare in hay or re.sub(r"['\u2019]s\b", "", head) in hay:
+                continue
+            f.append(f"profile {where}: '{name}' appears nowhere in the intake")
+        for pat in _SCENE_WORDS:
+            m = re.search(pat, text, re.I)
+            if m and not re.search(pat, hay, re.I):
+                ctx = text[max(0, m.start() - 40):m.end() + 46]
+                f.append(f"profile {where}: '{m.group(0)}' describes the circumstances of "
+                         f"something the intake records only as a result — …{ctx.strip()}…")
+        for pat, why in _UNGROUNDED_CLAIMS:
+            m = re.search(pat, text, re.I)
+            if m and not re.search(pat, hay, re.I):
+                f.append(f"profile {where}: '{m.group(0)}' — {why}")
+
+    # The flags box is on a parent's page, so it obeys the parent's rules. [#75][#63]
+    flags = str(p.get("flags") or "")
+    named = sorted(set(m.group(0) for m in re.finditer(_NAMED_BODIES, flags, re.I)))
+    if named:
+        f.append(f"the flags box names {named[:3]} on a page a parent reads — "
+                 f"operator checks are ours, and named bodies are forbidden four years out")
+
+    seen, uniq = set(), []
+    for x in f:
+        if x not in seen:
+            seen.add(x)
+            uniq.append(x)
+    return GateResult("profile_grounding", RETRY if uniq else PASS, uniq,
+                      "an invented detail does not read as a claim; it reads as care"
+                      if uniq else "")
+
+
+def gate_no_personal_odds(draft):
+    """A SCHOOL'S ADMIT RATE IS A FACT. A CHILD'S CHANCE IS NOT. [#88]
+
+    The tier strip puts six schools in four bands by published admit rate, and the one
+    thing it must never become is a forecast. We hold four sources and not one of them
+    can produce P(admit | this student):
+
+      * the corpus says what an admit LOOKED like, and its own accept share runs 3.7x to
+        7.7x above the published rate for these six schools, because people post results
+        forums when the news is good. Reading that share as odds would tell this family
+        Penn is a 35% school. Penn admitted 4.87%.
+      * admit_rates says how selective a school is, which is a property of the school.
+      * C7 says what a school weighs. Requirements say what to take. Neither forecasts.
+
+    So: percentages may be attached to a SCHOOL and never to the student, and no phrasing
+    may convert one into the other — "his odds at", "chance of getting in", "likelihood".
+    This is the number a family would plan around, and it is the easiest one in the whole
+    document to state with unearned confidence.
+    """
+    import re
+    f = []
+    tiers = [t if isinstance(t, dict) else {} for t in (draft.get("tiers") or [])]
+    blob = " ".join([str(draft.get("tiers_head") or ""), str(draft.get("tiers_note") or "")] +
+                    [f"{t.get('name','')} {t.get('range','')} {t.get('empty_note','')}" for t in tiers])
+
+    OWNED = (r"\bhis (?:odds|chances?|likelihood|probability)\b",
+             r"\b(?:odds|chance|probability) (?:of (?:getting|being) (?:in|admitted)|he (?:has|gets))\b",
+             r"\b(?:he|she) (?:has|would have) an? \d+ ?% \b",
+             r"\b\d+ ?% (?:chance|likely to get|likelihood)\b",
+             r"\bwill (?:get|be admitted)\b")
+    # A page that says "these are NOT his chances" contains the phrase it is denying, and
+    # the disclaimer is the thing we most want the writer to keep. Judge by what precedes
+    # the match: a negation ahead of it inverts the claim.
+    NEGATED = re.compile(r"(?:\bnot\b|\bnever\b|\bno\b|\brather than\b|\bnothing\b|"
+                         r"\bdo(?:es)? not\b|\bcannot\b|\bwithout\b)[^.;]{0,52}$", re.I)
+    for pat in OWNED:
+        for m in re.finditer(pat, blob, re.I):
+            before = blob[max(0, m.start() - 64):m.start()]
+            if NEGATED.search(before):
+                continue
+            f.append(f"'{m.group(0)}' turns a school's admit rate into this child's odds — "
+                     f"nothing we hold can produce that number")
+            break
+
+    for t in tiers:
+        for sc in [x if isinstance(x, dict) else {} for x in (t.get("schools") or [])]:
+            rate = str(sc.get("rate") or "")
+            if rate and not re.search(r"\d", rate):
+                f.append(f"tier chip '{sc.get('name')}' carries no figure")
+    if tiers and not re.search(r"published|the school'?s own|how selective", blob, re.I):
+        f.append("the tier strip never says these are the SCHOOLS' published rates — "
+                 "unlabelled, a reader takes them as their child's chances")
+    return GateResult("no_personal_odds", RETRY if f else PASS, f,
+                      "a school's admit rate is a fact; a child's chance is not" if f else "")
