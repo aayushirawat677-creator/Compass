@@ -1314,6 +1314,14 @@ def gate_card_shape(draft, college_list=None):
             if bad in keys:
                 f.append(f"{tag} card stat '{bad}' restates the credential list in shorthand")
 
+        # A grade spelled out in the stat row is a word in a row of figures. [#79]
+        for st in stats:
+            spelled = re.findall(r"\b(ninth|tenth|eleventh|twelfth)\b",
+                                 f"{st.get('v','')} {st.get('sub','')}", re.I)
+            if spelled:
+                f.append(f"{tag} stat '{st.get('k')}' spells out '{spelled[0]}' — "
+                         f"the stat row is scanned, so grades in it are numerals")
+
         creds = _rows(card.get("credentials"))
         if not 4 <= len(creds) <= 5:
             f.append(f"{tag} card carries {len(creds)} credentials — 4, or 5 at the most")

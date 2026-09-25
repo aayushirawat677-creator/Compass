@@ -2176,3 +2176,24 @@ The prompt now says all of this; only the RENDER is proven. The v13 cards and co
 were rebuilt by hand from run11's own plan material to show the shape. **What the writer
 does when it reads the new spec is untested** — no API key in this environment — and that
 run is the one that matters.
+
+## 79. Grades in the stat row are numerals
+> *"use number caluclusa by grade 12"*
+
+"Calculus by twelfth" -> **"Calculus by grade 12"**.
+
+The reason it matters is what the stat row is FOR. A parent's eye crosses it in a second,
+looking for figures — 3.8+, 1500+ / 34+, 7 to 13 — and a spelled-out ordinal sits in that
+row as a word to be *read* rather than a figure to be *scanned*. It breaks the rhythm of
+the one row on the card that has a rhythm.
+
+**Scanning and reading want opposite things**, which is why this is a stat-row rule and not
+a document rule. The credential bullets and the roadmap keep their words — "competing past
+his own school by eleventh grade" is prose, and "by grade 11" would read as a form field
+there. Same fact, different job, different spelling. Written into the card grammar and
+checked in `gate_card_shape`.
+
+The sub-line lost four words in the same pass ("kept open from grade 9; placement sets the
+pace" -> "the sequence kept open from grade 9"), because it was wrapping to a second line
+and making that stat box taller than the three beside it. The placement caveat already
+lives on the courses page, where the decision it qualifies is. [#32]

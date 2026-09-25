@@ -1481,8 +1481,15 @@ Return ONLY the StrategicPlan JSON with EXACTLY these keys, each fully populated
                           but the language level, the science sequence or the field
                           course where that is what their plan turns on. Name the course.
 
-      Values stay short — "1500+ / 34+", "Calculus by twelfth" — never a sentence. The
+      Values stay short — "1500+ / 34+", "Calculus by grade 12" — never a sentence. The
       sub-line carries the caveat; the value carries the fact.
+
+      GRADES IN THE STAT ROW ARE NUMERALS: "by grade 12", "in grade 11", "from grade 9".
+      Not "by twelfth", not "eleventh grade". [#79] The stat row is SCANNED — a parent's
+      eye crosses it in a second looking for figures — and a spelled-out ordinal sits in
+      that row as a word to be read, next to 3.8+ and 1500+ / 34+ which are not. The prose
+      elsewhere on the card and in the roadmap keeps its words; this rule is the stat row's
+      alone, because scanning and reading want opposite things.
 
     * CREDENTIALS: FOUR, FIVE AT THE ABSOLUTE MOST, AND ONE THREAD EACH. [#78]
       The heading IS the credential, stated flat, with its level, scale or duration.
