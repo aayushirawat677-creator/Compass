@@ -2067,3 +2067,112 @@ both rows on one line each with every name whole.
 The labels still read 01, 02, 03, **05**, 06, 07. Nothing in the document referred to a
 section by number so nothing broke — it just looked like a page had gone missing, which is
 the one thing a plan should never look like. Renumbered.
+
+## 78. The card was carrying four jobs, and three of them belonged elsewhere
+Eight points on the Target card. Six of them turned out to be the same finding, and it is
+the one this engine keeps rediscovering.
+
+### Four rules were already written. All four were broken.
+The writer spec said, in words, before any of this:
+
+    "Stat row: exactly 4 stats."                          -> six rendered
+    "Credentials: 4-6."                                   -> seven rendered
+    "NEVER repeat the stat row inside a credential."      -> one carried GPA and course load
+    "must NEVER recite the ... program names"             -> the first bullet named two
+
+Nothing checked any of them. **A rule is a suggestion until something rejects the output
+that breaks it** — the fourth time this exact shape has cost a defect (see #50, #17, #77).
+The prompt is where a rule is *expressed*; a gate is where it is *in force*. `gate_card_shape`
+now holds all four, with a negative control each built from the card that actually shipped.
+
+### "what is advance courses tells you?"
+Nothing that RIGOUR did not already say. On a transcript, rigour IS the advanced-course
+load — two stats, one fact. Alongside them, WHAT HE CARRIES ("Business · Debate · Service")
+and TOP LEVEL REACHED ("School") were the credential list compressed into two words and
+printed above itself.
+
+So: **four stats, and these four** — GPA, entrance tests, rigour as the AP band, and one
+course mark chosen for this student (the math ceiling here; the language level or the
+science sequence for a student whose plan turns on those). The fourth stat is the one that
+carries the child: "Calculus by twelfth" says something about Neerav that "School" did not.
+
+A card is the one page a parent photographs. Noise on it is expensive.
+
+### Courses go back to their own page — #76 was wrong
+I merged them onto the card last session and the page count made it look like a win. The
+distinction I collapsed:
+
+    THE CARD SAYS WHAT HE WILL LOOK LIKE.   A projection. Senior year, if the plan runs.
+    THE COURSE PAGE SAYS WHAT THE FAMILY DOES.  A decision. At a desk, on a date, by a person.
+
+A course target sitting inside a projection tells a parent her son's schedule is already
+settled. It is not — someone has to ask a counsellor for it, and can be told no.
+
+But the page does NOT come back as it was. The old one was a Target-against-Stretch table
+whose stretch column said "Same." five times out of six, and that criticism still stands.
+It is now five DECISIONS, each with the moment it happens ("Ninth-grade registration"),
+what to ask for, and — the field that earns the page — **what saying yes keeps open**:
+
+    The strongest math placement he can carry well
+    KEEPS OPEN  Calculus by twelfth grade, which business and economics programmes look for.
+
+Where the two paths differ is one sentence at the foot, not a column of repetitions.
+
+**Both versions of this page were wrong in the same way and I fixed it twice in opposite
+directions.** What was actually wrong was never the location — it was that the content was
+a table of targets rather than a set of choices. Moving a weak section does not strengthen
+it. That is the lesson, and it is more useful than either page.
+
+### "why there is a mix up"
+The first bullet read: *"A four-year card business, entered in his school's DECA or FBLA
+chapter and judged outside the family."* She read DECA as a debate competition, then hit a
+debate bullet next, and could not tell which thread she was in. DECA is business, not
+debate — but being right about that misses it entirely. **The bullet packed a business, a
+named organisation and a judging condition into one sentence, so from outside there was no
+way to tell what it was about.** When a reader cannot tell, the reader is not the problem.
+
+Now: ONE THREAD PER BULLET, the activity named in the first few words, and the job, the
+records and the role folded into the thread they belong to rather than spending a slot each.
+Four bullets, down from seven:
+
+    A card and collectibles business he has run for five years.
+    Four years on his school's debate team, competing past his own school by eleventh grade.
+    Five unbroken years with one service organisation, a standing role in the last two.
+    Chess, cooking, a racquet sport and theatre, carried the whole way through.
+
+And no named body, which was already the rule four years out (#62, #63) — enforced in
+`gate_horizon` for the roadmap and nowhere for the card. The rule was in force where it was
+written, not where it was decided. Again.
+
+### "Load-bearing credentials" -> "What his application will show"
+Our phrase, from our reasoning about which credentials carry weight. A parent does not need
+the engineering metaphor to read the list.
+
+### The odds: three things saying one thing
+A prose sentence on what was within reach, a prose sentence on the toughest reaches, and a
+band strip beneath them naming the same schools a third time with percentages. Now one
+block: two columns, two labelled lines, schools in full. [#77]
+
+### The takeaway was about our method
+*"The Target plan puts someone outside the family behind every activity he already has."*
+True, and it is a description of how we built the plan — not of her son. The card projects
+a student, so the takeaway describes that student:
+
+    "By senior year he applies as a student who built a real business, argued four years
+     on a debate team, and stayed five years with one cause."
+
+### Smaller things
+* `04` had been left out of the section numbering when the old course page was deleted, so
+  the labels read 01, 02, 03, 05, 06, 07 — a plan that looks like it is missing a page.
+* "maths" -> "math". The document's house spelling is British throughout (organisation,
+  rigour, programme) and I left that alone, but "maths" is the one form an American parent
+  does not use at all. **Open question for Aayushi: should the whole document be US-spelled?**
+  36 "organisation"s say it is a deliberate voice; if it is not, it is a one-line fix.
+* `gate_card_shape` tolerates a malformed row instead of raising. A gate that throws takes
+  the run down on exactly the output it existed to catch.
+
+### Not yet verified
+The prompt now says all of this; only the RENDER is proven. The v13 cards and course page
+were rebuilt by hand from run11's own plan material to show the shape. **What the writer
+does when it reads the new spec is untested** — no API key in this environment — and that
+run is the one that matters.

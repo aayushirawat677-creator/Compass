@@ -63,18 +63,24 @@ p{ margin:4px 0; }
 .cred{ margin-top:8px; } .cred .lab{ color:var(--gold2); letter-spacing:.12em; font-size:9px; font-weight:700; text-transform:uppercase; margin-bottom:4px; }
 .cred li{ list-style:none; padding-left:14px; position:relative; margin:2.5px 0; }
 .cred li:before{ content:'▪'; position:absolute; left:0; color:var(--green); }
-.acad{ margin-top:9px; border-top:1px solid var(--line); padding-top:7px; }
-.acad .lab{ color:var(--gold2); letter-spacing:.12em; font-size:9px; font-weight:700; text-transform:uppercase; margin-bottom:3px; }
-.acad p{ margin:0 0 4px; }
 .tracks{ display:flex; flex-wrap:wrap; gap:3px 14px; }
+.cdec{ border-left:2px solid var(--green); padding:7px 0 7px 11px; margin:9px 0; }
+.cdh{ display:flex; gap:9px; align-items:baseline; margin-bottom:3px; }
+.cdw{ color:var(--gold2); font-size:8.4px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; min-width:96px; }
+.cdk{ margin-top:4px; font-size:9.2px; color:var(--muted); }
+.cdk span{ color:var(--gold2); letter-spacing:.09em; text-transform:uppercase; font-size:8.2px; font-weight:700; margin-right:5px; }
+.cblk{ margin-top:15px; border-top:1px solid var(--line); padding-top:8px; }
+.cblk .lab{ color:var(--gold2); letter-spacing:.12em; font-size:9px; font-weight:700; text-transform:uppercase; margin-bottom:5px; }
 .trk{ flex:1 1 46%; font-size:9.6px; display:flex; gap:6px; }
 .trk .tk{ color:var(--muted); min-width:74px; letter-spacing:.04em; text-transform:uppercase; font-size:8.6px; padding-top:1px; }
 .reachrow{ display:flex; gap:16px; margin-top:8px; font-size:10px; }
-.bandstrip{ margin-top:6px; border-top:1px solid var(--line); padding-top:5px; }
-.bs{ display:flex; gap:7px; font-size:8.9px; margin:1.5px 0; align-items:baseline; line-height:1.35; }
-.bs .bsn{ font-weight:700; letter-spacing:.05em; text-transform:uppercase; font-size:8px; min-width:52px; color:#3a463a; }
-.bs .bsr{ color:var(--gold2); min-width:84px; white-space:nowrap; }
-.bs .bsc{ color:var(--muted); }
+.oddsrow{ display:flex; gap:22px; margin-top:10px; border-top:1px solid var(--line); padding-top:8px; }
+.oddsrow > div{ flex:1 1 50%; }
+.ot{ font-size:9.6px; margin:2.5px 0; line-height:1.4; }
+.oddsrow .lab{ color:var(--gold2); letter-spacing:.12em; font-size:9px; font-weight:700; text-transform:uppercase; margin-bottom:4px; }
+.ot .otn{ font-weight:700; color:#3a463a; }
+.ot .otr{ color:var(--gold2); font-weight:700; }
+.ot .otc{ color:var(--ink); }
 .reachrow .lab{ letter-spacing:.1em; font-size:8.5px; font-weight:700; text-transform:uppercase; color:var(--muted); }
 
 /* tier bands */
@@ -189,32 +195,23 @@ TEMPLATE = Template(r"""
     <div class="stats">
       {% for s in card.stats %}<div class="stat"><div class="k">{{ s.k }}</div><div class="v">{{ s.v }} <small>{{ s.sub }}</small></div></div>{% endfor %}
     </div>
-    {% if card.academics %}
-    {# COURSE AND GRADE TARGETS LIVE ON THE CARD. [#76] They used to have a section of
-       their own, which said the same thing the card's academic stat already said and
-       then repeated "Same." down a whole column for the stretch path. The card is where
-       a reader looks for what this plan produces, so the academic line belongs there
-       with the rest of it. #}
-    <div class="acad"><div class="lab">Courses and grades</div>
-      {% if card.academics.summary %}<p class="small">{{ card.academics.summary }}</p>{% endif %}
-      {% if card.academics.tracks %}<div class="tracks">
-        {% for t in card.academics.tracks %}<div class="trk"><span class="tk">{{ t.track }}</span><span>{{ t.target }}</span></div>{% endfor %}
-      </div>{% endif %}
-    </div>
-    {% endif %}
-    <div class="cred"><div class="lab">Load-bearing credentials</div><ul>
+    {# NO COURSES ON THE CARD. [#78] They had a page, I merged them here in #76, and that
+       was wrong in a way the page count hid: this card PROJECTS — it is what he looks
+       like in senior year if the plan is carried out. A course target is a DECISION the
+       family makes at registration. Putting a decision inside a projection tells a parent
+       their son's schedule is already settled. Courses went back to their own page. #}
+    <div class="cred"><div class="lab">What his application will show</div><ul>
       {% for cr in card.credentials %}<li><strong>{{ cr.h }}</strong> {{ cr.t }}</li>{% endfor %}</ul></div>
-    <div class="reachrow">
-      <div><div class="lab">▲ Within reach</div>{{ card.within_reach }}</div>
-      <div><div class="lab">★ Toughest reaches</div>{{ card.toughest }}</div>
-    </div>
-    {# The band strip prints ONCE, on the Target card. [#77] It was on both, byte for
-       byte identical — the same two rows, the same percentages, the same schools, on
-       facing pages. The bands describe the family's college list, which does not change
-       between the two paths, so the second printing carried no information. #}
-    {% if card.bands and color == 'g' %}
-    <div class="bandstrip">
-      {% for b in card.bands %}<div class="bs"><span class="bsn">{{ b.name }}</span><span class="bsr">{{ b.range }}</span><span class="bsc">{{ b.colleges }}</span></div>{% endfor %}
+    {# ONE ODDS BLOCK, TWO TIERS A SIDE. [#78] This was three things saying the same thing:
+       a prose sentence about what is within reach, a prose sentence about the toughest
+       reaches, and a band strip underneath naming the same schools again with percentages.
+       Now: two columns, two labelled lines each, the schools named in full. #}
+    {% if card.odds %}
+    <div class="oddsrow">
+      {% for col in card.odds %}
+      <div><div class="lab">{{ '▲' if loop.first else '★' }} {{ col.head }}</div>
+        {% for t in col.tiers %}<div class="ot"><span class="otn">{{ t.name }}</span> <span class="otr">{{ t.range }}</span> <span class="otc">{{ t.colleges }}</span></div>{% endfor %}
+      </div>{% endfor %}
     </div>
     {% endif %}
     <div class="darkbox"><div class="lab">Takeaway</div><p>{{ card.takeaway }}</p></div>
@@ -269,10 +266,45 @@ TEMPLATE = Template(r"""
   {{ pcard(c.stretch.card, 'p') }}
 </div>
 
+<!-- 04 COURSES AND GRADES -->
+{# A PAGE OF ITS OWN, AND NOT A PROJECTION. [#78] The old version of this page was a
+   Target-against-Stretch table whose stretch column said "Same." five times out of six,
+   so I folded it onto the cards in #76. That fixed the repetition and broke something
+   else: the card says what he WILL LOOK LIKE, and a course target is something the
+   family DECIDES, at a registration desk, on a date. The two are different kinds of
+   statement and they do not belong in one box. So the page comes back, written as the
+   decision it is — what to ask for, when it is asked, and what it keeps open. #}
+<div class="page">
+  <div class="rhead">Compass · Strategic Plan · {{ c.cover.student }} · Grade {{ c.cover.grade }}</div>
+  <div class="slabel">04 · Courses and Grades</div>
+  <h2 class="sec">{{ c.course.title }}</h2>
+  <div class="lead">{{ c.course.lead }}</div>
+  {% for d in c.course.decisions %}
+  <div class="cdec">
+    <div class="cdh"><span class="cdw">{{ d.when }}</span><strong>{{ d.head }}</strong></div>
+    <div class="small">{{ d.body }}</div>
+    {% if d.keeps_open %}<div class="cdk"><span>Keeps open</span> {{ d.keeps_open }}</div>{% endif %}
+  </div>
+  {% endfor %}
+  {% if c.course.tracks %}
+  <div class="cblk"><div class="lab">Where to aim, subject by subject</div>
+    <div class="tracks">
+      {% for t in c.course.tracks %}<div class="trk"><span class="tk">{{ t.track }}</span><span>{{ t.target }}</span></div>{% endfor %}
+    </div>
+  </div>
+  {% endif %}
+  {% if c.course.stretch_note %}
+  <div class="cblk"><div class="lab">On the Stretch plan</div>
+    <p class="small">{{ c.course.stretch_note }}</p></div>
+  {% endif %}
+  {% if c.course.note %}<div class="darkbox" style="margin-top:18px"><div class="lab">The one thing to hold on to</div>
+    <p>{{ c.course.note }}</p></div>{% endif %}
+</div>
+
 <!-- 05 ROADMAP -->
 <div class="page">
   <div class="rhead">Compass · Strategic Plan · {{ c.cover.student }} · Grade {{ c.cover.grade }}</div>
-  <div class="slabel">04 · The Roadmap</div>
+  <div class="slabel">05 · The Roadmap</div>
   <h2 class="sec">{{ c.roadmap.title }}</h2>
   <div class="lead">{{ c.roadmap.lead }}</div>
   <div class="stages">
@@ -341,7 +373,7 @@ TEMPLATE = Template(r"""
 <!-- 06 THIS YEAR -->
 <div class="page">
   <div class="rhead">Compass · Strategic Plan · {{ c.cover.student }} · Grade {{ c.cover.grade }}</div>
-  <div class="slabel">05 · This Year, Specifically</div>
+  <div class="slabel">06 · This Year, Specifically</div>
   <h2 class="sec">{{ c.this_year.title }}</h2>
   <div class="lead">{{ c.this_year.lead }}</div>
   {% if c.this_year.terms %}
@@ -360,7 +392,7 @@ TEMPLATE = Template(r"""
 <!-- 07 PARENT ACTIONS -->
 <div class="page">
   <div class="rhead">Compass · Strategic Plan · {{ c.cover.student }} · Grade {{ c.cover.grade }}</div>
-  <div class="slabel">06 · Parent Actions</div>
+  <div class="slabel">07 · Parent Actions</div>
   <h2 class="sec">What to do now.</h2>
   <div class="lead">{{ c.parent_actions.lead }}</div>
   {% for a in c.parent_actions['items'] %}
@@ -384,32 +416,38 @@ def to_pdf(plan: dict, out_path: str) -> str:
         return html_path + f"   (PDF skipped: {e})"
 
 
-def _bands(bands):
-    """The band strip's college list, joined so no school's name can be cut in half. [#77]
+def _odds(cols):
+    """The odds block: two columns, two tiers each, every school named in full. [#78][#77]
 
-    A writer told to comma-join a list of colleges, handed "University of California,
-    Berkeley" and "University of California, Los Angeles", printed
-    "University of California, University of California" — it dropped each campus to
-    keep its own separator unambiguous, and the strip then named the same school twice.
-    A name that contains the separator cannot be joined by it. So: the schema asks for a
-    LIST, we join with a middot, and a string that arrives anyway is passed through
-    rather than re-split — splitting it is the bug that caused this.
+    Joining is where a school's name gets broken. A writer told to comma-join a list
+    holding "University of California, Berkeley" and "University of California, Los
+    Angeles" printed "University of California, University of California" — it dropped
+    each campus so its own separator stayed unambiguous, and the block then named the
+    same school twice and no campus at all. A name that CONTAINS the separator cannot be
+    joined by it, so the schema asks for a list, this joins it with a middot, and a
+    string that arrives anyway is passed through rather than re-split. Splitting on the
+    comma is the bug that caused this.
     """
     out = []
-    for b in (bands or []):
-        b = dict(b or {})
-        cols = b.get("colleges")
-        if isinstance(cols, (list, tuple)):
-            names, seen = [], set()
-            for c in cols:
-                n = (c.get("name") if isinstance(c, dict) else str(c)).strip()
-                if n and n.lower() not in seen:
-                    seen.add(n.lower())
-                    names.append(n)
-            b["colleges"] = " · ".join(names)
-        else:
-            b["colleges"] = str(cols or "")
-        out.append(b)
+    for col in (cols or []):
+        col = dict(col or {})
+        tiers = []
+        for t in (col.get("tiers") or []):
+            t = dict(t or {})
+            c = t.get("colleges")
+            if isinstance(c, (list, tuple)):
+                names, seen = [], set()
+                for one in c:
+                    n = (one.get("name") if isinstance(one, dict) else str(one)).strip()
+                    if n and n.lower() not in seen:
+                        seen.add(n.lower())
+                        names.append(n)
+                t["colleges"] = " · ".join(names)
+            else:
+                t["colleges"] = str(c or "")
+            tiers.append(t)
+        col["tiers"] = tiers
+        out.append(col)
     return out
 
 
@@ -425,14 +463,18 @@ def _safe(d):
     for key in ("target", "stretch"):
         d.setdefault(key, {"lead": "", "card": {}, "bands": {"intro": "", "bands": []}})
         d[key].setdefault("card", {})
-        for f in ("label", "title", "subtitle", "within_reach", "toughest", "takeaway"):
+        for f in ("label", "title", "subtitle", "takeaway"):
             d[key]["card"].setdefault(f, "")
-        for f in ("stats", "credentials"):
+        for f in ("stats", "credentials", "odds"):
             d[key]["card"].setdefault(f, [])
-        d[key].setdefault("bands", {"intro": "", "bands": []})
-        d[key]["card"]["bands"] = _bands(d[key]["card"].get("bands"))
-    d.setdefault("course", {"lead": "", "target_gpa": "", "stretch_gpa": "", "target_bullets": [],
-                            "stretch_bullets": [], "table": [], "note": ""})
+        d[key]["card"]["odds"] = _odds(d[key]["card"].get("odds"))
+        # The card no longer carries courses. [#78]
+        d[key]["card"].pop("academics", None)
+    d.setdefault("course", {})
+    for f in ("title", "lead", "stretch_note", "note"):
+        d["course"].setdefault(f, "")
+    for f in ("decisions", "tracks"):
+        d["course"].setdefault(f, [])
     d.setdefault("roadmap", {"title": "", "lead": "", "stages": [], "grades": []})
     d.setdefault("this_year", {"title": "", "lead": "", "cards": []})
     d.setdefault("parent_actions", {"lead": "", "items": []})

@@ -1419,31 +1419,40 @@ Return ONLY the StrategicPlan JSON with EXACTLY these keys, each fully populated
   outside the family sees the result" is about the activity. "The organising body behind
   the medals is what decides which of those two it is" is us thinking out loud about our
   own classification, and it does not belong on a page a mother reads. [#69]
-- THERE IS NO SEPARATE COURSE SECTION. Courses and grades live ON THE CARD. [#76]
-  They used to have a page of their own, which repeated the card's academic stat and then
-  said "Same." down a whole column, because the stretch path does not change the academic
-  targets. One fact, one place (#32) — and the card is where a reader looks for what this
-  plan produces.
+- course: COURSES AND GRADES HAVE THEIR OWN PAGE, AND IT IS A PLAN, NOT A PROJECTION. [#78]
+  This page was merged onto the cards in #76 and that was wrong. The reason is worth
+  holding on to, because it is a distinction this whole document turns on:
 
-  Each card carries `academics: {{summary, tracks:[{{track, target}}]}}`:
-    * `summary` — ONE or TWO sentences. What the grades and testing come to, in plain
-      words. On the STRETCH card this is usually a single line saying the academic targets
-      do not change and the stretch is bought with activity hours — do not repeat the
-      target card's academics in full.
-    * `tracks` — one short line per subject area (Math, English, Science, World language,
-      the intended field, overall load). What this path aims at, in a handful of words.
-      On the stretch card, include only the tracks that genuinely DIFFER; an empty list
-      is right when none do.
+      THE CARD SAYS WHAT HE WILL LOOK LIKE.   A projection. Senior year, if the plan runs.
+      THIS PAGE SAYS WHAT THE FAMILY DOES.    A decision. At a desk, on a date, by a person.
 
-  THE CARD'S FOUR ACADEMIC NUMBERS. [#76] The stat row must carry all four, because these
-  are what a family came for and the card was showing only one:
-      GPA band          what admits to these schools held        from admit_pattern_json
-      TEST band         same, for the entrance tests             from admit_pattern_json
-      RIGOUR            the most demanding load he carries well  never a count to hit
-      AP / advanced     what admits typically carried            a band, and only stated
-                        at the grade where course selection happens
-  State them as what ADMITS HELD, never as a requirement, and mark a GPA for a student with
-  no transcript as an ENTERING target rather than a result. [#64]
+  A course target inside a projection reads as though his schedule is already settled.
+  It is not: someone asks the counsellor for it, at registration, and can be told no. So
+  this page is written as the decision — what to ask for, WHEN it is asked, and what
+  saying yes keeps open.
+
+  It is also NOT the old table. That version put Target against Stretch over six subject
+  rows and five of the six stretch cells said "Same.", which is not information. Say once,
+  in `stretch_note`, where the two paths differ and why. If they do not differ, say that in
+  one line and move on.
+
+  {{title, lead, decisions:[{{when, head, body, keeps_open}}], tracks:[{{track,target}}],
+   stretch_note, note}}
+    * `decisions` — THREE to FIVE. Each is a real choice with a moment attached.
+      `when` is the moment a human acts: "Eighth-grade registration", "Before ninth-grade
+      course selection", "End of tenth grade". `head` is the decision in a handful of
+      words. `body` is ONE or TWO sentences on what to ask for and why. `keeps_open` is
+      what the yes protects — the door that closes if it is missed. This is the field that
+      makes the page worth reading; a decision with nothing behind it is a chore.
+    * `tracks` — one short line per subject area, where to aim. A handful of words.
+      Written as a target to aim at, never as a course he has been placed in.
+    * `stretch_note` — ONE or TWO sentences. Where the Stretch plan's academics differ,
+      or that they do not and what buys the stretch instead.
+    * `note` — ONE sentence the family should carry out of this page.
+    * NO GRADE HE HAS NOT EARNED. For a student with no high-school transcript every
+      figure here is an ENTERING TARGET, and the page says so once, in the lead. [#64]
+    * NO COHORT STATISTICS. Same rule as the card: what admits held is how WE size the
+      target; it is not something a parent needs to read. [#20]
 
 - target / stretch: THE OUTCOME CARD. THE OUTPUT OF THE PLAN, NOT AN INPUT. [#17]
   This is NOT the step-2 Match Key (backend, never rendered, used only to retrieve similar
@@ -1453,13 +1462,70 @@ Return ONLY the StrategicPlan JSON with EXACTLY these keys, each fully populated
   CARD GRAMMAR — concision is the rule; the cards do the work, words get in the way. [#19]
     * Headline: ONE short phrase naming the most distinctive fact, ideally with the outcome in
       it. "The founder who took debate to state." Not a sentence with a clause hanging off it.
-    * Stat row: exactly 4 stats, values kept short ("1500+ / 34+", not a sentence).
-    * Credentials: 4–6. The heading IS the credential, stated flat and specific with its level,
-      scale or duration ("State qualifier, team captain."). The body is ONE or TWO short
-      sentences of explanation — never a paragraph. Lead with the heaviest credential.
-      Aggregate minor items into a single consolidated line rather than one bullet each.
-    * Takeaway: ONE sentence. Two is the maximum. Three means you are writing a paragraph and
-      have lost the format.
+
+    * STAT ROW: EXACTLY FOUR, AND THESE FOUR. [#78] Not five, not six. The card carried six
+      and two of them — what he carries, top level reached — restated the credential list in
+      shorthand, while RIGOUR and ADVANCED COURSES were the same fact written twice. A stat
+      a reader cannot act on or compare is noise, and noise on a card is expensive because
+      the card is the one page a parent photographs.
+
+          GPA             the band admits held; an ENTERING TARGET for a student with
+                          no transcript yet, and the sub-line must say so           [#64]
+          ENTRANCE TESTS  the band, both scales ("1500+ / 34+"), with the sitting plan
+          RIGOUR          the AP or advanced-course band, as ONE stat. This is what
+                          "rigour" MEANS on a transcript — do not also emit a separate
+                          advanced-course count. Sub-line: what admits carried, never a
+                          count to hit.
+          ONE COURSE MARK the single course fact that matters FOR THIS STUDENT, chosen
+                          from their own field and plan: the maths ceiling for most,
+                          but the language level, the science sequence or the field
+                          course where that is what their plan turns on. Name the course.
+
+      Values stay short — "1500+ / 34+", "Calculus by twelfth" — never a sentence. The
+      sub-line carries the caveat; the value carries the fact.
+
+    * CREDENTIALS: FOUR, FIVE AT THE ABSOLUTE MOST, AND ONE THREAD EACH. [#78]
+      The heading IS the credential, stated flat, with its level, scale or duration.
+      The body is ONE or TWO short sentences. Lead with the heaviest.
+        - ONE BULLET PER THREAD. Name the activity in the first few words, plainly, so a
+          reader knows which thread they are in before the detail starts. A bullet that
+          opens with a business and ends with a competition leaves a parent asking which
+          of the two it was about — and that is a real reading this card produced.
+        - AGGREGATE the small things he keeps into ONE closing line, never a bullet each.
+        - A JOB, A ROLE OR A RECORD BELONGING TO A THREAD GOES INSIDE THAT THREAD'S
+          BULLET. The shop job is part of the business; the records are part of the
+          business. Splitting them out spends a slot to say one thing twice.
+        - NOTHING ACADEMIC. Not the GPA, not the course load, not the rigour, not the
+          testing. Those are the stat row and the courses page. A credential that says
+          "the strongest course load he carries well, in the 3.8-and-above band" spends a
+          load-bearing slot on two numbers the reader has already read. [#20]
+        - NO PROGRAMME, ORGANISATION OR COMPETITION NAMED. Same rule as the roadmap
+          (#63): "his school's business club", not the club's name; "the league his
+          squad competes in", not the league. The card is four years out. A named body
+          on it is a commitment we cannot make and a brand we should not print. [#62]
+
+    * ODDS: TWO COLUMNS, TWO TIERS EACH, AND NOTHING ELSE. [#78]
+      `odds: [{{head, tiers:[{{name, range, colleges:[...]}}]}}]` — exactly two columns.
+      The first is what is within reach, the second the toughest reaches; two tiers per
+      column, each one line. This replaced three things that said the same thing: a prose
+      sentence on what was within reach, a prose sentence on the toughest reaches, and a
+      band strip below them naming the same schools over again with the same percentages.
+        - `name` is the tier ("Reach", "Far reach", "Target", "Likely").
+        - `range` is the admit band, short ("15-35%", "under 15%").
+        - `colleges` IS A LIST OF STRINGS, one full school name per entry, NEVER one
+          joined string. Several names carry a comma of their own ("University of
+          California, Berkeley"), and joining them with commas makes a writer drop the
+          campus to keep its separator clear — which printed "University of California,
+          University of California" and named one school twice. Emit the list. [#77]
+        - No sentences here. A tier is a label, a band and its schools.
+
+    * TAKEAWAY: ONE SENTENCE, AND IT DESCRIBES THE CARD. [#78]
+      The card is what this student looks like in senior year if the plan is carried out,
+      so the takeaway says THAT, in plain words a parent reads in one breath: the two or
+      three things his application will be built on. Not the mechanism behind the plan
+      ("puts someone outside the family behind every activity" is us explaining our
+      method), not a promise about admission, not a number. Two sentences is the maximum
+      and one is better.
 
   THE CARD IS ABOUT THIS STUDENT ONLY. [#20]
     * NO cohort or corpus statistics anywhere on it — no "only 35% of admits had a venture", no
@@ -1468,7 +1534,7 @@ Return ONLY the StrategicPlan JSON with EXACTLY these keys, each fully populated
       their child's profile in the application year and nothing else.
     * NEVER repeat the stat row inside a credential. The four stats already cover academics, so a
       credential restating GPA/testing/rigour wastes one of only four slots. Academics live in the
-      stat row; credentials cover everything else.
+      stat row and on the courses page; credentials cover everything else. [#78]
     * NAME THE LEVEL, concretely — what an admissions reader would actually see: state qualifier,
       top ten in the state, national qualifier, Best Delegate, a committee award, a medal. Never a
       vague stand-in like "a real credential" or "a strong result". Calibrate the level from the
@@ -1504,24 +1570,13 @@ Return ONLY the StrategicPlan JSON with EXACTLY these keys, each fully populated
       never your own estimate.
     * Bands and any percentage come from the module, with its cohort label and n. See the
       NUMBERS & ODDS clause.
-  Shape: {{lead, card:{{label, title, subtitle, stats:[{{k,v,sub}}], academics:{{summary,
-  tracks:[{{track,target}}]}}, credentials:[{{h,t}}] (4-7, load-bearing, each tied to plan
-  work), within_reach, toughest, bands:[{{name, range, colleges:[...]}}], takeaway}}}}
-  Stretch carries the same shape.
-
-  THE BAND STRIP. [#77] `bands` lives ON THE CARD and is written for the TARGET card only —
-  omit it from Stretch. The bands describe the family's college list, which is the same list
-  on both paths, so printing it twice puts two byte-identical strips on facing pages.
-
-  `colleges` IS A LIST OF STRINGS, one full school name per entry — never one joined
-  string. Several of these names contain a comma of their own ("University of California,
-  Berkeley"), and a writer joining them with commas drops the campus to keep its separator
-  unambiguous, which printed "University of California, University of California" and named
-  the same school twice. Emit the list; the renderer joins it. Write each name in full,
-  exactly as the family's list gives it, including the campus.
-- course: REMOVED — see above. Do not emit it. {{lead, target_gpa, stretch_gpa, target_bullets:[], stretch_bullets:[],
-  table:[{{track, target, stretch}}] (Math, spine subject, Science, English, World language,
-  Total APs), note}}
+  Shape: {{lead, card:{{label, title, subtitle, stats:[{{k,v,sub}}] (EXACTLY 4),
+  credentials:[{{h,t}}] (4, 5 at most, one thread each), odds:[{{head,
+  tiers:[{{name, range, colleges:[...]}}]}}] (EXACTLY 2 columns, 2 tiers each),
+  takeaway}}}}
+  Stretch carries the same shape. NO `academics` and NO `bands` — those are gone. [#78]
+- course: {{title, lead, decisions:[{{when, head, body, keeps_open}}] (3-5),
+  tracks:[{{track, target}}], stretch_note, note}} — see COURSES AND GRADES above. [#78]
 - roadmap: {{title, lead, stages:[{{grade,name,body,color:''|'g'|'p'}}], grades:[...]}}
   `grades` has one entry per grade, current grade first. EVERY GRADE TAKES THE SAME SHAPE:
   the SEMESTER is the container and the goals sit inside it. [#57]
@@ -1688,10 +1743,13 @@ SECTION SHAPES THAT KEEP IT AT TWELVE PAGES [#38]
       Never name something already inside its lead time — give the next occurrence.
     * `contact` is the last thing to cut. It is how a parent acts.
 
-  course — targets only.
-    * `target_bullets` at most 4, `stretch_bullets` at most 3, one line each. A bullet states
-      a target, a threshold or a course-direction consequence. "Which grades count is a fair
-      question" is commentary and does not belong on a targets page.
+  course — decisions, each with the moment it happens. [#78]
+    * `body` at most two sentences; `keeps_open` ONE line naming the door that closes if the
+      decision is missed. A decision with nothing behind it is a chore, not a plan.
+    * `stretch_note` at most two sentences. Where the paths do not differ, say so once —
+      never a column of "Same."
+    * Commentary is not a decision. "Which grades count is a fair question" states nothing
+      the family can act on.
 
   Outcome cards — a credential is the credential plus ONE qualifying clause. Nothing more.
 

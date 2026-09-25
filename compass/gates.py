@@ -1266,62 +1266,113 @@ def gate_expert_use(output, step=None):
                       "advice may inform a plan; it may not invent or override one")
 
 
-def gate_bandstrip(draft, college_list=None):
-    """A SCHOOL'S NAME IS NOT JOINABLE BY A COMMA. [#77]
+def gate_card_shape(draft, college_list=None):
+    """THE CARD'S OWN GRAMMAR, ENFORCED. [#78]
 
-    The band strip names the family's college list under each selectivity band. Two of the
-    names on a typical list carry a comma of their own — "University of California,
-    Berkeley" — and a writer asked to comma-join such a list drops the campus so its own
-    separator stays unambiguous. The strip then printed:
+    Four of these rules were already written in the writer spec — exactly four stats, four
+    to six credentials, never restate the stat row in a credential, never name a programme
+    — and the card that shipped broke all four. That is the recurring shape in this engine
+    and it is worth naming once more: **a rule is a suggestion until something rejects the
+    output that breaks it.** The spec said "exactly 4 stats" while six rendered; it said
+    credentials never restate academics while one of them carried the GPA band and the
+    course load; it forbids programme names four years out while the first bullet named
+    two business organisations.
 
-        Reach   University of California, University of California, Georgetown, Michigan
+    The other two rules are new, and both come from a parent reading the card and not
+    being able to tell what she was looking at:
 
-    which names the same school twice and no campus at all. A parent reads that as an
-    error in the plan, and they are right. The schema now asks for a list and the renderer
-    joins it, so this gate exists to catch the string coming back.
+      * ONE THREAD PER BULLET. A bullet that opens on a business and closes on a
+        competition reads as a mix-up, because from outside there is no way to tell which
+        of the two the bullet was about.
+      * THE ODDS BLOCK IS TWO COLUMNS OF TWO. It used to be a prose sentence, a second
+        prose sentence, and a band strip naming the same schools a third time.
 
-    It also checks the strip is printed once. It was on both cards, byte for byte
-    identical, because the bands describe the college list and the list does not differ
-    between the two paths.
+    Also folded in from #77: a school whose name was cut at its own comma.
     """
+    import re
     f = []
-    strips = []
     for key in ("target", "stretch"):
-        bands = ((draft.get(key) or {}).get("card") or {}).get("bands")
-        if bands:
-            strips.append((key, bands))
+        card = (draft.get(key) or {}).get("card") or {}
+        if not card:
+            continue
+        tag = key
 
-    if not strips:
-        return GateResult("bandstrip", PASS, [], "no band strip to check")
+        # A gate that raises is worse than a gate that fails: the exception takes the
+        # whole run down, and it does so precisely on the malformed output it existed to
+        # catch. Everything below tolerates a row that is not a dict.
+        def _rows(x):
+            return [r if isinstance(r, dict) else {} for r in (x or [])]
 
-    if len(strips) > 1:
-        a = _txt(strips[0][1]).strip().lower()
-        b = _txt(strips[1][1]).strip().lower()
-        if a == b:
-            f.append("the same band strip is printed on both cards — write it on Target only")
+        stats = _rows(card.get("stats"))
+        if len(stats) != 4:
+            f.append(f"{tag} card carries {len(stats)} stats — the card takes exactly 4")
+        keys = " ".join(str(s.get("k", "")).lower() for s in stats)
+        if "rigour" in keys or "rigor" in keys:
+            if re.search(r"advanced|ap count|aps", keys):
+                f.append(f"{tag} card states rigour twice — the AP band IS the rigour stat")
+        for bad in ("what he carries", "what she carries", "top level reached"):
+            if bad in keys:
+                f.append(f"{tag} card stat '{bad}' restates the credential list in shorthand")
 
-    wanted = {str(c).strip().lower() for c in (college_list or []) if str(c).strip()}
-    for key, bands in strips:
-        for b in bands:
-            cols = (b or {}).get("colleges")
-            names = ([str(c.get("name") if isinstance(c, dict) else c).strip() for c in cols]
-                     if isinstance(cols, (list, tuple))
-                     else [p.strip() for p in str(cols or "").split(",")])
-            names = [n for n in names if n]
-            low = [n.lower() for n in names]
-            dupes = {n for n in low if low.count(n) > 1}
-            if dupes:
-                f.append(f"{key} band '{b.get('name')}' names the same school twice: "
-                         f"{sorted(dupes)[:2]} — a campus name was cut at its own comma")
-            # A name that is a strict prefix of one on the real list lost its tail.
-            for n in names:
-                if n.lower() in wanted:
-                    continue
-                truncated = [w for w in wanted
-                             if w.startswith(n.lower() + ",") or w.startswith(n.lower() + " ")]
-                if truncated:
-                    f.append(f"{key} band prints '{n}', which is the front of "
-                             f"'{truncated[0]}' — write the full name including the campus")
+        creds = _rows(card.get("credentials"))
+        if not 4 <= len(creds) <= 5:
+            f.append(f"{tag} card carries {len(creds)} credentials — 4, or 5 at the most")
 
-    return GateResult("bandstrip", RETRY if f else PASS, f,
-                      "a name that contains the separator cannot be joined by it" if f else "")
+        for cr in creds:
+            body = f"{cr.get('h','')} {cr.get('t','')}"
+            if re.search(r"\b(gpa|grade point|3\.\d|4\.0)\b", body, re.I) or \
+               re.search(r"course load|\bAPs?\b|advanced courses|honou?rs track|"
+                         r"\b(SAT|ACT)\b|test scores?", body):
+                f.append(f"{tag} credential restates academics: '{body[:56]}' — "
+                         f"that is the stat row and the courses page")
+            named = sorted(set(m.group(0) for m in re.finditer(_NAMED_BODIES, body, re.I)))
+            if named:
+                f.append(f"{tag} credential names {named[:2]} — the card is four years "
+                         f"out; name the KIND of body, not the body")
+
+        if card.get("academics"):
+            f.append(f"{tag} card still carries courses — they have their own page")
+        if card.get("bands"):
+            f.append(f"{tag} card carries the old band strip — it is the odds block now")
+        for dead in ("within_reach", "toughest"):
+            if str(card.get(dead) or "").strip():
+                f.append(f"{tag} card carries prose '{dead}' — the odds block replaced it")
+
+        take = str(card.get("takeaway") or "")
+        if len(re.findall(r"[.!?](?:\s|$)", take)) > 2:
+            f.append(f"{tag} takeaway runs past two sentences")
+
+        odds = _rows(card.get("odds"))
+        if len(odds) != 2:
+            f.append(f"{tag} odds block has {len(odds)} column(s) — it takes exactly 2")
+        wanted = {str(c).strip().lower() for c in (college_list or []) if str(c).strip()}
+        for col in odds:
+            tiers = _rows(col.get("tiers"))
+            if not 1 <= len(tiers) <= 2:
+                f.append(f"{tag} odds column '{col.get('head')}' has {len(tiers)} tiers "
+                         f"— two is the shape, one is the floor")
+            for t in tiers:
+                cols = t.get("colleges")
+                names = ([str(c.get("name") if isinstance(c, dict) else c).strip()
+                          for c in cols] if isinstance(cols, (list, tuple))
+                         else [x.strip() for x in str(cols or "").split(",")])
+                names = [n for n in names if n]
+                low = [n.lower() for n in names]
+                dupes = {n for n in low if low.count(n) > 1}
+                if dupes:
+                    f.append(f"{tag} tier '{t.get('name')}' names the same school twice: "
+                             f"{sorted(dupes)[:1]} — a campus was cut at its own comma")
+                for n in names:
+                    if n.lower() in wanted:
+                        continue
+                    cut = [w for w in wanted if w.startswith(n.lower() + ",")
+                           or w.startswith(n.lower() + " ")]
+                    if cut:
+                        f.append(f"{tag} tier prints '{n}', the front of '{cut[0]}' — "
+                                 f"write the full name including the campus")
+
+    return GateResult("card_shape", RETRY if f else PASS, f,
+                      "a rule is a suggestion until something rejects what breaks it" if f
+                      else "")
+
+
