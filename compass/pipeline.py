@@ -370,6 +370,11 @@ def run(intake: dict, log=print) -> dict:
     if gcs.verdict != gates.PASS:
         log(f"      gate: {gcs.verdict} (card_shape) — {'; '.join(gcs.failures)[:100]}")
 
+    gcp = gates.gate_course_page(state["draft"])
+    state.setdefault("_gates", []).append(gcp)
+    if gcp.verdict != gates.PASS:
+        log(f"      gate: {gcp.verdict} (course_page) — {'; '.join(gcp.failures)[:100]}")
+
     log("  9/10 Critic ........... tone / honesty / plain English")
     verdict = _agent("critic", {"strategic_plan_json": state["draft"]})
     state["critic"] = verdict

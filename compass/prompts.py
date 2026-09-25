@@ -1436,23 +1436,54 @@ Return ONLY the StrategicPlan JSON with EXACTLY these keys, each fully populated
   in `stretch_note`, where the two paths differ and why. If they do not differ, say that in
   one line and move on.
 
-  {{title, lead, decisions:[{{when, head, body, keeps_open}}], tracks:[{{track,target}}],
-   stretch_note, note}}
-    * `decisions` — THREE to FIVE. Each is a real choice with a moment attached.
-      `when` is the moment a human acts: "Eighth-grade registration", "Before ninth-grade
-      course selection", "End of tenth grade". `head` is the decision in a handful of
-      words. `body` is ONE or TWO sentences on what to ask for and why. `keeps_open` is
-      what the yes protects — the door that closes if it is missed. This is the field that
-      makes the page worth reading; a decision with nothing behind it is a chore.
-    * `tracks` — one short line per subject area, where to aim. A handful of words.
-      Written as a target to aim at, never as a course he has been placed in.
-    * `stretch_note` — ONE or TWO sentences. Where the Stretch plan's academics differ,
-      or that they do not and what buys the stretch instead.
-    * `note` — ONE sentence the family should carry out of this page.
-    * NO GRADE HE HAS NOT EARNED. For a student with no high-school transcript every
-      figure here is an ENTERING TARGET, and the page says so once, in the lead. [#64]
-    * NO COHORT STATISTICS. Same rule as the card: what admits held is how WE size the
-      target; it is not something a parent needs to read. [#20]
+  THE PAGE'S SHAPE ANSWERS "HOW ARE THE TWO PLANS DIFFERENT?" AT A GLANCE. [#80]
+  The first version of this page drew that distinction with a Target-against-Stretch table
+  whose stretch column said "Same." five times out of six — the distinction expressed by
+  repeating the word for no-distinction. The second buried the difference in a paragraph at
+  the foot, where it was honest and invisible. Neither let a reader SEE it. So the page runs:
+
+      1. THE TWO PLANS SIDE BY SIDE, each with the same three figures. A reader sees in
+         one second whether they match.
+      2. ONE shared subject grid, LABELLED as shared. A label carries "these are the same"
+         better than a column repeating it six times.
+      3. THE DIFFERENCE, once, in a box of its own — including when the difference is that
+         there is none, which is itself the thing the family most needs to know.
+      4. WHAT TO DO, as dated decisions.
+
+  {{title, lead, plans:[{{name, figures:[{{k,v}}], line}}], tracks:[{{track,target}}],
+   tracks_note, difference_head, difference,
+   decisions:[{{when, head, body, keeps_open}}], note}}
+
+    * `plans` — EXACTLY TWO, Target then Stretch. Each carries THREE `figures` and the two
+      plans use THE SAME THREE KEYS in the same order, because the comparison only works if
+      the boxes line up. GPA, tests and advanced-course load is the usual set. `line` is ONE
+      sentence on what that plan asks of his courses.
+      Where a figure does not differ, PRINT IT ANYWAY, identical, on both sides. That is the
+      point: the reader sees two identical numbers and learns something.
+    * `tracks` — one short line per subject area, where to aim. A handful of words. Written
+      as a target to aim at, never as a course he has been placed in.
+    * `tracks_note` — a few words saying whether the grid holds for both plans ("identical
+      on both plans"), or which plan it describes when they genuinely diverge.
+    * `difference_head` + `difference` — the one block a parent reads to answer "so what
+      does the Stretch actually cost?". State the answer IN THE HEADING, so it survives
+      skimming: "Why the Stretch plan asks for nothing extra here", or "The two extra
+      courses the Stretch plan adds". The body is TWO or THREE sentences saying what is
+      bought and with what. Never write a heading that promises a difference the body then
+      denies.
+    * `decisions` — THREE to FIVE. Each is a real choice with a moment attached. `when` is
+      when a human acts, SHORT, and it sits in a narrow column so the moments line up down
+      the page: "Grade 9 registration", "Grade 8, this spring", "Every year after" — four
+      or five words at the outside. `head` is the decision in a handful of words. `body` is
+      ONE or TWO sentences on what to ask for and why. `keeps_open` is ONE line naming the
+      door that closes if it is missed — the field that earns this page. A decision with
+      nothing behind it is a chore.
+    * `note` — ONE sentence the family carries out of this page.
+    * NO GRADE HE HAS NOT EARNED. For a student with no high-school transcript every figure
+      here is an ENTERING TARGET, and the page says so once, in the lead. [#64]
+    * NO COHORT STATISTICS. What admits held is how WE size the target; it is not something
+      a parent needs to read. [#20]
+    * GRADES ARE NUMERALS on this page as on the card — "grade 9", not "ninth grade" — since
+      the `when` column and the figure boxes are both scanned rather than read. [#79]
 
 - target / stretch: THE OUTCOME CARD. THE OUTPUT OF THE PLAN, NOT AN INPUT. [#17]
   This is NOT the step-2 Match Key (backend, never rendered, used only to retrieve similar
@@ -1582,8 +1613,10 @@ Return ONLY the StrategicPlan JSON with EXACTLY these keys, each fully populated
   tiers:[{{name, range, colleges:[...]}}]}}] (EXACTLY 2 columns, 2 tiers each),
   takeaway}}}}
   Stretch carries the same shape. NO `academics` and NO `bands` — those are gone. [#78]
-- course: {{title, lead, decisions:[{{when, head, body, keeps_open}}] (3-5),
-  tracks:[{{track, target}}], stretch_note, note}} — see COURSES AND GRADES above. [#78]
+- course: {{title, lead, plans:[{{name, figures:[{{k,v}}], line}}] (EXACTLY 2),
+  tracks:[{{track, target}}], tracks_note, difference_head, difference,
+  decisions:[{{when, head, body, keeps_open}}] (3-5), note}}
+  — see COURSES AND GRADES above. [#78][#80]
 - roadmap: {{title, lead, stages:[{{grade,name,body,color:''|'g'|'p'}}], grades:[...]}}
   `grades` has one entry per grade, current grade first. EVERY GRADE TAKES THE SAME SHAPE:
   the SEMESTER is the container and the goals sit inside it. [#57]
@@ -1750,11 +1783,12 @@ SECTION SHAPES THAT KEEP IT AT TWELVE PAGES [#38]
       Never name something already inside its lead time — give the next occurrence.
     * `contact` is the last thing to cut. It is how a parent acts.
 
-  course — decisions, each with the moment it happens. [#78]
+  course — two plans at the top, one shared grid, one difference box, dated decisions. [#80]
+    * `when` four or five words at the outside — it sits in a narrow column.
     * `body` at most two sentences; `keeps_open` ONE line naming the door that closes if the
       decision is missed. A decision with nothing behind it is a chore, not a plan.
-    * `stretch_note` at most two sentences. Where the paths do not differ, say so once —
-      never a column of "Same."
+    * `difference` at most three sentences, and the heading states the answer.
+      Where the paths do not differ, say so once — never a column of "Same."
     * Commentary is not a decision. "Which grades count is a fair question" states nothing
       the family can act on.
 

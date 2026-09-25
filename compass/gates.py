@@ -1384,3 +1384,78 @@ def gate_card_shape(draft, college_list=None):
                       else "")
 
 
+
+
+def gate_course_page(draft):
+    """THE COMPARISON ONLY WORKS IF THE BOXES LINE UP. [#80]
+
+    The courses page shows the two plans side by side so a parent can see at a glance
+    whether they differ. That reading depends entirely on the two columns carrying the
+    SAME figure keys in the SAME order — "GPA / Tests / Advanced" against "GPA / Tests /
+    Advanced". A writer that gives Target three figures and Stretch two, or reorders them,
+    produces a layout that still renders and no longer compares anything. The reader does
+    not notice they have been shown a non-comparison; they just come away unsure.
+
+    It also catches the self-contradicting heading, which is a real thing this page did:
+    "The only academic difference between the two plans" over a body beginning "There is
+    none." The heading has to survive skimming on its own, because for many parents the
+    heading is all that gets read.
+    """
+    import re
+    c = draft.get("course") or {}
+    if not c:
+        return GateResult("course_page", PASS, [], "no courses page")
+    f = []
+
+    plans = [p if isinstance(p, dict) else {} for p in (c.get("plans") or [])]
+    if len(plans) != 2:
+        f.append(f"courses page shows {len(plans)} plan column(s) — it takes exactly 2, "
+                 f"Target and Stretch")
+    else:
+        keys = [[str(g.get("k", "")).strip().lower()
+                 for g in (p.get("figures") or []) if isinstance(g, dict)] for p in plans]
+        if keys[0] != keys[1]:
+            f.append(f"the two plan columns carry different figures ({keys[0]} vs "
+                     f"{keys[1]}) — they must line up or the comparison shows nothing")
+        elif not 2 <= len(keys[0]) <= 4:
+            f.append(f"each plan column carries {len(keys[0])} figures — three is the shape")
+        for p in plans:
+            if not str(p.get("line") or "").strip():
+                f.append(f"plan column '{p.get('name')}' has no line saying what it asks")
+
+    head = str(c.get("difference_head") or "")
+    body = str(c.get("difference") or "")
+    if body and not head:
+        f.append("the difference box has a body and no heading — the heading is what "
+                 "survives skimming")
+    if head and body:
+        promises = re.search(r"\b(the|only|where)\b.*\bdiffer|difference", head, re.I)
+        denies = re.match(r"\s*(there is none|none|neither|no difference)", body, re.I)
+        if promises and denies:
+            f.append(f"'{head[:46]}' promises a difference the body then denies — "
+                     f"state the answer in the heading")
+    if len(re.findall(r"[.!?](?:\s|$)", body)) > 3:
+        f.append("the difference box runs past three sentences")
+
+    for d in [x if isinstance(x, dict) else {} for x in (c.get("decisions") or [])]:
+        when = str(d.get("when") or "")
+        if len(when.split()) > 5:
+            f.append(f"decision moment '{when[:40]}' is too long for its column — "
+                     f"four or five words")
+        if not str(d.get("keeps_open") or "").strip():
+            f.append(f"decision '{str(d.get('head'))[:40]}' names no door it keeps open — "
+                     f"that is what makes it a decision and not a chore")
+
+    # Grades are numerals here too, in the scanned columns. [#79]
+    scanned = " ".join(str(d.get("when", "")) for d in
+                       [x for x in (c.get("decisions") or []) if isinstance(x, dict)])
+    spelled = re.findall(r"\b(ninth|tenth|eleventh|twelfth)\b", scanned, re.I)
+    if spelled:
+        f.append(f"a decision moment spells out '{spelled[0]}' — the when-column is scanned")
+
+    n = len(c.get("decisions") or [])
+    if n and not 3 <= n <= 5:
+        f.append(f"{n} decisions — three to five")
+
+    return GateResult("course_page", RETRY if f else PASS, f,
+                      "a comparison whose columns do not line up compares nothing" if f else "")

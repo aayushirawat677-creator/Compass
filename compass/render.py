@@ -64,12 +64,30 @@ p{ margin:4px 0; }
 .cred li{ list-style:none; padding-left:14px; position:relative; margin:2.5px 0; }
 .cred li:before{ content:'▪'; position:absolute; left:0; color:var(--green); }
 .tracks{ display:flex; flex-wrap:wrap; gap:3px 14px; }
-.cdec{ border-left:2px solid var(--green); padding:7px 0 7px 11px; margin:9px 0; }
-.cdh{ display:flex; gap:9px; align-items:baseline; margin-bottom:3px; }
-.cdw{ color:var(--gold2); font-size:8.4px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; min-width:96px; }
-.cdk{ margin-top:4px; font-size:9.2px; color:var(--muted); }
-.cdk span{ color:var(--gold2); letter-spacing:.09em; text-transform:uppercase; font-size:8.2px; font-weight:700; margin-right:5px; }
-.cblk{ margin-top:15px; border-top:1px solid var(--line); padding-top:8px; }
+/* Two plans, side by side, in the colours the document already uses for them. [#80] */
+.planrow{ display:flex; gap:10px; margin:12px 0 4px; }
+.plan{ flex:1 1 50%; border:1px solid var(--line); border-radius:6px; padding:9px 11px 10px; }
+.plan.p1{ background:#f4f5f0; border-left:3px solid #5c6b3d; }
+.plan.p2{ background:#f3f1f7; border-left:3px solid #5b4a86; }
+.plan .ph{ font-size:9px; font-weight:700; letter-spacing:.13em; text-transform:uppercase; margin-bottom:6px; }
+.plan.p1 .ph{ color:#5c6b3d; } .plan.p2 .ph{ color:#5b4a86; }
+.pfigs{ display:flex; gap:5px; margin-bottom:6px; }
+.pfig{ flex:1 1 33%; background:#fff; border-radius:4px; padding:5px 7px; }
+.pfig .fk{ display:block; color:var(--muted); font-size:7.6px; letter-spacing:.08em; text-transform:uppercase; }
+.pfig .fv{ display:block; font-weight:700; font-size:11.5px; margin-top:1px; }
+.plan .pline{ font-size:9.3px; line-height:1.45; color:var(--ink); }
+.shared{ float:right; color:var(--muted); font-weight:400; letter-spacing:.04em; text-transform:none; font-size:8.6px; font-style:italic; }
+.diffbox{ margin-top:13px; border:1px solid #d8d2e4; background:#f7f5fb; border-radius:6px; padding:9px 12px 10px; }
+.diffbox .lab{ color:#5b4a86; letter-spacing:.11em; font-size:8.8px; font-weight:700; text-transform:uppercase; margin-bottom:4px; }
+.diffbox p{ margin:0; }
+/* Decisions: a when-column and a body-column, so the moments line up down the page. */
+.cdec{ display:flex; gap:11px; padding:5px 0; border-top:1px solid var(--line); }
+.cdec:first-of-type{ border-top:0; }
+.cdw{ color:var(--gold2); font-size:8.2px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; min-width:104px; padding-top:2px; }
+.cdhd{ font-weight:700; margin-bottom:1px; }
+.cdk{ margin-top:3px; font-size:9.1px; color:var(--muted); }
+.cdk span{ color:var(--gold2); letter-spacing:.09em; text-transform:uppercase; font-size:8px; font-weight:700; margin-right:5px; }
+.cblk{ margin-top:14px; border-top:1px solid var(--line); padding-top:8px; }
 .cblk .lab{ color:var(--gold2); letter-spacing:.12em; font-size:9px; font-weight:700; text-transform:uppercase; margin-bottom:5px; }
 .trk{ flex:1 1 46%; font-size:9.6px; display:flex; gap:6px; }
 .trk .tk{ color:var(--muted); min-width:74px; letter-spacing:.04em; text-transform:uppercase; font-size:8.6px; padding-top:1px; }
@@ -267,37 +285,71 @@ TEMPLATE = Template(r"""
 </div>
 
 <!-- 04 COURSES AND GRADES -->
-{# A PAGE OF ITS OWN, AND NOT A PROJECTION. [#78] The old version of this page was a
-   Target-against-Stretch table whose stretch column said "Same." five times out of six,
-   so I folded it onto the cards in #76. That fixed the repetition and broke something
-   else: the card says what he WILL LOOK LIKE, and a course target is something the
-   family DECIDES, at a registration desk, on a date. The two are different kinds of
-   statement and they do not belong in one box. So the page comes back, written as the
-   decision it is — what to ask for, when it is asked, and what it keeps open. #}
+{# A PAGE OF ITS OWN, AND NOT A PROJECTION. [#78] The card says what he WILL LOOK LIKE;
+   a course target is something the family DECIDES, at a registration desk, on a date.
+
+   THE SHAPE OF THIS PAGE ANSWERS A QUESTION THE OLD TABLE ANSWERED BADLY. [#80] Aayushi
+   wants the two plans told apart at a glance. The first version did that with a
+   Target-against-Stretch table whose stretch column said "Same." five times out of six —
+   the distinction drawn by repeating the word for "no distinction". The second version
+   buried the difference in a paragraph at the foot, where it was honest and invisible.
+
+   So: the two plans sit side by side AT THE TOP, in their own colours, with the three
+   academic figures each. A reader sees in one second that the figures are identical and
+   that one line differs. Then ONE shared subject grid, labelled as shared, because a
+   column of "Same." is not information — the label carries it. Then the difference
+   itself, once, in a box of its own. Then what to do about it.  #}
 <div class="page">
   <div class="rhead">Compass · Strategic Plan · {{ c.cover.student }} · Grade {{ c.cover.grade }}</div>
   <div class="slabel">04 · Courses and Grades</div>
   <h2 class="sec">{{ c.course.title }}</h2>
   <div class="lead">{{ c.course.lead }}</div>
-  {% for d in c.course.decisions %}
-  <div class="cdec">
-    <div class="cdh"><span class="cdw">{{ d.when }}</span><strong>{{ d.head }}</strong></div>
-    <div class="small">{{ d.body }}</div>
-    {% if d.keeps_open %}<div class="cdk"><span>Keeps open</span> {{ d.keeps_open }}</div>{% endif %}
+
+  {% if c.course.plans %}
+  <div class="planrow">
+    {% for pl in c.course.plans %}
+    <div class="plan {{ 'p2' if loop.last else 'p1' }}">
+      <div class="ph">{{ pl.name }}</div>
+      <div class="pfigs">
+        {% for fg in pl.figures %}<div class="pfig"><span class="fk">{{ fg.k }}</span><span class="fv">{{ fg.v }}</span></div>{% endfor %}
+      </div>
+      <div class="pline">{{ pl.line }}</div>
+    </div>
+    {% endfor %}
   </div>
-  {% endfor %}
+  {% endif %}
+
   {% if c.course.tracks %}
-  <div class="cblk"><div class="lab">Where to aim, subject by subject</div>
+  <div class="cblk">
+    <div class="lab">Where to aim, subject by subject{% if c.course.tracks_note %}<span class="shared">{{ c.course.tracks_note }}</span>{% endif %}</div>
     <div class="tracks">
       {% for t in c.course.tracks %}<div class="trk"><span class="tk">{{ t.track }}</span><span>{{ t.target }}</span></div>{% endfor %}
     </div>
   </div>
   {% endif %}
-  {% if c.course.stretch_note %}
-  <div class="cblk"><div class="lab">On the Stretch plan</div>
-    <p class="small">{{ c.course.stretch_note }}</p></div>
+
+  {% if c.course.difference %}
+  <div class="diffbox">
+    <div class="lab">{{ c.course.difference_head or 'Where the two plans differ' }}</div>
+    <p class="small">{{ c.course.difference }}</p>
+  </div>
   {% endif %}
-  {% if c.course.note %}<div class="darkbox" style="margin-top:18px"><div class="lab">The one thing to hold on to</div>
+
+  {% if c.course.decisions %}
+  <div class="cblk"><div class="lab">What to do, and when</div>
+    {% for d in c.course.decisions %}
+    <div class="cdec">
+      <div class="cdw">{{ d.when }}</div>
+      <div><div class="cdhd">{{ d.head }}</div>
+        <div class="small">{{ d.body }}</div>
+        {% if d.keeps_open %}<div class="cdk"><span>Keeps open</span> {{ d.keeps_open }}</div>{% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if c.course.note %}<div class="darkbox" style="margin-top:14px"><div class="lab">The one thing to hold on to</div>
     <p>{{ c.course.note }}</p></div>{% endif %}
 </div>
 
@@ -471,9 +523,9 @@ def _safe(d):
         # The card no longer carries courses. [#78]
         d[key]["card"].pop("academics", None)
     d.setdefault("course", {})
-    for f in ("title", "lead", "stretch_note", "note"):
+    for f in ("title", "lead", "difference", "difference_head", "tracks_note", "note"):
         d["course"].setdefault(f, "")
-    for f in ("decisions", "tracks"):
+    for f in ("decisions", "tracks", "plans"):
         d["course"].setdefault(f, [])
     d.setdefault("roadmap", {"title": "", "lead": "", "stages": [], "grades": []})
     d.setdefault("this_year", {"title": "", "lead": "", "cards": []})

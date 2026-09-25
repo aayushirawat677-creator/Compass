@@ -2197,3 +2197,61 @@ The sub-line lost four words in the same pass ("kept open from grade 9; placemen
 pace" -> "the sequence kept open from grade 9"), because it was wrapping to a second line
 and making that stat box taller than the three beside it. The placement caveat already
 lives on the courses page, where the decision it qualifies is. [#32]
+
+## 80. Showing a difference, including when the difference is none
+> *"I want to see the clear distinguish in target and stretch plan clearly and easy to
+> understand. make it more visual and concise."*
+
+This page has now been wrong three ways, and the three are worth keeping together because
+they are the same mistake at different settings.
+
+    v1  A Target-against-Stretch table. Five of six stretch cells read "Same."
+        -> The distinction drawn by repeating the word for no-distinction.
+    v2  Merged onto the cards (#76), difference dropped entirely.
+        -> A decision printed inside a projection. Reversed in #78.
+    v3  Its own page again, difference honest and correct — in a paragraph at the foot.
+        -> Invisible. A parent skimming never reached it.
+
+**v1 was unreadable, v3 was unseen, and both failed the same reader for the same reason:
+the difference was something she had to assemble rather than something she was shown.**
+
+The shape now:
+
+    1. THE TWO PLANS SIDE BY SIDE, in the colours the document already uses for them —
+       green Target, purple Stretch — each with the same three figure boxes.
+    2. ONE subject grid, labelled "identical on both plans".
+    3. THE DIFFERENCE, once, in a box of its own.
+    4. WHAT TO DO, as dated decisions in a narrow when-column.
+
+### The important bit is step 1 printing identical numbers on purpose
+    TARGET PLAN                          STRETCH PLAN
+    GPA 3.8+  TESTS 1500+/34+  ADV 7-13  GPA 3.8+  TESTS 1500+/34+  ADV 7-13
+
+Six boxes, two of them the same three numbers, and the reader learns the answer in a
+second: **the Stretch costs nothing academically**. That is what the "Same." column was
+trying to say and could not. A repeated word is noise; a repeated FIGURE, in a box beside
+its twin, is a measurement the eye performs itself.
+
+This is the concision rule turned around. Usually concision means cutting the repetition —
+that is what #76, #77 and #78 all did. Here the repetition IS the content, and cutting it
+is what made the page unreadable the first two times. **The test is not "is this repeated"
+but "does the reader learn something from seeing it twice."**
+
+### The heading has to survive skimming
+The first version of the difference box read:
+
+    THE ONLY ACADEMIC DIFFERENCE BETWEEN THE TWO PLANS
+    There is none. Both plans ask for the same grades...
+
+A heading promising a difference over a body denying one. For a parent who reads headings
+and skips bodies — most of them — that box said the opposite of the truth. The heading now
+carries the answer: *"Why the Stretch plan asks for nothing extra here"*. `gate_course_page`
+rejects a heading that promises what its body denies.
+
+### And the comparison has to actually compare
+`gate_course_page` requires the two columns to carry the SAME figure keys in the SAME
+order. A writer that gives Target three figures and Stretch two produces a layout that
+still renders and silently compares nothing — the worst kind of defect, because the reader
+does not notice they were shown a non-comparison. They just come away unsure.
+
+Seven negative controls, including the two that render perfectly while meaning nothing.
