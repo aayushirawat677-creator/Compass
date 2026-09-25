@@ -2647,3 +2647,45 @@ which is more useful than a yes.
 now enforce it, but the writer has not once been run against the new spec — there is no
 API key in this environment. Until that run happens, "the system generates this PDF" is a
 claim the repo makes and nobody has tested.
+
+## 93. A step with no spec and no rubric is a step nobody can review
+> *"save all the new agents like appraisals, since then whatever the changes we did —
+> update the prompts, guardrails, rubrics and save them."*
+
+**The appraiser had no entry in `design/agents/`.** It has been running since rule #59 — the
+one step in the pipeline allowed to tell a family that an activity will not repay five years
+— and the only place its reasoning was written down was the prompt it is made of.
+
+Its rubric existed but predated `RUBRIC_STANDARD.md` and **failed seven of its eight shape
+rules**: no named subject, no check count, no weighting, no outcome check, no fix levers, no
+boundary, no version. So the one instrument for checking the most consequential step in the
+engine could not itself be checked.
+
+Three more steps had no spec either: `gap`, `two_paths`, `comparisons`.
+
+**Both gaps were invisible because everything RAN.** Nothing fails when a step has no design
+spec. You simply cannot review it, and nobody notices until someone new asks how it works —
+which is the exact moment the answer matters most.
+
+### What is now written down
+
+    design/agents/R2_gap_analyst.md      diagnose, never prioritise
+    design/agents/R3_appraiser.md        the two layers, and why it runs before strategy
+    design/agents/R5_two_paths.md        why the card runs AFTER the plan
+    design/agents/R10_comparisons.md     why this exists instead of stating odds
+    evals/R3_appraiser_rubric.md (v2)    rewritten to the standard: 4 checks, 2 starred,
+                                         a gate, one outcome check, fix levers, boundary
+
+All 11 rubrics now pass `audit_rubrics.py`. `audit_step_coverage` makes the gap
+unreproducible: every step in `BY_STEP` must have a rubric, and every agent step a spec.
+
+It needs an alias table, because **the three naming schemes have never agreed** — the
+pipeline says `appraiser`, the design folder says R3, the rubric says R3_appraiser, and
+two_paths is R5 in one place and R7 in another. That is its own small debt and the alias
+table is where it is now visible.
+
+### The one thing the rubrics still cannot do
+They grade SHAPE. `audit_rubrics.py` says so itself at the foot of its output. A rubric can
+pass every line and still measure the wrong thing — and none of the eleven has ever been run
+against real output from the current prompts. Calibrating them in both directions (standard,
+rule 7) is a job for the first real run, not for today.

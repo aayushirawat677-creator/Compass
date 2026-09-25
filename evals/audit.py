@@ -260,10 +260,57 @@ def audit_render_contract():
           f"renders blank: {['card.' + k for k in unspecced_card]}")
 
 
+# ------------------------------------------------ 9. every step is specced and graded
+def audit_step_coverage():
+    """A STEP WITH NO SPEC AND NO RUBRIC IS A STEP NOBODY CAN REVIEW. [#93]
+
+    The appraiser ran in production for days with no entry in `design/agents/` — the one
+    step in the pipeline allowed to tell a family an activity will not repay five years,
+    and the only place its reasoning was written down was the prompt it was made of.
+    Its rubric existed but predated the RUBRIC_STANDARD and failed seven of eight shape
+    rules, so the one instrument for checking it could not itself be checked.
+
+    Both gaps were invisible because everything RAN. Nothing fails when a step has no
+    spec; you simply cannot review it, and nobody notices until someone new asks how it
+    works.
+
+    Aliases are needed because the three naming schemes have never agreed: the pipeline
+    calls it `appraiser`, the design folder calls it R3, the rubric calls it R3_appraiser.
+    """
+    import re
+    steps = sorted(P.BY_STEP)
+    specs = os.listdir(os.path.join(ROOT, "design", "agents")) \
+        if os.path.isdir(os.path.join(ROOT, "design", "agents")) else []
+    rubrics = [f for f in os.listdir(os.path.join(ROOT, "evals")) if f.endswith("_rubric.md")]
+
+    ALIAS = {
+        "profile": ("R1", "profile"), "projected": ("MatchKey", "projected", "match"),
+        "gap": ("Gap", "gap"), "appraiser": ("R3", "appraise"),
+        "strategy": ("R4", "strategy"), "plan_goals": ("R6", "plan"),
+        "plan_recs": ("R7", "recommend"), "two_paths": ("R5", "twopath", "two_path"),
+        "writer": ("R9", "writer", "narrative"), "critic": ("R8", "critic", "calibration"),
+        "comparisons": ("Comparison", "comparison"),
+    }
+
+    def found(step, pool):
+        keys = ALIAS.get(step, (step,))
+        return any(any(k.lower() in f.lower() for k in keys) for f in pool)
+
+    no_rubric = [s for s in steps if not found(s, rubrics)]
+    check(not no_rubric, "every pipeline step has a rubric",
+          f"ungraded: {no_rubric}")
+
+    # Modules get unit tests, not rubrics (RUBRIC_STANDARD). `projected` is one.
+    MODULES = {"projected"}
+    no_spec = [s for s in steps if s not in MODULES and not found(s, specs)]
+    check(not no_spec, "every agent step has a design spec",
+          f"no entry in design/agents/: {no_spec}")
+
+
 if __name__ == "__main__":
     for fn in (audit_steps, audit_gates_wired, audit_gates_fire, audit_rules,
                audit_contracts, audit_rubrics, audit_prompts_build,
-               audit_render_contract):
+               audit_render_contract, audit_step_coverage):
         fn()
     for line in notes:
         print(line)
